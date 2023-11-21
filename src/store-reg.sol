@@ -10,7 +10,6 @@ contract Store is ERC721, Delegatable {
     string public baseURI;
     mapping(uint256 => bytes32) public storeRootHash;
     mapping(uint256 => string[]) public relays;
-    
 
     constructor(
         string memory _name,
@@ -18,6 +17,16 @@ contract Store is ERC721, Delegatable {
         string memory _baseURI
     ) ERC721(_name, _symbol) Delegatable("ShopReg", "1") {
         baseURI = _baseURI;
+    }
+
+    function authorized(uint256 id) view internal {
+        address owner = _ownerOf(id);
+        require(
+            _msgSender() == owner ||
+            isApprovedForAll(owner, msg.sender) ||
+            _msgSender() == getApproved(id),
+            "NOT_AUTHORIZED"
+        );
     }
 
     function mintTo(address recipient, uint256 id, bytes32 rootHash) public returns (uint256) {
@@ -30,25 +39,13 @@ contract Store is ERC721, Delegatable {
 
     function updateRootHash(uint256 id, bytes32 hash) public
     {
-        address owner = _ownerOf(id);
-        require(
-            msg.sender == owner ||
-            isApprovedForAll(owner, msg.sender) ||
-            msg.sender == getApproved(id),
-            "NOT_AUTHORIZED"
-        );
+        authorized(id);
         storeRootHash[id] = hash;
     }
 
     function updateRelays(uint256 id, string[] memory _relays) public {
-        address owner = _ownerOf(id);
-        require(
-            msg.sender == owner ||
-            isApprovedForAll(owner, msg.sender) ||
-            msg.sender == getApproved(id),
-            "NOT_AUTHORIZED"
-        );
-        relays[id] = _relays;  
+        authorized(id);
+        relays[id] = _relays;
     }
 
     function _msgSender()
@@ -56,8 +53,7 @@ contract Store is ERC721, Delegatable {
         view
         virtual
         override(DelegatableCore, Context)
-        returns (address sender)
-    {
+        returns (address sender) {
         if (msg.sender == address(this)) {
             bytes memory array = msg.data;
             uint256 index = msg.data.length;
