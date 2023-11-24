@@ -20,10 +20,15 @@
         ];
       };
 
+      deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
+        forge script ./script/store-reg.s.sol:MyScript --fork-url http://localhost:8545 --broadcast --no-auto-detect --via-ir
+      '';
+
       buildInputs = with pkgs; [
         # smart contracct dependencies
         foundry-bin
         solc
+        deploy_market
       ];
     in {
       devShell = pkgs.mkShell {
