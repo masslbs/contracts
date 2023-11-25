@@ -24,16 +24,12 @@
         forge script ./script/store-reg.s.sol:MyScript --fork-url http://localhost:8545 --broadcast --no-auto-detect --via-ir
       '';
 
-      update_abi = pkgs.writeShellScriptBin "updateABI" ''
-        forge build --no-auto-detect --via-ir --silent &&  ${pkgs.jq}/bin/jq '.abi' ./out/store-reg.sol/Store.json > ./store-reg-abi.json
-      '';
-
       buildInputs = with pkgs; [
         # smart contracct dependencies
         foundry-bin
+        nodePackages.pnpm
         solc
         deploy_market
-        update_abi
       ];
     in {
       devShell = pkgs.mkShell {
