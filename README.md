@@ -15,6 +15,20 @@ This repo contains store registry and the payments factory.
 
 Run `nix develop` to enter the devShell.
 
+## Delpoy to local test nest
+To create and delopy the contract to a local testnet first
+- start anvil run  `anvil`
+- in a seprate terminal run `deploy-market` which will delopy the contrat to the local testnet 
+
+## Generating ABI.ts
+To generate the ABI bindings for use in in viem.sh 
+- Go to the abi directory. `cd ./abi`
+- install the dependancies `pnpm install .`
+- run wagmi cli `pnpm wagmi`
+
+The resulting binding should be written to `src/abi.ts` 
+
+
 # TESTING
 
 `forge test --no-auto-detect`
