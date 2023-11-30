@@ -5,44 +5,94 @@ import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./relay-reg.sol";
 
+enum AccessLevel { Zero, Clerk, Admin, Owner }
 
 contract Store is ERC721 {
     uint256 private _storeIds;
-    mapping(uint256 => bytes32) public storeRootHash;
-    mapping(uint256 => string[]) public relays;
+    // info per store
+    mapping(uint256 => bytes32) public rootHashes;
+    mapping(uint256 => uint256[]) public relays;
+    mapping(uint256 => mapping(address => AccessLevel)) public storesToUsers;
     RelayReg public relayReg;
 
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
     } 
 
-    function authorized(uint256 id) view internal {
-        address owner = _ownerOf(id);
-        require(
-            _msgSender() == owner ||
-            isApprovedForAll(owner, msg.sender) ||
-            _msgSender() == getApproved(id),
-            "NOT_AUTHORIZED"
-        );
-    }
-
-    function mintTo(address owner, bytes32 rootHash) public returns (uint256) {
+    // creates a new store
+    function mint(address owner, bytes32 rootHash) public returns (uint256) {
         // safe mint checks id
         uint256 newId = _storeIds++;
         _mint(owner, newId);
         // update the hash
-        storeRootHash[newId] = rootHash;
+        rootHashes[newId] = rootHash;
         return newId;
     }
 
-    function updateRootHash(uint256 id, bytes32 hash) public
-    {
-        authorized(id);
-        storeRootHash[id] = hash;
+    function updateRootHash(uint256 storeId, bytes32 hash) public {
+        requireOnlyAdminOrHigher(storeId, msg.sender);
+        rootHashes[storeId] = hash;
     }
 
-    function updateRelays(uint256 id, string[] memory _relays) public {
-        authorized(id);
-        relays[id] = _relays;
+    function updateRelays(uint256 storeId, uint256[] memory _relays) public {
+        requireOnlyAdminOrHigher(storeId, msg.sender);
+        relays[storeId] = _relays;
+    }
+
+    // access control
+
+    function _checkIsOwner(uint256 storeId) view internal returns (bool) {
+         address owner = _ownerOf(storeId);
+         return _msgSender() == owner;
+            isApprovedForAll(owner, msg.sender) ||
+            _msgSender() == getApproved(storeId);
+    }
+
+    function requireIsOwner(uint256 storeId) view internal {
+        require(_checkIsOwner(storeId),
+            "NOT_AUTHORIZED"
+        );
+    }
+
+    function requireOnlyAdminOrHigher(uint256 storeId, address who) public view {
+        if (_checkIsOwner(storeId)) {
+            return;
+        }
+        AccessLevel acl = storesToUsers[storeId][who];
+        // TODO: combine into one require()?
+        require(acl != AccessLevel.Zero && acl != AccessLevel.Clerk, "no such user");
+    }
+
+    function registerUser(uint256 storeId, address addr, AccessLevel acl) public {
+        requireOnlyAdminOrHigher(storeId, msg.sender);
+        require(addr != address(0), "can't be zero address");
+        require(acl == AccessLevel.Clerk || acl == AccessLevel.Admin, "invalid access level");
+        // that is the user we want to save on chain
+        storesToUsers[storeId][addr] = acl;
+    }
+
+    function removeUser(uint256 storeId, address who) public {
+        requireOnlyAdminOrHigher(storeId, msg.sender);
+        AccessLevel theirAcl = storesToUsers[storeId][who];
+        if (theirAcl == AccessLevel.Zero) {
+            // already removed
+            return;
+        }
+        // can't delete things in a mapping so we overwrite with an empty entry
+        storesToUsers[storeId][who] = AccessLevel.Zero;
+    }
+
+    function hasAtLeastAccess(uint256 storeId, address addr, AccessLevel want) public view returns (bool) {
+        AccessLevel has = storesToUsers[storeId][addr];
+        address owner = _ownerOf(storeId);
+        if (want == AccessLevel.Clerk) {
+            return has != AccessLevel.Zero || owner == addr;
+        } else if (want == AccessLevel.Admin) {
+            return has == AccessLevel.Admin || owner == addr;
+        } else if (want == AccessLevel.Owner) {
+            return addr == owner;
+        }
+        require(false, "unhandled access level");
+        return false; // unreachable but need to return something
     }
 }
