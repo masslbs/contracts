@@ -77,6 +77,21 @@ contract StoreTest is Test {
         assertEq(testHashUpdate, store.rootHashes(storeId));
     }
 
+    function test_accesControl_fromRelay() public {
+        bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
+        address owner = address(3);
+        uint256 storeId = store.mint(owner, testHash);
+        address relayAddr = address(42);
+        uint256 relayId = relayReg.mint(relayAddr, "ssb://nope");
+        vm.prank(owner);
+        uint256[] memory newRelays = new uint256[](1);
+        newRelays[0] = relayId;
+        store.updateRelays(storeId, newRelays);
+        vm.prank(relayAddr);
+        store.updateRootHash(storeId, testHashUpdate);
+        assertEq(testHashUpdate, store.rootHashes(storeId));
+    }
+
     function testSafeContractReceiver() public {
         Receiver receiver = new Receiver();
         store.mint(address(receiver), testHash);

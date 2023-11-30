@@ -5,7 +5,6 @@ import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
 import "../src/store-reg.sol";
 
-import "forge-std/console.sol";
 
 contract StoreUsersTest is Test {
     Store internal s;

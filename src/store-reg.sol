@@ -17,7 +17,7 @@ contract Store is ERC721 {
 
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
-    } 
+    }
 
     // creates a new store
     function mint(address owner, bytes32 rootHash) public returns (uint256) {
@@ -29,8 +29,22 @@ contract Store is ERC721 {
         return newId;
     }
 
+    function relayIsSender(uint256 storeId) internal view returns (bool) {
+        uint256[] memory allRelays = relays[storeId];
+        for (uint256 index = 0; index < allRelays.length; index++) {
+            uint256 relayId = allRelays[index];
+            address relayAddr = relayReg.ownerOf(relayId);
+            if (relayAddr == msg.sender) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
+        require(hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk)
+            || relayIsSender(storeId),
+            "access denied");
         rootHashes[storeId] = hash;
     }
 
