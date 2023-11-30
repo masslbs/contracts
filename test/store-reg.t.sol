@@ -5,16 +5,19 @@ import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol";
 import "forge-std/console.sol";
 import "../src/store-reg.sol";
+import "../src/relay-reg.sol";
 
 contract StoreTest is Test {
     using stdStorage for StdStorage;
 
     Store internal store;
+    RelayReg internal relayReg;
     bytes32 internal testHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
 
     function setUp() public {
+        relayReg = new RelayReg();
         // Deploy NFT contract
-        store = new Store();
+        store = new Store(relayReg);
     }
 
     function testFailMintToZeroAddress() public {

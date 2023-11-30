@@ -3,14 +3,18 @@ pragma solidity ^0.8.21;
 
 import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "./relay-reg.sol";
 
 
 contract Store is ERC721 {
     uint256 private _storeIds;
     mapping(uint256 => bytes32) public storeRootHash;
     mapping(uint256 => string[]) public relays;
+    RelayReg public relayReg;
 
-    constructor() ERC721("Store", "MMSR") {} 
+    constructor(RelayReg r) ERC721("Store", "MMSR") {
+        relayReg = r;
+    } 
 
     function authorized(uint256 id) view internal {
         address owner = _ownerOf(id);
