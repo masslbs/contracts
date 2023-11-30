@@ -1,18 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.21;
 
-import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-import "openzeppelin-contracts/contracts/utils/Counters.sol";
 
-contract Store is ERC721Enumerable {
-    using Counters for Counters.Counter;
-    using Strings for uint256;
 
-    Counters.Counter private _tokenIdCounter;
+contract Store is ERC721 {
     string public baseURI;
     mapping(uint256 => bytes32) public storeRootHash;
+    mapping(uint256 => string[]) public relays;
 
     constructor(
         string memory _name,
@@ -20,6 +16,16 @@ contract Store is ERC721Enumerable {
         string memory _baseURI
     ) ERC721(_name, _symbol) {
         baseURI = _baseURI;
+    }
+
+    function authorized(uint256 id) view internal {
+        address owner = _ownerOf(id);
+        require(
+            _msgSender() == owner ||
+            isApprovedForAll(owner, msg.sender) ||
+            _msgSender() == getApproved(id),
+            "NOT_AUTHORIZED"
+        );
     }
 
     function mintTo(address recipient, uint256 id, bytes32 rootHash) public returns (uint256) {
@@ -32,13 +38,12 @@ contract Store is ERC721Enumerable {
 
     function updateRootHash(uint256 id, bytes32 hash) public
     {
-        address owner = _ownerOf(id);
-        require(
-            msg.sender == owner ||
-            isApprovedForAll(owner, msg.sender) ||
-            msg.sender == getApproved(id),
-            "NOT_AUTHORIZED"
-        );
+        authorized(id);
         storeRootHash[id] = hash;
+    }
+
+    function updateRelays(uint256 id, string[] memory _relays) public {
+        authorized(id);
+        relays[id] = _relays;
     }
 }

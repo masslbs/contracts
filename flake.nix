@@ -1,34 +1,35 @@
 {
-  description = "UAP - Unstoppable Affiliates Protocol";
+  description = "MASS_MARKET";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     utils.url = "github:numtide/flake-utils";
     foundry.url = "github:shazow/foundry.nix"; # Use monthly branch for permanent releases
-    muKnIOpkgs.url = "github:MuKnIO/nixpkgs/solc"; # solc in master is broken and out of date
   };
 
   outputs = {
-    self,
     nixpkgs,
     utils,
     foundry,
-    muKnIOpkgs,
+    ...
   }:
     utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
-          (self: super: {
-            solc = muKnIOpkgs.legacyPackages.${system}.solc;
-          })
           foundry.overlay
         ];
       };
 
+      deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
+        forge script ./script/store-reg.s.sol:MyScript --fork-url http://localhost:8545 --broadcast --no-auto-detect --via-ir
+      '';
+
       buildInputs = with pkgs; [
         # smart contracct dependencies
         foundry-bin
+        nodePackages.pnpm
         solc
+        deploy_market
       ];
     in {
       devShell = pkgs.mkShell {

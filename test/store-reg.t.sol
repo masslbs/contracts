@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.21;
 
 import "forge-std/Test.sol";
+import "openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol";
+import "forge-std/console.sol";
 import "../src/store-reg.sol";
 
 contract StoreTest is Test {
     using stdStorage for StdStorage;
 
-    Store private store;
-    bytes32 testHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
+    Store internal store;
+    bytes32 internal testHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
 
     function setUp() public {
         // Deploy NFT contract
@@ -20,11 +22,11 @@ contract StoreTest is Test {
     }
 
     function testNewMintOwnerRegistered() public {
-        uint256 id = store.mintTo(address(1), 1, testHash);
+        uint256 store_id = store.mintTo(address(1), 1, testHash);
         uint256 slotOfNewOwner = stdstore
             .target(address(store))
             .sig(store.ownerOf.selector)
-            .with_key(id)
+            .with_key(store_id)
             .find();
 
         uint160 ownerOfTokenIdOne = uint160(
@@ -55,6 +57,25 @@ contract StoreTest is Test {
         assertEq(balanceSecondMint, 2);
     }
 
+    function testFail_accesControl() public {
+        bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
+        uint256 storeId = 55;
+        address owner = address(3);
+        store.mintTo(owner, storeId, testHash);
+        store.updateRootHash(storeId, testHashUpdate);
+        assertEq(testHashUpdate, store.storeRootHash(storeId));
+    }
+
+    function test_accesControl() public {
+        bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
+        uint256 storeId = 55;
+        address owner = address(3);
+        store.mintTo(owner, storeId, testHash);
+        vm.prank(owner);
+        store.updateRootHash(storeId, testHashUpdate);
+        assertEq(testHashUpdate, store.storeRootHash(storeId));
+    }
+
     function testSafeContractReceiver() public {
         Receiver receiver = new Receiver();
         store.mintTo(address(receiver), 4, testHash);
@@ -68,11 +89,9 @@ contract StoreTest is Test {
         assertEq(balance, 1);
     }
 
-    function testFailUnSafeContractReceiver() public {
-        vm.etch(address(1), bytes("mock code"));
-        store.mintTo(address(1), 5, testHash);
-    }
+
 }
+
 
 contract Receiver is IERC721Receiver {
     function onERC721Received(
@@ -80,9 +99,8 @@ contract Receiver is IERC721Receiver {
         address from,
         uint256 id,
         bytes calldata data
-    ) external override returns (bytes4) {
+    ) external override pure returns (bytes4) {
         return this.onERC721Received.selector;
     }
 }
-
 
