@@ -6,17 +6,11 @@ import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 
 contract Store is ERC721 {
-    string public baseURI;
+    uint256 private _storeIds;
     mapping(uint256 => bytes32) public storeRootHash;
     mapping(uint256 => string[]) public relays;
 
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        string memory _baseURI
-    ) ERC721(_name, _symbol) {
-        baseURI = _baseURI;
-    }
+    constructor() ERC721("Store", "MMSR") {} 
 
     function authorized(uint256 id) view internal {
         address owner = _ownerOf(id);
@@ -28,12 +22,13 @@ contract Store is ERC721 {
         );
     }
 
-    function mintTo(address recipient, uint256 id, bytes32 rootHash) public returns (uint256) {
+    function mintTo(address owner, bytes32 rootHash) public returns (uint256) {
         // safe mint checks id
-        _safeMint(recipient, id);
+        uint256 newId = _storeIds++;
+        _mint(owner, newId);
         // update the hash
-        storeRootHash[id] = rootHash;
-        return id;
+        storeRootHash[newId] = rootHash;
+        return newId;
     }
 
     function updateRootHash(uint256 id, bytes32 hash) public

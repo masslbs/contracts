@@ -14,15 +14,15 @@ contract StoreTest is Test {
 
     function setUp() public {
         // Deploy NFT contract
-        store = new Store("STORES", "TUT", "baseUri");
+        store = new Store();
     }
 
     function testFailMintToZeroAddress() public {
-        store.mintTo(address(0), 0, testHash);
+        store.mintTo(address(0), testHash);
     }
 
     function testNewMintOwnerRegistered() public {
-        uint256 store_id = store.mintTo(address(1), 1, testHash);
+        uint256 store_id = store.mintTo(address(1), testHash);
         uint256 slotOfNewOwner = stdstore
             .target(address(store))
             .sig(store.ownerOf.selector)
@@ -38,7 +38,7 @@ contract StoreTest is Test {
     }
 
     function testBalanceIncremented() public {
-        store.mintTo(address(1), 2, testHash);
+        store.mintTo(address(1), testHash);
         uint256 slotBalance = stdstore
             .target(address(store))
             .sig(store.balanceOf.selector)
@@ -50,7 +50,7 @@ contract StoreTest is Test {
         );
         assertEq(balanceFirstMint, 1);
 
-        store.mintTo(address(1), 3, testHash);
+        store.mintTo(address(1), testHash);
         uint256 balanceSecondMint = uint256(
             vm.load(address(store), bytes32(slotBalance))
         );
@@ -59,18 +59,16 @@ contract StoreTest is Test {
 
     function testFail_accesControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
-        uint256 storeId = 55;
         address owner = address(3);
-        store.mintTo(owner, storeId, testHash);
+        uint256 storeId = store.mintTo(owner, testHash);
         store.updateRootHash(storeId, testHashUpdate);
         assertEq(testHashUpdate, store.storeRootHash(storeId));
     }
 
     function test_accesControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
-        uint256 storeId = 55;
         address owner = address(3);
-        store.mintTo(owner, storeId, testHash);
+        uint256 storeId = store.mintTo(owner, testHash);
         vm.prank(owner);
         store.updateRootHash(storeId, testHashUpdate);
         assertEq(testHashUpdate, store.storeRootHash(storeId));
@@ -78,7 +76,7 @@ contract StoreTest is Test {
 
     function testSafeContractReceiver() public {
         Receiver receiver = new Receiver();
-        store.mintTo(address(receiver), 4, testHash);
+        store.mintTo(address(receiver), testHash);
         uint256 slotBalance = stdstore
             .target(address(store))
             .sig(store.balanceOf.selector)
