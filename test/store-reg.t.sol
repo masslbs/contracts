@@ -82,7 +82,7 @@ contract StoreTest is Test {
         address owner = address(3);
         uint256 storeId = store.mint(owner, testHash);
         address relayAddr = address(42);
-        uint256 relayId = relayReg.mint(relayAddr, "ssb://nope");
+        uint256 relayId = relayReg.mint(relayAddr, "https://smthing.somewhere");
         vm.prank(owner);
         uint256[] memory newRelays = new uint256[](1);
         newRelays[0] = relayId;
@@ -90,6 +90,12 @@ contract StoreTest is Test {
         vm.prank(relayAddr);
         store.updateRootHash(storeId, testHashUpdate);
         assertEq(testHashUpdate, store.rootHashes(storeId));
+        // now remove relay and check it cant change rootHash
+        vm.prank(owner);
+        store.updateRelays(storeId, new uint256[](0));
+        vm.expectRevert("access denied");
+        vm.prank(relayAddr);
+        store.updateRootHash(storeId, testHashUpdate);
     }
 
     function testSafeContractReceiver() public {
