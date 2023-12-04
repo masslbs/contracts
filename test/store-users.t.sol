@@ -7,7 +7,7 @@ import "../src/store-reg.sol";
 
 
 contract StoreUsersTest is Test {
-    Store internal s;
+    StoreReg internal s;
     uint256 internal storeId;
     address internal addrOwner;
     address internal addrNewUser;
@@ -19,7 +19,7 @@ contract StoreUsersTest is Test {
         // console.log("setUp owner=%a", addrOwner);
         addrNewUser = address(0x6f8e7BD90cC9AF3AA50108eaC86DE0F952e4D3Ca);
         addrSomeoneElse = address(0x01a1257382B6b9a7BDFeF762379C085Ca50F1Ca9);
-        s = new Store(new RelayReg());
+        s = new StoreReg(new RelayReg());
         storeId = s.mint(addrOwner, testHash);
     }
 

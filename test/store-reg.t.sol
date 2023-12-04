@@ -10,52 +10,51 @@ import "../src/relay-reg.sol";
 contract StoreTest is Test {
     using stdStorage for StdStorage;
 
-    Store internal store;
-    RelayReg internal relayReg;
+    StoreReg internal stores;
+    RelayReg internal relays;
     bytes32 internal testHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
 
     function setUp() public {
-        relayReg = new RelayReg();
-        // Deploy NFT contract
-        store = new Store(relayReg);
+        relays = new RelayReg();
+        stores = new StoreReg(relays);
     }
 
     function testFailMintZeroAddress() public {
-        store.mint(address(0), testHash);
+        stores.mint(address(0), testHash);
     }
 
     function testNewMintOwnerRegistered() public {
-        uint256 store_id = store.mint(address(1), testHash);
+        uint256 store_id = stores.mint(address(1), testHash);
         uint256 slotOfNewOwner = stdstore
-            .target(address(store))
-            .sig(store.ownerOf.selector)
+            .target(address(stores))
+            .sig(stores.ownerOf.selector)
             .with_key(store_id)
             .find();
 
         uint160 ownerOfTokenIdOne = uint160(
             uint256(
-                (vm.load(address(store), bytes32(abi.encode(slotOfNewOwner))))
+                (vm.load(address(stores), bytes32(abi.encode(slotOfNewOwner))))
             )
         );
         assertEq(address(ownerOfTokenIdOne), address(1));
     }
 
     function testBalanceIncremented() public {
-        store.mint(address(1), testHash);
+        stores.mint(address(1), testHash);
         uint256 slotBalance = stdstore
-            .target(address(store))
-            .sig(store.balanceOf.selector)
+            .target(address(stores))
+            .sig(stores.balanceOf.selector)
             .with_key(address(1))
             .find();
 
         uint256 balanceFirstMint = uint256(
-            vm.load(address(store), bytes32(slotBalance))
+            vm.load(address(stores), bytes32(slotBalance))
         );
         assertEq(balanceFirstMint, 1);
 
-        store.mint(address(1), testHash);
+        stores.mint(address(1), testHash);
         uint256 balanceSecondMint = uint256(
-            vm.load(address(store), bytes32(slotBalance))
+            vm.load(address(stores), bytes32(slotBalance))
         );
         assertEq(balanceSecondMint, 2);
     }
@@ -63,51 +62,51 @@ contract StoreTest is Test {
     function testFail_accesControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
-        uint256 storeId = store.mint(owner, testHash);
-        store.updateRootHash(storeId, testHashUpdate);
-        assertEq(testHashUpdate, store.rootHashes(storeId));
+        uint256 storeId = stores.mint(owner, testHash);
+        stores.updateRootHash(storeId, testHashUpdate);
+        assertEq(testHashUpdate, stores.rootHashes(storeId));
     }
 
     function test_accesControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
-        uint256 storeId = store.mint(owner, testHash);
+        uint256 storeId = stores.mint(owner, testHash);
         vm.prank(owner);
-        store.updateRootHash(storeId, testHashUpdate);
-        assertEq(testHashUpdate, store.rootHashes(storeId));
+        stores.updateRootHash(storeId, testHashUpdate);
+        assertEq(testHashUpdate, stores.rootHashes(storeId));
     }
 
     function test_accesControl_fromRelay() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
-        uint256 storeId = store.mint(owner, testHash);
+        uint256 storeId = stores.mint(owner, testHash);
         address relayAddr = address(42);
-        uint256 relayId = relayReg.mint(relayAddr, "https://smthing.somewhere");
+        uint256 relayId = relays.mint(relayAddr, "https://smthing.somewhere");
         vm.prank(owner);
         uint256[] memory newRelays = new uint256[](1);
         newRelays[0] = relayId;
-        store.updateRelays(storeId, newRelays);
+        stores.updateRelays(storeId, newRelays);
         vm.prank(relayAddr);
-        store.updateRootHash(storeId, testHashUpdate);
-        assertEq(testHashUpdate, store.rootHashes(storeId));
+        stores.updateRootHash(storeId, testHashUpdate);
+        assertEq(testHashUpdate, stores.rootHashes(storeId));
         // now remove relay and check it cant change rootHash
         vm.prank(owner);
-        store.updateRelays(storeId, new uint256[](0));
+        stores.updateRelays(storeId, new uint256[](0));
         vm.expectRevert("access denied");
         vm.prank(relayAddr);
-        store.updateRootHash(storeId, testHashUpdate);
+        stores.updateRootHash(storeId, testHashUpdate);
     }
 
     function testSafeContractReceiver() public {
         Receiver receiver = new Receiver();
-        store.mint(address(receiver), testHash);
+        stores.mint(address(receiver), testHash);
         uint256 slotBalance = stdstore
-            .target(address(store))
-            .sig(store.balanceOf.selector)
+            .target(address(stores))
+            .sig(stores.balanceOf.selector)
             .with_key(address(receiver))
             .find();
 
-        uint256 balance = uint256(vm.load(address(store), bytes32(slotBalance)));
+        uint256 balance = uint256(vm.load(address(stores), bytes32(slotBalance)));
         assertEq(balance, 1);
     }
 }
