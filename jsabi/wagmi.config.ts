@@ -1,6 +1,6 @@
 import { foundry } from "@wagmi/cli/plugins";
 import * as chains from "wagmi/chains";
-import depolyerTx from "../broadcast/store-reg.s.sol/31337/run-latest.json" assert { type: "json" };
+import depolyerTx from "../broadcast/registires.s.sol/31337/run-latest.json" assert { type: "json" };
 
 const relayAddress: string = depolyerTx.transactions[0].contractAddress;
 const storeAddress: string = depolyerTx.transactions[1].contractAddress;
