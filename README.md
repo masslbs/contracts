@@ -28,6 +28,16 @@ To generate the ABI bindings for use in in viem.sh
 
 The resulting binding should be written to `src/abi.ts` 
 
+## Generate Go abi
+
+tool requirement: `go install github.com/ethereum/go-ethereum/cmd/abigen@latest`
+
+```
+rm -rf abi
+solc --abi --base-path . --include-path lib/  --input-file src/store-reg.sol --input-file src/relay-reg.sol -o abi
+abigen --abi abi/StoreReg.abi --pkg main --type RegStore --out goabi/registry-store.go
+abigen --abi abi/RelayReg.abi --pkg main --type RegRelay --out goabi/registry-relay.go
+```
 
 # TESTING
 
