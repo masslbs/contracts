@@ -74,7 +74,6 @@ contract Store is ERC721 {
             return;
         }
         AccessLevel acl = storesToUsers[storeId][who];
-        // TODO: combine into one require()?
         require(acl != AccessLevel.Zero && acl != AccessLevel.Clerk, "no such user");
     }
 

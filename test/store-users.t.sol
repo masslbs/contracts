@@ -46,16 +46,11 @@ contract StoreUsersTest is Test {
         vm.prank(addrOwner);
         s.registerUser(storeId, addrNewUser, AccessLevel.Clerk);
         vm.startPrank(addrNewUser);
+        vm.expectRevert("no such user");
         s.registerUser(storeId, addrSomeoneElse, AccessLevel.Clerk);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), true);
+        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), false);
         assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Admin), false);
         assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Owner), false);
-        s.removeUser(storeId, addrSomeoneElse);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), false);
-        // check a clerk cant register an admin
-        vm.startPrank(addrSomeoneElse);
-        s.registerUser(storeId, addrNewUser, AccessLevel.Admin);
-        assertEq(s.hasAtLeastAccess(storeId, addrNewUser, AccessLevel.Admin), false);
     }
 
     function testUsersRegisterByAdmin() public {
