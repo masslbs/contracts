@@ -6,10 +6,9 @@ import "forge-std/Script.sol";
 import "../src/store-reg.sol";
 import "../src/relay-reg.sol";
 
-contract MyScript is Script {
+contract DeployRegistries is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        uint256 store_id;
         // need to be the address of the PRIVATE_KEY
         address testAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
         // root hash for the store
@@ -17,7 +16,7 @@ contract MyScript is Script {
         vm.startBroadcast(deployerPrivateKey);
         RelayReg relayReg = new RelayReg();
         StoreReg store = new StoreReg(relayReg);
-        store_id =  store.mint(testAddress, rootHash);
+        store.registerStore(1, testAddress, rootHash);
         vm.stopBroadcast();
     }
 }

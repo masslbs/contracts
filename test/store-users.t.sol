@@ -20,7 +20,8 @@ contract StoreUsersTest is Test {
         addrNewUser = address(0x6f8e7BD90cC9AF3AA50108eaC86DE0F952e4D3Ca);
         addrSomeoneElse = address(0x01a1257382B6b9a7BDFeF762379C085Ca50F1Ca9);
         s = new StoreReg(new RelayReg());
-        storeId = s.mint(addrOwner, testHash);
+        storeId = 42;
+        s.registerStore(storeId, addrOwner, testHash);
     }
 
     function testUsersRegisterOwner() public {

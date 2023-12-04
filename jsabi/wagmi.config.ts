@@ -10,7 +10,7 @@ export default {
   plugins: [
     foundry({
       deployments: {
-        Store: {
+        StoreReg: {
           [chains.foundry.id]: storeAddress as `0x${string}`,
         },
         RelayReg: {

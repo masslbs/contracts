@@ -449,16 +449,6 @@ export const relayRegABI = [
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'relay', internalType: 'address', type: 'address' },
-      { name: 'uri', internalType: 'string', type: 'string' },
-    ],
-    name: 'mint',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
@@ -471,6 +461,17 @@ export const relayRegABI = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'ownerOf',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'newRelayId', internalType: 'uint256', type: 'uint256' },
+      { name: 'relay', internalType: 'address', type: 'address' },
+      { name: 'uri', internalType: 'string', type: 'string' },
+    ],
+    name: 'registerRelay',
+    outputs: [],
   },
   {
     stateMutability: 'nonpayable',
@@ -555,9 +556,6 @@ export const relayRegConfig = { address: relayRegAddress, abi: relayRegABI }
 // Store
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- *
- */
 export const storeABI = [
   {
     stateMutability: 'nonpayable',
@@ -892,22 +890,13 @@ export const storeABI = [
   },
 ]
 
-/**
- *
- */
-export const storeAddress = {
-  31337: '0xd767705e78A05A62CBfC7b26A72535E31265A11e',
-}
-
-/**
- *
- */
-export const storeConfig = { address: storeAddress, abi: storeABI }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // StoreReg
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ *
+ */
 export const storeRegABI = [
   {
     stateMutability: 'nonpayable',
@@ -1067,16 +1056,6 @@ export const storeRegABI = [
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'owner', internalType: 'address', type: 'address' },
-      { name: 'rootHash', internalType: 'bytes32', type: 'bytes32' },
-    ],
-    name: 'mint',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
@@ -1089,6 +1068,17 @@ export const storeRegABI = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'ownerOf',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'rootHash', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'registerStore',
+    outputs: [],
   },
   {
     stateMutability: 'nonpayable',
@@ -1241,6 +1231,18 @@ export const storeRegABI = [
     outputs: [],
   },
 ]
+
+/**
+ *
+ */
+export const storeRegAddress = {
+  31337: '0xd767705e78A05A62CBfC7b26A72535E31265A11e',
+}
+
+/**
+ *
+ */
+export const storeRegConfig = { address: storeRegAddress, abi: storeRegABI }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SweepERC20Payment

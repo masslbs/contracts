@@ -39,6 +39,8 @@ abigen --abi abi/StoreReg.abi --pkg main --type RegStore --out goabi/registry-st
 abigen --abi abi/RelayReg.abi --pkg main --type RegRelay --out goabi/registry-relay.go
 ```
 
+**TODO**: need to find a way to include deployed addresses
+
 # TESTING
 
 `forge test --no-auto-detect`

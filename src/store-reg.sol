@@ -19,17 +19,32 @@ contract StoreReg is ERC721 {
         relayReg = r;
     }
 
-    // creates a new store
-    function mint(address owner, bytes32 rootHash) public returns (uint256) {
-        // safe mint checks id
-        uint256 newId = _storeIds++;
-        _mint(owner, newId);
+    function registerStore(uint256 storeId, address owner, bytes32 rootHash) public {
+        // safe mint checks if id is taken
+        _safeMint(owner, storeId);
         // update the hash
-        rootHashes[newId] = rootHash;
-        return newId;
+        rootHashes[storeId] = rootHash;
     }
 
-    function relayIsSender(uint256 storeId) internal view returns (bool) {
+    function updateRootHash(uint256 storeId, bytes32 hash) public {
+        require(hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk)
+            || _checkIsConfiguredRelay(storeId),
+            "access denied");
+        rootHashes[storeId] = hash;
+    }
+
+    function updateRelays(uint256 storeId, uint256[] memory _relays) public {
+        requireOnlyAdminOrHigher(storeId, msg.sender);
+        relays[storeId] = _relays;
+    }
+
+    // function getAllRelays(uint256 storeId) public view returns (uint256[] memory) {
+    //     return relays[storeId];
+    // }
+
+    // access control
+
+    function _checkIsConfiguredRelay(uint256 storeId) internal view returns (bool) {
         uint256[] memory allRelays = relays[storeId];
         for (uint256 index = 0; index < allRelays.length; index++) {
             uint256 relayId = allRelays[index];
@@ -40,20 +55,6 @@ contract StoreReg is ERC721 {
         }
         return false;
     }
-
-    function updateRootHash(uint256 storeId, bytes32 hash) public {
-        require(hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk)
-            || relayIsSender(storeId),
-            "access denied");
-        rootHashes[storeId] = hash;
-    }
-
-    function updateRelays(uint256 storeId, uint256[] memory _relays) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
-        relays[storeId] = _relays;
-    }
-
-    // access control
 
     function _checkIsOwner(uint256 storeId) view internal returns (bool) {
          address owner = _ownerOf(storeId);
