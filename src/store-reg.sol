@@ -38,10 +38,6 @@ contract StoreReg is ERC721 {
         relays[storeId] = _relays;
     }
 
-    // function getAllRelays(uint256 storeId) public view returns (uint256[] memory) {
-    //     return relays[storeId];
-    // }
-
     // access control
 
     function _checkIsConfiguredRelay(uint256 storeId) internal view returns (bool) {
