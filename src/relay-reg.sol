@@ -8,12 +8,12 @@ contract RelayReg is ERC721URIStorage {
 
     constructor() ERC721("RelayReg", "MMRR") {}
 
-    function mint(address owner, string memory uri)
+    function mint(address relay, string memory uri)
         public
         returns (uint256)
     {
         uint256 newRelayId = _relayIds++;
-        _mint(owner, newRelayId);
+        _mint(relay, newRelayId);
         _setTokenURI(newRelayId, uri);
 
         return newRelayId;

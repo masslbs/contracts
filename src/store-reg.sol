@@ -7,6 +7,7 @@ import "./relay-reg.sol";
 
 enum AccessLevel { Zero, Clerk, Admin, Owner }
 
+// TODO: rename to StoreReg for consistency
 contract Store is ERC721 {
     uint256 private _storeIds;
     // info per store

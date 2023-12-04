@@ -15,7 +15,8 @@ contract MyScript is Script {
         // root hash for the store
         bytes32 rootHash = 0xf7da9dd69c40b660bedf17b0bafe9b16085e1bf34c6bc18655c5af3997aa5174;
         vm.startBroadcast(deployerPrivateKey);
-        Store store = new Store(new RelayReg());
+        RelayReg relayReg = new RelayReg();
+        Store store = new Store(relayReg);
         store_id =  store.mint(testAddress, rootHash);
         vm.stopBroadcast();
     }
