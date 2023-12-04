@@ -54,7 +54,7 @@ contract StoreReg is ERC721 {
 
     function _checkIsOwner(uint256 storeId) view internal returns (bool) {
          address owner = _ownerOf(storeId);
-         return _msgSender() == owner;
+         return _msgSender() == owner ||
             isApprovedForAll(owner, msg.sender) ||
             _msgSender() == getApproved(storeId);
     }

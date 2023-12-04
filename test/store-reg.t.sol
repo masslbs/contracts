@@ -115,12 +115,8 @@ contract StoreTest is Test {
 
 
 contract Receiver is IERC721Receiver {
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 id,
-        bytes calldata data
-    ) external override pure returns (bytes4) {
+    function onERC721Received(address,address,uint256,bytes calldata)
+        external override pure returns (bytes4) {
         return this.onERC721Received.selector;
     }
 }
