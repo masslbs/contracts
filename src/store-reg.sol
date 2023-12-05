@@ -11,7 +11,7 @@ contract StoreReg is ERC721 {
     uint256 private _storeIds;
     // info per store
     mapping(uint256 => bytes32) public rootHashes;
-    mapping(uint256 => uint256[]) public relays;
+    mapping(uint256 => uint256[]) internal relays;
     mapping(uint256 => mapping(address => AccessLevel)) public storesToUsers;
     RelayReg public relayReg;
 
@@ -31,6 +31,17 @@ contract StoreReg is ERC721 {
             || _checkIsConfiguredRelay(storeId),
             "access denied");
         rootHashes[storeId] = hash;
+    }
+
+    // relay config things
+
+    function getRelayCount(uint256 storeId) public view returns (uint256) {
+        return relays[storeId].length;
+    }
+
+    function getAllRelays(uint256 storeId) public view returns (uint256[] memory) {
+        require(getRelayCount(storeId) > 0, "no relays configured");
+        return relays[storeId];
     }
 
     function updateRelays(uint256 storeId, uint256[] memory _relays) public {

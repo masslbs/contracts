@@ -88,6 +88,12 @@ contract StoreTest is Test {
         uint256[] memory newRelays = new uint256[](1);
         newRelays[0] = relayId;
         stores.updateRelays(storeId, newRelays);
+        uint256 wantCount = 1;
+        uint256 count = stores.getRelayCount(storeId);
+        assertEq(count, wantCount);
+        uint256[] memory gotRelays = stores.getAllRelays(storeId);
+        assertEq(gotRelays.length, wantCount);
+        assertEq(gotRelays[0], relayId);
         vm.prank(relayAddr);
         stores.updateRootHash(storeId, testHashUpdate);
         assertEq(testHashUpdate, stores.rootHashes(storeId));
