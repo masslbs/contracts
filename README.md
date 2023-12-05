@@ -22,7 +22,7 @@ To create and delopy the contract to a local testnet first
 
 ## Generating ABI.ts
 To generate the ABI bindings for use in in viem.sh 
-- Go to the abi directory. `cd ./abi`
+- Go to the abi directory. `cd ./abis/js`
 - install the dependancies `pnpm install .`
 - run wagmi cli `pnpm wagmi`
 
@@ -30,13 +30,11 @@ The resulting binding should be written to `src/abi.ts`
 
 ## Generate Go abi
 
-tool requirement: `go install github.com/ethereum/go-ethereum/cmd/abigen@latest`
-
 ```
-rm -rf abi
-solc --abi --base-path . --include-path lib/  --input-file src/store-reg.sol --input-file src/relay-reg.sol -o abi
-abigen --abi abi/StoreReg.abi --pkg main --type RegStore --out goabi/registry-store.go
-abigen --abi abi/RelayReg.abi --pkg main --type RegRelay --out goabi/registry-relay.go
+rm -rf abis/sol
+solc --abi --base-path . --include-path lib/  --input-file src/store-reg.sol --input-file src/relay-reg.sol -o abis/sol
+abigen --abi abis/sol/StoreReg.abi --pkg main --type RegStore --out abis/go/registry-store.go
+abigen --abi abis/sol/RelayReg.abi --pkg main --type RegRelay --out abis/go/registry-relay.go
 ```
 
 **TODO**: need to find a way to include deployed addresses

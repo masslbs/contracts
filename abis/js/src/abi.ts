@@ -544,7 +544,7 @@ export const relayRegABI = [
  *
  */
 export const relayRegAddress = {
-  31337: '0xA00E16c8A72C3110601702775E03875c4B83262d',
+  31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
 }
 
 /**
@@ -1236,7 +1236,7 @@ export const storeRegABI = [
  *
  */
 export const storeRegAddress = {
-  31337: '0xFe5BFEc042189b7b732E00E0b393ee0d04AF9180',
+  31337: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
 }
 
 /**
