@@ -544,7 +544,7 @@ export const relayRegABI = [
  *
  */
 export const relayRegAddress = {
-  31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  31337: '0x68B1D87F95878fE05B998F19b66F4baba5De1aed',
 }
 
 /**
@@ -1030,9 +1030,23 @@ export const storeRegABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: 'storeId', internalType: 'uint256', type: 'uint256' }],
+    name: 'getAllRelays',
+    outputs: [{ name: '', internalType: 'uint256[]', type: 'uint256[]' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'getApproved',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'storeId', internalType: 'uint256', type: 'uint256' }],
+    name: 'getRelayCount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -1097,16 +1111,6 @@ export const storeRegABI = [
     inputs: [],
     name: 'relayReg',
     outputs: [{ name: '', internalType: 'contract RelayReg', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'relays',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'nonpayable',
@@ -1236,7 +1240,7 @@ export const storeRegABI = [
  *
  */
 export const storeRegAddress = {
-  31337: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  31337: '0x3Aa5ebB10DC797CAC828524e59A333d0A371443c',
 }
 
 /**
