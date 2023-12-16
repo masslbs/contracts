@@ -2,10 +2,9 @@
 pragma solidity ^0.8.21;
 
 import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./relay-reg.sol";
 
-enum AccessLevel { Zero, Clerk, Admin, Owner }
+enum AccessLevel { Zero, Clerk, Admin, Owner } // note: currently owner is not really used
 
 contract StoreReg is ERC721 {
     uint256 private _storeIds;
