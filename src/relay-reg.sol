@@ -13,4 +13,10 @@ contract RelayReg is ERC721URIStorage {
         _safeMint(relay, newRelayId);
         _setTokenURI(newRelayId, uri);
     }
+
+    function updateURI(uint256 relayId, string memory uri) public
+    {
+         require(_ownerOf(relayId) == _msgSender(), "NOT_AUTHORIZED");
+        _setTokenURI(relayId, uri);
+    }
 }
