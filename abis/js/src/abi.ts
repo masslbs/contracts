@@ -1,210 +1,4 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// NFTReceipt
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const nftReceiptABI = [
-  { stateMutability: 'nonpayable', type: 'constructor', inputs: [] },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'owner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'approved',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'tokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-    ],
-    name: 'Approval',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'owner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'operator',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      { name: 'approved', internalType: 'bool', type: 'bool', indexed: false },
-    ],
-    name: 'ApprovalForAll',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'from', internalType: 'address', type: 'address', indexed: true },
-      { name: 'to', internalType: 'address', type: 'address', indexed: true },
-      {
-        name: 'tokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-    ],
-    name: 'Transfer',
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'approve',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
-    name: 'balanceOf',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'id', internalType: 'uint256', type: 'uint256' }],
-    name: 'burn',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
-    name: 'getApproved',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: 'owner', internalType: 'address', type: 'address' },
-      { name: 'operator', internalType: 'address', type: 'address' },
-    ],
-    name: 'isApprovedForAll',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'nftOwner', internalType: 'address', type: 'address' },
-      { name: 'id', internalType: 'uint256', type: 'uint256' },
-      { name: 'receipt', internalType: 'bytes32', type: 'bytes32' },
-    ],
-    name: 'mint',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'name',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
-    name: 'ownerOf',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'receipts',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'from', internalType: 'address', type: 'address' },
-      { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'safeTransferFrom',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'from', internalType: 'address', type: 'address' },
-      { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'data', internalType: 'bytes', type: 'bytes' },
-    ],
-    name: 'safeTransferFrom',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'operator', internalType: 'address', type: 'address' },
-      { name: 'approved', internalType: 'bool', type: 'bool' },
-    ],
-    name: 'setApprovalForAll',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'interfaceId', internalType: 'bytes4', type: 'bytes4' }],
-    name: 'supportsInterface',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'symbol',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
-    name: 'tokenURI',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'from', internalType: 'address', type: 'address' },
-      { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'transferFrom',
-    outputs: [],
-  },
-]
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PaymentFactory
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -544,7 +338,7 @@ export const relayRegABI = [
  *
  */
 export const relayRegAddress = {
-  31337: '0x68B1D87F95878fE05B998F19b66F4baba5De1aed',
+  31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
 }
 
 /**
@@ -697,17 +491,6 @@ export const storeABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [
-      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
-      { name: 'addr', internalType: 'address', type: 'address' },
-      { name: 'want', internalType: 'enum AccessLevel', type: 'uint8' },
-    ],
-    name: 'hasAtLeastAccess',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
       { name: 'owner', internalType: 'address', type: 'address' },
       { name: 'operator', internalType: 'address', type: 'address' },
     ],
@@ -721,7 +504,7 @@ export const storeABI = [
       { name: 'owner', internalType: 'address', type: 'address' },
       { name: 'rootHash', internalType: 'bytes32', type: 'bytes32' },
     ],
-    name: 'mint',
+    name: 'mintTo',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
@@ -739,17 +522,6 @@ export const storeABI = [
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
   },
   {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
-      { name: 'addr', internalType: 'address', type: 'address' },
-      { name: 'acl', internalType: 'enum AccessLevel', type: 'uint8' },
-    ],
-    name: 'registerUser',
-    outputs: [],
-  },
-  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
@@ -764,34 +536,7 @@ export const storeABI = [
       { name: '', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'relays',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
-      { name: 'who', internalType: 'address', type: 'address' },
-    ],
-    name: 'removeUser',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
-      { name: 'who', internalType: 'address', type: 'address' },
-    ],
-    name: 'requireOnlyAdminOrHigher',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'rootHashes',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
   },
   {
     stateMutability: 'nonpayable',
@@ -829,12 +574,9 @@ export const storeABI = [
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'address', type: 'address' },
-    ],
-    name: 'storesToUsers',
-    outputs: [{ name: '', internalType: 'enum AccessLevel', type: 'uint8' }],
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'storeRootHash',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
   },
   {
     stateMutability: 'view',
@@ -872,8 +614,8 @@ export const storeABI = [
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
-      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
-      { name: '_relays', internalType: 'uint256[]', type: 'uint256[]' },
+      { name: 'id', internalType: 'uint256', type: 'uint256' },
+      { name: '_relays', internalType: 'string[]', type: 'string[]' },
     ],
     name: 'updateRelays',
     outputs: [],
@@ -882,7 +624,7 @@ export const storeABI = [
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
-      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
+      { name: 'id', internalType: 'uint256', type: 'uint256' },
       { name: 'hash', internalType: 'bytes32', type: 'bytes32' },
     ],
     name: 'updateRootHash',
@@ -1240,7 +982,7 @@ export const storeRegABI = [
  *
  */
 export const storeRegAddress = {
-  31337: '0x3Aa5ebB10DC797CAC828524e59A333d0A371443c',
+  31337: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
 }
 
 /**

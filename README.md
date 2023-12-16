@@ -24,7 +24,7 @@ To create and delopy the contract to a local testnet first
 To generate the ABI bindings for use in in viem.sh 
 - Go to the abi directory. `cd ./abis/js`
 - install the dependancies `pnpm install .`
-- run wagmi cli `pnpm wagmi`
+- run wagmi cli `pnpm wagmi generate`
 
 The resulting binding should be written to `src/abi.ts` 
 
