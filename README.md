@@ -32,7 +32,13 @@ The resulting binding should be written to `src/abi.ts`
 
 ```
 rm -rf abis/sol
-solc --abi --base-path . --include-path lib/  --input-file src/store-reg.sol --input-file src/relay-reg.sol -o abis/sol
+solc --abi --base-path . --include-path lib/  \
+  --input-file src/store-reg.sol \
+  --input-file src/relay-reg.sol \
+  --input-file src/payment-factory.sol \
+  -o abis/sol
+# overwrite for abis/sol/IERC1155Errors.abi
+solc --abi --input-file lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol -o abis/sol --overwrite
 abigen --abi abis/sol/StoreReg.abi --pkg main --type RegStore --out abis/go/registry-store.go
 abigen --abi abis/sol/RelayReg.abi --pkg main --type RegRelay --out abis/go/registry-relay.go
 ```
