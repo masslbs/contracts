@@ -21,7 +21,7 @@
       };
 
       deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
-        forge script ./script/registries.s.sol:DeployRegistries --fork-url http://localhost:8545 --broadcast --no-auto-detect --via-ir
+        forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect
       '';
 
       buildInputs = with pkgs; [
