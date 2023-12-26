@@ -1,23 +1,34 @@
 import { foundry } from "@wagmi/cli/plugins";
 import * as chains from "wagmi/chains";
-import depolyerTx from "../../broadcast/registries.s.sol/31337/run-latest.json" assert { type: "json" };
+import depolyerTx from "../../broadcast/deploy.s.sol/31337/run-latest.json" assert { type: "json" };
 
-const relayAddress: string = depolyerTx.transactions[0].contractAddress;
-const storeAddress: string = depolyerTx.transactions[1].contractAddress;
+function getAddress(name: string): `0x${string}` {
+  return (
+    (depolyerTx.transactions.find((a) => a.contractName === name)
+      ?.contractAddress as `0x${string}`) ?? "0x00" //nullish coalescing
+  );
+}
 
 export default {
   out: "src/abi.ts",
   plugins: [
     foundry({
       deployments: {
+        PaymentFactory: {
+          [chains.foundry.id]: getAddress("PaymentFactory"),
+        },
         StoreReg: {
-          [chains.foundry.id]: storeAddress as `0x${string}`,
+          [chains.foundry.id]: getAddress("StoreReg"),
         },
         RelayReg: {
-          [chains.foundry.id]: relayAddress as `0x${string}`,
+          [chains.foundry.id]: getAddress("RelayReg"),
         },
       },
-      include: ["payment-factory.sol/*.json", "store-reg.sol/*.json", "relay-reg.sol/*.json"],
+      include: [
+        "payment-factory.sol/*.json",
+        "store-reg.sol/*.json",
+        "relay-reg.sol/*.json",
+      ],
       forge: {
         build: false,
       },

@@ -2,6 +2,9 @@
 // PaymentFactory
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ *
+ */
 export const paymentFactoryABI = [
   {
     stateMutability: 'nonpayable',
@@ -59,6 +62,21 @@ export const paymentFactoryABI = [
     outputs: [],
   },
 ]
+
+/**
+ *
+ */
+export const paymentFactoryAddress = {
+  31337: '0xf8038Fdf3bff94EA264E097DFfd67B55e09ceDdF',
+}
+
+/**
+ *
+ */
+export const paymentFactoryConfig = {
+  address: paymentFactoryAddress,
+  abi: paymentFactoryABI,
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RelayReg
@@ -332,13 +350,23 @@ export const relayRegABI = [
     name: 'transferFrom',
     outputs: [],
   },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'relayId', internalType: 'uint256', type: 'uint256' },
+      { name: 'uri', internalType: 'string', type: 'string' },
+    ],
+    name: 'updateURI',
+    outputs: [],
+  },
 ]
 
 /**
  *
  */
 export const relayRegAddress = {
-  31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  31337: '0xd5829754d7948f084272A92343848155bCfc71f6',
 }
 
 /**
@@ -982,7 +1010,7 @@ export const storeRegABI = [
  *
  */
 export const storeRegAddress = {
-  31337: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  31337: '0x475e7e66Cb513286C08E8730a05DFB2bf65Ae2F9',
 }
 
 /**
