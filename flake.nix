@@ -23,8 +23,9 @@
       deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
         export PATH=$PATH:${pkgs.solc}/bin
         pushd .
-        rm -r /tmp/deploy-market
-        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect -o /tmp/deploy-market
+        # TODO proper tmpdir
+        rm -r /tmp/deploy-market*
+        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect -o /tmp/deploy-market --cache-path=/tmp/deploy-market-cache
         popd
       '';
 
