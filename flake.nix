@@ -69,6 +69,7 @@
               cp -r ./src/* $out/src/
               cp -r ./script/* $out/script/
               cp -r ./lib $out/lib
+              cp ./foundry.toml $out/
 solc --abi --base-path . --include-path lib/  \
   --input-file src/store-reg.sol \
   --input-file src/relay-reg.sol \
