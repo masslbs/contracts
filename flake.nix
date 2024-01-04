@@ -43,7 +43,6 @@
         '';
       };
       packages = {
-        market-deploy = deploy_market;
         market-build = pkgs.stdenv.mkDerivation {
           inherit buildInputs;
           name = "mass-contracts";
