@@ -67,7 +67,7 @@
               ls > $out/files
               cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
               substituteInPlace $out/bin/deploy-market \
-                --replace "pusd ." "pushd $out"
+                --replace "pushd ." "pushd $out"
               cp -r ./src/* $out/src/
               cp -r ./script/* $out/script/
               cp -r ./lib $out/lib
