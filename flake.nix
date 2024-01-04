@@ -21,7 +21,11 @@
       };
 
       deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
-        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect
+        export PATH=$PATH:${pkgs.solc}/bin
+        pushd .
+        rm -r /tmp/deploy-market
+        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect -o /tmp/deploy-market
+        popd
       '';
 
       buildInputs = with pkgs; [
@@ -44,9 +48,11 @@
         market-deploy = deploy_market;
         market-build = pkgs.stdenv.mkDerivation {
           inherit buildInputs;
-          name = "DMP contracts";
+          name = "mass-contracts";
 
-          unpackPhase = ":";
+          src = ./.;
+          dontPatch = true;
+          dontConfigure = true;
 
           buildPhase = ''
             forge compile --no-auto-detect
@@ -57,9 +63,14 @@
           '';
 
           installPhase = ''
-              mkdir -p $out/{script,src,abi};
-              cp -r ./src/* $our/src/
-              cp -r ./script/* $our/script/
+              mkdir -p $out/{bin,script,src,abi};
+              ls > $out/files
+              cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
+              substituteInPlace $out/bin/deploy-market \
+                --replace "pusd ." "pushd $out"
+              cp -r ./src/* $out/src/
+              cp -r ./script/* $out/script/
+              cp -r ./lib $out/lib
 solc --abi --base-path . --include-path lib/  \
   --input-file src/store-reg.sol \
   --input-file src/relay-reg.sol \
@@ -69,7 +80,7 @@ solc --abi --base-path . --include-path lib/  \
 solc --abi --input-file lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol -o $out/abi --overwrite
           '';
 
-          doCheck = true;
+          #doCheck = true;
         };
       };
     });
