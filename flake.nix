@@ -23,7 +23,7 @@
       deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
         export PATH=$PATH:${pkgs.solc}/bin
         tmp=$(mktemp -d)
-        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --root=$PWD --fork-url http://localhost:8545 --broadcast --no-auto-detect -o $tmp --cache-path=$tmp/cache
+        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --root=$PWD --config-path=$PWD/foundry.toml --fork-url http://localhost:8545 --broadcast --no-auto-detect -o $tmp --cache-path=$tmp/cache
       '';
 
       buildInputs = with pkgs; [
@@ -65,7 +65,8 @@
               ls > $out/files
               cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
               substituteInPlace $out/bin/deploy-market \
-                --replace "root=\$PWD" "root=$out"
+                --replace "root=\$PWD" "root=$out" \
+                --replace "config-path=\$PWD" "config-path=$out"
               cp -r ./src/* $out/src/
               cp -r ./script/* $out/script/
               cp -r ./lib $out/lib
