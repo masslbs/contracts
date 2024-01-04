@@ -21,7 +21,7 @@
       };
 
       deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
-        forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect
+        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect
       '';
 
       buildInputs = with pkgs; [
@@ -35,15 +35,14 @@
       devShell = pkgs.mkShell {
         inherit buildInputs;
 
-        # Decorative prompt override so we know when we're in a dev shell
         shellHook = ''
-          export PS1="[dev] $PS1"
+          export PS1="[contracts] $PS1"
           export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
         '';
       };
       packages = {
-        deploy = deploy_market;
-        test = pkgs.stdenv.mkDerivation {
+        market-deploy = deploy_market;
+        market-build = pkgs.stdenv.mkDerivation {
           inherit buildInputs;
           name = "DMP contracts";
 
@@ -57,7 +56,18 @@
             forge test --no-auto-detect
           '';
 
-          installPhase = "mkdir -p $out";
+          installPhase = ''
+              mkdir -p $out/{script,src,abi};
+              cp -r ./src/* $our/src/
+              cp -r ./script/* $our/script/
+solc --abi --base-path . --include-path lib/  \
+  --input-file src/store-reg.sol \
+  --input-file src/relay-reg.sol \
+  --input-file src/payment-factory.sol \
+  -o $out/abi
+# overwrite for abis/sol/IERC1155Errors.abi
+solc --abi --input-file lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol -o $out/abi --overwrite
+          '';
 
           doCheck = true;
         };
