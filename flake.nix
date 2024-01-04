@@ -1,9 +1,9 @@
 {
-  description = "MASS_MARKET";
+  description = "Mass Market Contracts";
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     utils.url = "github:numtide/flake-utils";
-    foundry.url = "github:shazow/foundry.nix/monthly"; # Use monthly branch for permanent releases
+    foundry.url = "github:shazow/foundry.nix/monthly";
   };
 
   outputs = {
@@ -27,7 +27,6 @@
       buildInputs = with pkgs; [
         # smart contracct dependencies
         foundry-bin
-        go-ethereum # for abigen
         nodePackages.pnpm
         solc
         deploy_market
@@ -43,6 +42,7 @@
         '';
       };
       packages = {
+        deploy = deploy_market;
         test = pkgs.stdenv.mkDerivation {
           inherit buildInputs;
           name = "DMP contracts";
