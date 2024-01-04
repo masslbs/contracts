@@ -65,7 +65,7 @@
               ls > $out/files
               cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
               substituteInPlace $out/bin/deploy-market \
-                --replace "root=$PWD" "root=$out" \
+                --replace "root=\$PWD" "root=$out"
               cp -r ./src/* $out/src/
               cp -r ./script/* $out/script/
               cp -r ./lib $out/lib
