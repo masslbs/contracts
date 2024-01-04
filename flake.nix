@@ -4,12 +4,27 @@
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     utils.url = "github:numtide/flake-utils";
     foundry.url = "github:shazow/foundry.nix/monthly";
+    forge-std = {
+      url = "github:foundry-rs/forge-std";
+      flake = false;
+    };
+    openzeppelin-contracts = {
+      url = "github:OpenZeppelin/openzeppelin-contracts";
+      flake = false;
+    };
+    ds-tests = {
+      url = "github:dapphub/ds-test";
+      flake = false;
+    };
   };
 
   outputs = {
     nixpkgs,
     utils,
     foundry,
+    forge-std,
+    openzeppelin-contracts,
+    ds-tests,
     ...
   }:
     utils.lib.eachDefaultSystem (system: let
@@ -47,7 +62,7 @@
       };
       packages = {
         market-deploy = deploy_market;
-        market-build = pkgs.stdenv.mkDerivation {
+        market-build = pkgs.stdenv.mkDerivation rec {
           inherit buildInputs;
           name = "mass-contracts";
 
@@ -55,7 +70,14 @@
           dontPatch = true;
           dontConfigure = true;
 
+          remappings = pkgs.writeText "remapping.txt" ''
+            forge-std/=${forge-std}/src
+            openzeppelin-contracts/=${openzeppelin-contracts}
+            ds-test/=${ds-tests}/src
+          '';
+
           buildPhase = ''
+            cp ${remappings} ./remappings.txt
             forge compile --no-auto-detect
           '';
 
@@ -72,13 +94,13 @@
               cp -r ./src/* $out/src/
               cp -r ./script/* $out/script/
               cp -r ./lib $out/lib
-solc --abi --base-path . --include-path lib/  \
-  --input-file src/store-reg.sol \
-  --input-file src/relay-reg.sol \
-  --input-file src/payment-factory.sol \
-  -o $out/abi
-# overwrite for abis/sol/IERC1155Errors.abi
-solc --abi --input-file lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol -o $out/abi --overwrite
+              solc --abi --base-path . --include-path lib/  \
+                --input-file src/store-reg.sol \
+                --input-file src/relay-reg.sol \
+                --input-file src/payment-factory.sol \
+                -o $out/abi
+              # overwrite for abis/sol/IERC1155Errors.abi
+              solc --abi --input-file lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol -o $out/abi --overwrite
           '';
 
           #doCheck = true;
