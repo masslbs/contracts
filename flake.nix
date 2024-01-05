@@ -68,6 +68,7 @@
               mkdir -p $out/{bin,script,abi};
               #forge flatten ./script/deploy.s.sol > $out/script/deploy.s.sol
               cp ./script/* $out/script/
+              cp ./update_env.sh $out/bin/
               cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
               substituteInPlace $out/bin/deploy-market \
                 --replace "pushd \$PWD" "pushd $out" \
