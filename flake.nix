@@ -4,12 +4,27 @@
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     utils.url = "github:numtide/flake-utils";
     foundry.url = "github:shazow/foundry.nix/monthly";
+    forge-std = {
+      url = "github:foundry-rs/forge-std";
+      flake = false;
+    };
+    openzeppelin-contracts = {
+      url = "github:OpenZeppelin/openzeppelin-contracts";
+      flake = false;
+    };
+    ds-tests = {
+      url = "github:dapphub/ds-test";
+      flake = false;
+    };
   };
 
   outputs = {
     nixpkgs,
     utils,
     foundry,
+    forge-std,
+    openzeppelin-contracts,
+    ds-tests,
     ...
   }:
     utils.lib.eachDefaultSystem (system: let
@@ -48,7 +63,7 @@
         '';
       };
       packages = {
-        market-build = pkgs.stdenv.mkDerivation {
+        market-build = pkgs.stdenv.mkDerivation rec {
           inherit buildInputs;
           name = "mass-contracts";
 
@@ -56,7 +71,14 @@
           dontPatch = true;
           dontConfigure = true;
 
+          remappings = pkgs.writeText "remapping.txt" ''
+            forge-std/=${forge-std}/src
+            openzeppelin-contracts/=${openzeppelin-contracts}
+            ds-test/=${ds-tests}/src
+          '';
+
           buildPhase = ''
+            cp ${remappings} ./remappings.txt
             forge compile --no-auto-detect
           '';
 
@@ -78,6 +100,7 @@
               cp -r ./src $out/src
               cp -r ./lib $out/lib
               ln -s /tmp/ $out/broadcast
+
               solc --abi --base-path . --include-path lib/  \
                 --input-file src/store-reg.sol \
                 --input-file src/relay-reg.sol \
