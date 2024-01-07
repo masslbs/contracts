@@ -21,7 +21,7 @@ contract Deploy is Script {
         // deploy store registary
         StoreReg store = new StoreReg{salt: salt}(relayReg);
         // create the payment factory
-        PaymentFactory pf = new PaymentFactory{salt: salt}();
+        new PaymentFactory{salt: salt}();
         // create a test store
         store.registerStore(1, testAddress, rootHash);
         vm.stopBroadcast();
