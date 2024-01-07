@@ -1,6 +1,7 @@
 [profile.default]
 src = 'src'
 out = 'out'
+script = 'script'
 libs = ['lib']
 
 [rpc_endpoints]

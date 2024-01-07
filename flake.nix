@@ -37,15 +37,17 @@
 
       deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
         export PATH=$PATH:${pkgs.solc}/bin
-        pushd .
-        # TODO proper tmpdir
-        rm -r /tmp/deploy-market*
-        ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy --fork-url http://localhost:8545 --broadcast --no-auto-detect -o /tmp/deploy-market --cache-path=/tmp/deploy-market-cache
+        tmp=$(mktemp -d)
+        pushd $PWD
+        ${pkgs.foundry-bin}/bin/forge \
+          script $PWD/script/deploy.s.sol --target-contract Deploy \
+          --root=$PWD --lib-paths=$PWD \
+          --fork-url http://localhost:8545 --broadcast --no-auto-detect -o $tmp --cache-path=$tmp/cache
         popd
       '';
 
       buildInputs = with pkgs; [
-        # smart contracct dependencies
+        # smart contract dependencies
         foundry-bin
         nodePackages.pnpm
         solc
@@ -61,7 +63,6 @@
         '';
       };
       packages = {
-        market-deploy = deploy_market;
         market-build = pkgs.stdenv.mkDerivation rec {
           inherit buildInputs;
           name = "mass-contracts";
@@ -86,14 +87,20 @@
           '';
 
           installPhase = ''
-              mkdir -p $out/{bin,script,src,abi};
-              ls > $out/files
+              mkdir -p $out/{bin,script,abi};
+              #forge flatten ./script/deploy.s.sol > $out/script/deploy.s.sol
+              cp ./script/* $out/script/
+              cp ./update_env.sh $out/bin/
               cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
               substituteInPlace $out/bin/deploy-market \
-                --replace "pushd ." "pushd $out"
-              cp -r ./src/* $out/src/
-              cp -r ./script/* $out/script/
+                --replace "pushd \$PWD" "pushd $out" \
+                --replace "script \$PWD/" "script $out/" \
+                --replace "root=\$PWD" "root=$out" \
+                --replace "lib-paths=\$PWD" "lib-paths=$out"
+              cp -r ./src $out/src
               cp -r ./lib $out/lib
+              ln -s /tmp/ $out/broadcast
+
               solc --abi --base-path . --include-path lib/  \
                 --input-file src/store-reg.sol \
                 --input-file src/relay-reg.sol \
