@@ -11,13 +11,14 @@ contract StoreUsersTest is Test {
     uint256 internal storeId;
     address internal addrOwner;
     address internal addrNewUser;
+    uint256 pkNewUser;
     address internal addrSomeoneElse;
-     bytes32 internal testHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
+    bytes32 internal testHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
 
     function setUp() public {
         addrOwner = msg.sender;
         // console.log("setUp owner=%a", addrOwner);
-        addrNewUser = address(0x6f8e7BD90cC9AF3AA50108eaC86DE0F952e4D3Ca);
+        (addrNewUser, pkNewUser) = makeAddrAndKey("newUser");
         addrSomeoneElse = address(0x01a1257382B6b9a7BDFeF762379C085Ca50F1Ca9);
         s = new StoreReg(new RelayReg());
         storeId = 42;
@@ -64,5 +65,23 @@ contract StoreUsersTest is Test {
         assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Owner), false);
         s.removeUser(storeId, addrSomeoneElse);
         assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), false);
+    }
+
+    function testTokenRegistration() public {
+        (address token, uint256 tokenPk) = makeAddrAndKey("token");
+        vm.prank(addrOwner);
+        s.registrationTokenPublish(storeId, token);
+        // new user wants to redeem the token
+        bytes32 regMsg = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32MASS Store Registration Redemption"));
+        (uint8 sigv, bytes32 sigr, bytes32 sigs) = vm.sign(tokenPk, regMsg);
+        vm.prank(addrNewUser);
+        s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrNewUser);
+        vm.prank(addrOwner);
+        assertEq(true, s.hasAtLeastAccess(storeId, addrNewUser, AccessLevel.Clerk));
+        // try to use the token twice
+        vm.prank(addrSomeoneElse);
+        vm.expectRevert("no such token");
+        s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrSomeoneElse);
+
     }
 }

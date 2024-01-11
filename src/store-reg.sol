@@ -7,15 +7,19 @@ import "./relay-reg.sol";
 enum AccessLevel { Zero, Clerk, Admin, Owner } // note: currently owner is not really used
 
 contract StoreReg is ERC721 {
-    uint256 private _storeIds;
+    RelayReg public relayReg;
+
+    bytes32 private _registrationTokenRedeemMessage;
+
     // info per store
     mapping(uint256 => bytes32) public rootHashes;
     mapping(uint256 => uint256[]) internal relays;
     mapping(uint256 => mapping(address => AccessLevel)) public storesToUsers;
-    RelayReg public relayReg;
+    mapping(uint256 => mapping(address => bool)) public storesToRegistrationTokens;
 
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
+        _registrationTokenRedeemMessage = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32MASS Store Registration Redemption"));
     }
 
     function registerStore(uint256 storeId, address owner, bytes32 rootHash) public {
@@ -83,6 +87,25 @@ contract StoreReg is ERC721 {
         require(acl != AccessLevel.Zero && acl != AccessLevel.Clerk, "no such user");
     }
 
+    // adds a new one-time use registration token to the store
+    function registrationTokenPublish(uint256 storeId, address token) public {
+        bool has = hasAtLeastAccess(storeId, msg.sender, AccessLevel.Admin);
+        require(has, "access denied");
+        storesToRegistrationTokens[storeId][token] = true;
+    }
+
+    // redeem one of the registration tokens. (v,r,s) are the signature
+    function regstrationTokenRedeem(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
+        address recovered = ecrecover(_registrationTokenRedeemMessage, v, r, s);
+        bool isAllowed = storesToRegistrationTokens[storeId][recovered];
+        require(isAllowed, "no such token");
+        delete storesToRegistrationTokens[storeId][recovered];
+        // register the new user
+        storesToUsers[storeId][user] = AccessLevel.Clerk;
+    }
+
+
+    // manually add user, identified by their wallet addr, to the store
     function registerUser(uint256 storeId, address addr, AccessLevel acl) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
         require(addr != address(0), "can't be zero address");
@@ -98,8 +121,7 @@ contract StoreReg is ERC721 {
             // already removed
             return;
         }
-        // can't delete things in a mapping so we overwrite with an empty entry
-        storesToUsers[storeId][who] = AccessLevel.Zero;
+        delete storesToUsers[storeId][who];
     }
 
     function hasAtLeastAccess(uint256 storeId, address addr, AccessLevel want) public view returns (bool) {
