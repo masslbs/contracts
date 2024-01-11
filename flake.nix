@@ -97,6 +97,7 @@
 
           installPhase = ''
             mkdir -p $out/{bin,script,abi};
+            cp ${remappings} $out/remappings.txt
             cp ./script/* $out/script/
             cp ./update_env.sh $out/bin/
             cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market

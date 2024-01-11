@@ -9,6 +9,8 @@ function getAddress(name: string): `0x${string}` {
   );
 }
 
+console.log(getAddress("StoreReg"))
+
 export default {
   out: "src/abi.ts",
   plugins: [
