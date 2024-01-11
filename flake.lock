@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "ds-tests": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1677883973,
+        "narHash": "sha256-wXtNq4ZUohndNGs9VttOI9m9VW5QlVKOPtR8+mv2fBM=",
+        "owner": "dapphub",
+        "repo": "ds-test",
+        "rev": "e282159d5170298eb2455a6c05280ab5a73a4ef0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dapphub",
+        "repo": "ds-test",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "locked": {
         "lastModified": 1644229661,
@@ -15,17 +31,33 @@
         "type": "github"
       }
     },
+    "forge-std": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1703285350,
+        "narHash": "sha256-m/dGDWwyN0DfSmJk66QLCnW+njOeVJvdFMzZN6bevFQ=",
+        "owner": "foundry-rs",
+        "repo": "forge-std",
+        "rev": "87a2a0afc5fafd6297538a45a52ac19e71a84562",
+        "type": "github"
+      },
+      "original": {
+        "owner": "foundry-rs",
+        "repo": "forge-std",
+        "type": "github"
+      }
+    },
     "foundry": {
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1701270599,
-        "narHash": "sha256-6JNWZuON189C2pJci7jBBXtJqGPO9UKEKGzHY9dTGKs=",
+        "lastModified": 1704705059,
+        "narHash": "sha256-fAfVGg4xrFsJy9EE9abkdxxMNEM80+V56JmUjaRnpIE=",
         "owner": "shazow",
         "repo": "foundry.nix",
-        "rev": "1d4d9d015a64e9921f8837a83941d93182d92a71",
+        "rev": "ee8da03e7b8526fe289ff76af74319a429b46e5d",
         "type": "github"
       },
       "original": {
@@ -51,11 +83,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1701237617,
-        "narHash": "sha256-Ryd8xpNDY9MJnBFDYhB37XSFIxCPVVVXAbInNPa95vs=",
+        "lastModified": 1704161960,
+        "narHash": "sha256-QGua89Pmq+FBAro8NriTuoO/wNaUtugt29/qqA8zeeM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "85306ef2470ba705c97ce72741d56e42d0264015",
+        "rev": "63143ac2c9186be6d9da6035fa22620018c85932",
         "type": "github"
       },
       "original": {
@@ -64,10 +96,29 @@
         "type": "indirect"
       }
     },
+    "openzeppelin-contracts": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1704377273,
+        "narHash": "sha256-h5D1OB2xNzw+PTWxKwgp9YPtVuvP2Nz3Ew2CfT3wpJM=",
+        "owner": "OpenZeppelin",
+        "repo": "openzeppelin-contracts",
+        "rev": "ef68ac3ed83f85e4ce078b26170280c468ffeabb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "OpenZeppelin",
+        "repo": "openzeppelin-contracts",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
+        "ds-tests": "ds-tests",
+        "forge-std": "forge-std",
         "foundry": "foundry",
         "nixpkgs": "nixpkgs_2",
+        "openzeppelin-contracts": "openzeppelin-contracts",
         "utils": "utils"
       }
     },
@@ -91,11 +142,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1694529238,
-        "narHash": "sha256-zsNZZGTGnMOf9YpHKJqMSsa0dXbfmxeoJ7xHlrt+xmY=",
+        "lastModified": 1701680307,
+        "narHash": "sha256-kAuep2h5ajznlPMD9rnQyffWG8EM/C73lejGofXvdM8=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "ff7b65b44d01cf9ba6a71320833626af21126384",
+        "rev": "4022d587cbbfd70fe950c1e2083a02621806a725",
         "type": "github"
       },
       "original": {

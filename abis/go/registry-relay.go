@@ -29,113 +29,113 @@ var (
 	_ = abi.ConvertType
 )
 
-// RegRelayMetaData contains all meta data concerning the RegRelay contract.
-var RegRelayMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721IncorrectOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721InsufficientApproval\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"approver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidApprover\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOperator\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidReceiver\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"ERC721InvalidSender\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721NonexistentToken\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_fromTokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_toTokenId\",\"type\":\"uint256\"}],\"name\":\"BatchMetadataUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"MetadataUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newRelayId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"relay\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerRelay\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+// RegStoreMetaData contains all meta data concerning the RegStore contract.
+var RegStoreMetaData = &bind.MetaData{
+	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721IncorrectOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721InsufficientApproval\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"approver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidApprover\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOperator\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"ERC721InvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"}],\"name\":\"ERC721InvalidReceiver\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"ERC721InvalidSender\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ERC721NonexistentToken\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_fromTokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_toTokenId\",\"type\":\"uint256\"}],\"name\":\"BatchMetadataUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\"}],\"name\":\"MetadataUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newRelayId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"relay\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerRelay\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"relayId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"updateURI\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
-// RegRelayABI is the input ABI used to generate the binding from.
-// Deprecated: Use RegRelayMetaData.ABI instead.
-var RegRelayABI = RegRelayMetaData.ABI
+// RegStoreABI is the input ABI used to generate the binding from.
+// Deprecated: Use RegStoreMetaData.ABI instead.
+var RegStoreABI = RegStoreMetaData.ABI
 
-// RegRelay is an auto generated Go binding around an Ethereum contract.
-type RegRelay struct {
-	RegRelayCaller     // Read-only binding to the contract
-	RegRelayTransactor // Write-only binding to the contract
-	RegRelayFilterer   // Log filterer for contract events
+// RegStore is an auto generated Go binding around an Ethereum contract.
+type RegStore struct {
+	RegStoreCaller     // Read-only binding to the contract
+	RegStoreTransactor // Write-only binding to the contract
+	RegStoreFilterer   // Log filterer for contract events
 }
 
-// RegRelayCaller is an auto generated read-only Go binding around an Ethereum contract.
-type RegRelayCaller struct {
+// RegStoreCaller is an auto generated read-only Go binding around an Ethereum contract.
+type RegStoreCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// RegRelayTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type RegRelayTransactor struct {
+// RegStoreTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type RegStoreTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// RegRelayFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type RegRelayFilterer struct {
+// RegStoreFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type RegStoreFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// RegRelaySession is an auto generated Go binding around an Ethereum contract,
+// RegStoreSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type RegRelaySession struct {
-	Contract     *RegRelay         // Generic contract binding to set the session for
+type RegStoreSession struct {
+	Contract     *RegStore         // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts     // Call options to use throughout this session
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// RegRelayCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// RegStoreCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type RegRelayCallerSession struct {
-	Contract *RegRelayCaller // Generic contract caller binding to set the session for
+type RegStoreCallerSession struct {
+	Contract *RegStoreCaller // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts   // Call options to use throughout this session
 }
 
-// RegRelayTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// RegStoreTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type RegRelayTransactorSession struct {
-	Contract     *RegRelayTransactor // Generic contract transactor binding to set the session for
+type RegStoreTransactorSession struct {
+	Contract     *RegStoreTransactor // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
 }
 
-// RegRelayRaw is an auto generated low-level Go binding around an Ethereum contract.
-type RegRelayRaw struct {
-	Contract *RegRelay // Generic contract binding to access the raw methods on
+// RegStoreRaw is an auto generated low-level Go binding around an Ethereum contract.
+type RegStoreRaw struct {
+	Contract *RegStore // Generic contract binding to access the raw methods on
 }
 
-// RegRelayCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type RegRelayCallerRaw struct {
-	Contract *RegRelayCaller // Generic read-only contract binding to access the raw methods on
+// RegStoreCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type RegStoreCallerRaw struct {
+	Contract *RegStoreCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// RegRelayTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type RegRelayTransactorRaw struct {
-	Contract *RegRelayTransactor // Generic write-only contract binding to access the raw methods on
+// RegStoreTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type RegStoreTransactorRaw struct {
+	Contract *RegStoreTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewRegRelay creates a new instance of RegRelay, bound to a specific deployed contract.
-func NewRegRelay(address common.Address, backend bind.ContractBackend) (*RegRelay, error) {
-	contract, err := bindRegRelay(address, backend, backend, backend)
+// NewRegStore creates a new instance of RegStore, bound to a specific deployed contract.
+func NewRegStore(address common.Address, backend bind.ContractBackend) (*RegStore, error) {
+	contract, err := bindRegStore(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelay{RegRelayCaller: RegRelayCaller{contract: contract}, RegRelayTransactor: RegRelayTransactor{contract: contract}, RegRelayFilterer: RegRelayFilterer{contract: contract}}, nil
+	return &RegStore{RegStoreCaller: RegStoreCaller{contract: contract}, RegStoreTransactor: RegStoreTransactor{contract: contract}, RegStoreFilterer: RegStoreFilterer{contract: contract}}, nil
 }
 
-// NewRegRelayCaller creates a new read-only instance of RegRelay, bound to a specific deployed contract.
-func NewRegRelayCaller(address common.Address, caller bind.ContractCaller) (*RegRelayCaller, error) {
-	contract, err := bindRegRelay(address, caller, nil, nil)
+// NewRegStoreCaller creates a new read-only instance of RegStore, bound to a specific deployed contract.
+func NewRegStoreCaller(address common.Address, caller bind.ContractCaller) (*RegStoreCaller, error) {
+	contract, err := bindRegStore(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayCaller{contract: contract}, nil
+	return &RegStoreCaller{contract: contract}, nil
 }
 
-// NewRegRelayTransactor creates a new write-only instance of RegRelay, bound to a specific deployed contract.
-func NewRegRelayTransactor(address common.Address, transactor bind.ContractTransactor) (*RegRelayTransactor, error) {
-	contract, err := bindRegRelay(address, nil, transactor, nil)
+// NewRegStoreTransactor creates a new write-only instance of RegStore, bound to a specific deployed contract.
+func NewRegStoreTransactor(address common.Address, transactor bind.ContractTransactor) (*RegStoreTransactor, error) {
+	contract, err := bindRegStore(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayTransactor{contract: contract}, nil
+	return &RegStoreTransactor{contract: contract}, nil
 }
 
-// NewRegRelayFilterer creates a new log filterer instance of RegRelay, bound to a specific deployed contract.
-func NewRegRelayFilterer(address common.Address, filterer bind.ContractFilterer) (*RegRelayFilterer, error) {
-	contract, err := bindRegRelay(address, nil, nil, filterer)
+// NewRegStoreFilterer creates a new log filterer instance of RegStore, bound to a specific deployed contract.
+func NewRegStoreFilterer(address common.Address, filterer bind.ContractFilterer) (*RegStoreFilterer, error) {
+	contract, err := bindRegStore(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayFilterer{contract: contract}, nil
+	return &RegStoreFilterer{contract: contract}, nil
 }
 
-// bindRegRelay binds a generic wrapper to an already deployed contract.
-func bindRegRelay(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := RegRelayMetaData.GetAbi()
+// bindRegStore binds a generic wrapper to an already deployed contract.
+func bindRegStore(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := RegStoreMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
@@ -146,46 +146,46 @@ func bindRegRelay(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_RegRelay *RegRelayRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _RegRelay.Contract.RegRelayCaller.contract.Call(opts, result, method, params...)
+func (_RegStore *RegStoreRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _RegStore.Contract.RegStoreCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_RegRelay *RegRelayRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _RegRelay.Contract.RegRelayTransactor.contract.Transfer(opts)
+func (_RegStore *RegStoreRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _RegStore.Contract.RegStoreTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_RegRelay *RegRelayRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _RegRelay.Contract.RegRelayTransactor.contract.Transact(opts, method, params...)
+func (_RegStore *RegStoreRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _RegStore.Contract.RegStoreTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_RegRelay *RegRelayCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _RegRelay.Contract.contract.Call(opts, result, method, params...)
+func (_RegStore *RegStoreCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _RegStore.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_RegRelay *RegRelayTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _RegRelay.Contract.contract.Transfer(opts)
+func (_RegStore *RegStoreTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _RegStore.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_RegRelay *RegRelayTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _RegRelay.Contract.contract.Transact(opts, method, params...)
+func (_RegStore *RegStoreTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _RegStore.Contract.contract.Transact(opts, method, params...)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(address owner) view returns(uint256)
-func (_RegRelay *RegRelayCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
+func (_RegStore *RegStoreCaller) BalanceOf(opts *bind.CallOpts, owner common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "balanceOf", owner)
+	err := _RegStore.contract.Call(opts, &out, "balanceOf", owner)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -200,23 +200,23 @@ func (_RegRelay *RegRelayCaller) BalanceOf(opts *bind.CallOpts, owner common.Add
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(address owner) view returns(uint256)
-func (_RegRelay *RegRelaySession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _RegRelay.Contract.BalanceOf(&_RegRelay.CallOpts, owner)
+func (_RegStore *RegStoreSession) BalanceOf(owner common.Address) (*big.Int, error) {
+	return _RegStore.Contract.BalanceOf(&_RegStore.CallOpts, owner)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
 // Solidity: function balanceOf(address owner) view returns(uint256)
-func (_RegRelay *RegRelayCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
-	return _RegRelay.Contract.BalanceOf(&_RegRelay.CallOpts, owner)
+func (_RegStore *RegStoreCallerSession) BalanceOf(owner common.Address) (*big.Int, error) {
+	return _RegStore.Contract.BalanceOf(&_RegStore.CallOpts, owner)
 }
 
 // GetApproved is a free data retrieval call binding the contract method 0x081812fc.
 //
 // Solidity: function getApproved(uint256 tokenId) view returns(address)
-func (_RegRelay *RegRelayCaller) GetApproved(opts *bind.CallOpts, tokenId *big.Int) (common.Address, error) {
+func (_RegStore *RegStoreCaller) GetApproved(opts *bind.CallOpts, tokenId *big.Int) (common.Address, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "getApproved", tokenId)
+	err := _RegStore.contract.Call(opts, &out, "getApproved", tokenId)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -231,23 +231,23 @@ func (_RegRelay *RegRelayCaller) GetApproved(opts *bind.CallOpts, tokenId *big.I
 // GetApproved is a free data retrieval call binding the contract method 0x081812fc.
 //
 // Solidity: function getApproved(uint256 tokenId) view returns(address)
-func (_RegRelay *RegRelaySession) GetApproved(tokenId *big.Int) (common.Address, error) {
-	return _RegRelay.Contract.GetApproved(&_RegRelay.CallOpts, tokenId)
+func (_RegStore *RegStoreSession) GetApproved(tokenId *big.Int) (common.Address, error) {
+	return _RegStore.Contract.GetApproved(&_RegStore.CallOpts, tokenId)
 }
 
 // GetApproved is a free data retrieval call binding the contract method 0x081812fc.
 //
 // Solidity: function getApproved(uint256 tokenId) view returns(address)
-func (_RegRelay *RegRelayCallerSession) GetApproved(tokenId *big.Int) (common.Address, error) {
-	return _RegRelay.Contract.GetApproved(&_RegRelay.CallOpts, tokenId)
+func (_RegStore *RegStoreCallerSession) GetApproved(tokenId *big.Int) (common.Address, error) {
+	return _RegStore.Contract.GetApproved(&_RegStore.CallOpts, tokenId)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
 // Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
-func (_RegRelay *RegRelayCaller) IsApprovedForAll(opts *bind.CallOpts, owner common.Address, operator common.Address) (bool, error) {
+func (_RegStore *RegStoreCaller) IsApprovedForAll(opts *bind.CallOpts, owner common.Address, operator common.Address) (bool, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "isApprovedForAll", owner, operator)
+	err := _RegStore.contract.Call(opts, &out, "isApprovedForAll", owner, operator)
 
 	if err != nil {
 		return *new(bool), err
@@ -262,23 +262,23 @@ func (_RegRelay *RegRelayCaller) IsApprovedForAll(opts *bind.CallOpts, owner com
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
 // Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
-func (_RegRelay *RegRelaySession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
-	return _RegRelay.Contract.IsApprovedForAll(&_RegRelay.CallOpts, owner, operator)
+func (_RegStore *RegStoreSession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
+	return _RegStore.Contract.IsApprovedForAll(&_RegStore.CallOpts, owner, operator)
 }
 
 // IsApprovedForAll is a free data retrieval call binding the contract method 0xe985e9c5.
 //
 // Solidity: function isApprovedForAll(address owner, address operator) view returns(bool)
-func (_RegRelay *RegRelayCallerSession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
-	return _RegRelay.Contract.IsApprovedForAll(&_RegRelay.CallOpts, owner, operator)
+func (_RegStore *RegStoreCallerSession) IsApprovedForAll(owner common.Address, operator common.Address) (bool, error) {
+	return _RegStore.Contract.IsApprovedForAll(&_RegStore.CallOpts, owner, operator)
 }
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
 // Solidity: function name() view returns(string)
-func (_RegRelay *RegRelayCaller) Name(opts *bind.CallOpts) (string, error) {
+func (_RegStore *RegStoreCaller) Name(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "name")
+	err := _RegStore.contract.Call(opts, &out, "name")
 
 	if err != nil {
 		return *new(string), err
@@ -293,23 +293,23 @@ func (_RegRelay *RegRelayCaller) Name(opts *bind.CallOpts) (string, error) {
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
 // Solidity: function name() view returns(string)
-func (_RegRelay *RegRelaySession) Name() (string, error) {
-	return _RegRelay.Contract.Name(&_RegRelay.CallOpts)
+func (_RegStore *RegStoreSession) Name() (string, error) {
+	return _RegStore.Contract.Name(&_RegStore.CallOpts)
 }
 
 // Name is a free data retrieval call binding the contract method 0x06fdde03.
 //
 // Solidity: function name() view returns(string)
-func (_RegRelay *RegRelayCallerSession) Name() (string, error) {
-	return _RegRelay.Contract.Name(&_RegRelay.CallOpts)
+func (_RegStore *RegStoreCallerSession) Name() (string, error) {
+	return _RegStore.Contract.Name(&_RegStore.CallOpts)
 }
 
 // OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
 //
 // Solidity: function ownerOf(uint256 tokenId) view returns(address)
-func (_RegRelay *RegRelayCaller) OwnerOf(opts *bind.CallOpts, tokenId *big.Int) (common.Address, error) {
+func (_RegStore *RegStoreCaller) OwnerOf(opts *bind.CallOpts, tokenId *big.Int) (common.Address, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "ownerOf", tokenId)
+	err := _RegStore.contract.Call(opts, &out, "ownerOf", tokenId)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -324,23 +324,23 @@ func (_RegRelay *RegRelayCaller) OwnerOf(opts *bind.CallOpts, tokenId *big.Int) 
 // OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
 //
 // Solidity: function ownerOf(uint256 tokenId) view returns(address)
-func (_RegRelay *RegRelaySession) OwnerOf(tokenId *big.Int) (common.Address, error) {
-	return _RegRelay.Contract.OwnerOf(&_RegRelay.CallOpts, tokenId)
+func (_RegStore *RegStoreSession) OwnerOf(tokenId *big.Int) (common.Address, error) {
+	return _RegStore.Contract.OwnerOf(&_RegStore.CallOpts, tokenId)
 }
 
 // OwnerOf is a free data retrieval call binding the contract method 0x6352211e.
 //
 // Solidity: function ownerOf(uint256 tokenId) view returns(address)
-func (_RegRelay *RegRelayCallerSession) OwnerOf(tokenId *big.Int) (common.Address, error) {
-	return _RegRelay.Contract.OwnerOf(&_RegRelay.CallOpts, tokenId)
+func (_RegStore *RegStoreCallerSession) OwnerOf(tokenId *big.Int) (common.Address, error) {
+	return _RegStore.Contract.OwnerOf(&_RegStore.CallOpts, tokenId)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
 // Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
-func (_RegRelay *RegRelayCaller) SupportsInterface(opts *bind.CallOpts, interfaceId [4]byte) (bool, error) {
+func (_RegStore *RegStoreCaller) SupportsInterface(opts *bind.CallOpts, interfaceId [4]byte) (bool, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "supportsInterface", interfaceId)
+	err := _RegStore.contract.Call(opts, &out, "supportsInterface", interfaceId)
 
 	if err != nil {
 		return *new(bool), err
@@ -355,23 +355,23 @@ func (_RegRelay *RegRelayCaller) SupportsInterface(opts *bind.CallOpts, interfac
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
 // Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
-func (_RegRelay *RegRelaySession) SupportsInterface(interfaceId [4]byte) (bool, error) {
-	return _RegRelay.Contract.SupportsInterface(&_RegRelay.CallOpts, interfaceId)
+func (_RegStore *RegStoreSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
+	return _RegStore.Contract.SupportsInterface(&_RegStore.CallOpts, interfaceId)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
 // Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
-func (_RegRelay *RegRelayCallerSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
-	return _RegRelay.Contract.SupportsInterface(&_RegRelay.CallOpts, interfaceId)
+func (_RegStore *RegStoreCallerSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
+	return _RegStore.Contract.SupportsInterface(&_RegStore.CallOpts, interfaceId)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
 // Solidity: function symbol() view returns(string)
-func (_RegRelay *RegRelayCaller) Symbol(opts *bind.CallOpts) (string, error) {
+func (_RegStore *RegStoreCaller) Symbol(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "symbol")
+	err := _RegStore.contract.Call(opts, &out, "symbol")
 
 	if err != nil {
 		return *new(string), err
@@ -386,23 +386,23 @@ func (_RegRelay *RegRelayCaller) Symbol(opts *bind.CallOpts) (string, error) {
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
 // Solidity: function symbol() view returns(string)
-func (_RegRelay *RegRelaySession) Symbol() (string, error) {
-	return _RegRelay.Contract.Symbol(&_RegRelay.CallOpts)
+func (_RegStore *RegStoreSession) Symbol() (string, error) {
+	return _RegStore.Contract.Symbol(&_RegStore.CallOpts)
 }
 
 // Symbol is a free data retrieval call binding the contract method 0x95d89b41.
 //
 // Solidity: function symbol() view returns(string)
-func (_RegRelay *RegRelayCallerSession) Symbol() (string, error) {
-	return _RegRelay.Contract.Symbol(&_RegRelay.CallOpts)
+func (_RegStore *RegStoreCallerSession) Symbol() (string, error) {
+	return _RegStore.Contract.Symbol(&_RegStore.CallOpts)
 }
 
 // TokenURI is a free data retrieval call binding the contract method 0xc87b56dd.
 //
 // Solidity: function tokenURI(uint256 tokenId) view returns(string)
-func (_RegRelay *RegRelayCaller) TokenURI(opts *bind.CallOpts, tokenId *big.Int) (string, error) {
+func (_RegStore *RegStoreCaller) TokenURI(opts *bind.CallOpts, tokenId *big.Int) (string, error) {
 	var out []interface{}
-	err := _RegRelay.contract.Call(opts, &out, "tokenURI", tokenId)
+	err := _RegStore.contract.Call(opts, &out, "tokenURI", tokenId)
 
 	if err != nil {
 		return *new(string), err
@@ -417,146 +417,167 @@ func (_RegRelay *RegRelayCaller) TokenURI(opts *bind.CallOpts, tokenId *big.Int)
 // TokenURI is a free data retrieval call binding the contract method 0xc87b56dd.
 //
 // Solidity: function tokenURI(uint256 tokenId) view returns(string)
-func (_RegRelay *RegRelaySession) TokenURI(tokenId *big.Int) (string, error) {
-	return _RegRelay.Contract.TokenURI(&_RegRelay.CallOpts, tokenId)
+func (_RegStore *RegStoreSession) TokenURI(tokenId *big.Int) (string, error) {
+	return _RegStore.Contract.TokenURI(&_RegStore.CallOpts, tokenId)
 }
 
 // TokenURI is a free data retrieval call binding the contract method 0xc87b56dd.
 //
 // Solidity: function tokenURI(uint256 tokenId) view returns(string)
-func (_RegRelay *RegRelayCallerSession) TokenURI(tokenId *big.Int) (string, error) {
-	return _RegRelay.Contract.TokenURI(&_RegRelay.CallOpts, tokenId)
+func (_RegStore *RegStoreCallerSession) TokenURI(tokenId *big.Int) (string, error) {
+	return _RegStore.Contract.TokenURI(&_RegStore.CallOpts, tokenId)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelayTransactor) Approve(opts *bind.TransactOpts, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.contract.Transact(opts, "approve", to, tokenId)
+func (_RegStore *RegStoreTransactor) Approve(opts *bind.TransactOpts, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.contract.Transact(opts, "approve", to, tokenId)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelaySession) Approve(to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.Contract.Approve(&_RegRelay.TransactOpts, to, tokenId)
+func (_RegStore *RegStoreSession) Approve(to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.Contract.Approve(&_RegStore.TransactOpts, to, tokenId)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelayTransactorSession) Approve(to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.Contract.Approve(&_RegRelay.TransactOpts, to, tokenId)
+func (_RegStore *RegStoreTransactorSession) Approve(to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.Contract.Approve(&_RegStore.TransactOpts, to, tokenId)
 }
 
 // RegisterRelay is a paid mutator transaction binding the contract method 0xb8a21956.
 //
 // Solidity: function registerRelay(uint256 newRelayId, address relay, string uri) returns()
-func (_RegRelay *RegRelayTransactor) RegisterRelay(opts *bind.TransactOpts, newRelayId *big.Int, relay common.Address, uri string) (*types.Transaction, error) {
-	return _RegRelay.contract.Transact(opts, "registerRelay", newRelayId, relay, uri)
+func (_RegStore *RegStoreTransactor) RegisterRelay(opts *bind.TransactOpts, newRelayId *big.Int, relay common.Address, uri string) (*types.Transaction, error) {
+	return _RegStore.contract.Transact(opts, "registerRelay", newRelayId, relay, uri)
 }
 
 // RegisterRelay is a paid mutator transaction binding the contract method 0xb8a21956.
 //
 // Solidity: function registerRelay(uint256 newRelayId, address relay, string uri) returns()
-func (_RegRelay *RegRelaySession) RegisterRelay(newRelayId *big.Int, relay common.Address, uri string) (*types.Transaction, error) {
-	return _RegRelay.Contract.RegisterRelay(&_RegRelay.TransactOpts, newRelayId, relay, uri)
+func (_RegStore *RegStoreSession) RegisterRelay(newRelayId *big.Int, relay common.Address, uri string) (*types.Transaction, error) {
+	return _RegStore.Contract.RegisterRelay(&_RegStore.TransactOpts, newRelayId, relay, uri)
 }
 
 // RegisterRelay is a paid mutator transaction binding the contract method 0xb8a21956.
 //
 // Solidity: function registerRelay(uint256 newRelayId, address relay, string uri) returns()
-func (_RegRelay *RegRelayTransactorSession) RegisterRelay(newRelayId *big.Int, relay common.Address, uri string) (*types.Transaction, error) {
-	return _RegRelay.Contract.RegisterRelay(&_RegRelay.TransactOpts, newRelayId, relay, uri)
+func (_RegStore *RegStoreTransactorSession) RegisterRelay(newRelayId *big.Int, relay common.Address, uri string) (*types.Transaction, error) {
+	return _RegStore.Contract.RegisterRelay(&_RegStore.TransactOpts, newRelayId, relay, uri)
 }
 
 // SafeTransferFrom is a paid mutator transaction binding the contract method 0x42842e0e.
 //
 // Solidity: function safeTransferFrom(address from, address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelayTransactor) SafeTransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.contract.Transact(opts, "safeTransferFrom", from, to, tokenId)
+func (_RegStore *RegStoreTransactor) SafeTransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.contract.Transact(opts, "safeTransferFrom", from, to, tokenId)
 }
 
 // SafeTransferFrom is a paid mutator transaction binding the contract method 0x42842e0e.
 //
 // Solidity: function safeTransferFrom(address from, address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelaySession) SafeTransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.Contract.SafeTransferFrom(&_RegRelay.TransactOpts, from, to, tokenId)
+func (_RegStore *RegStoreSession) SafeTransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.Contract.SafeTransferFrom(&_RegStore.TransactOpts, from, to, tokenId)
 }
 
 // SafeTransferFrom is a paid mutator transaction binding the contract method 0x42842e0e.
 //
 // Solidity: function safeTransferFrom(address from, address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelayTransactorSession) SafeTransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.Contract.SafeTransferFrom(&_RegRelay.TransactOpts, from, to, tokenId)
+func (_RegStore *RegStoreTransactorSession) SafeTransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.Contract.SafeTransferFrom(&_RegStore.TransactOpts, from, to, tokenId)
 }
 
 // SafeTransferFrom0 is a paid mutator transaction binding the contract method 0xb88d4fde.
 //
 // Solidity: function safeTransferFrom(address from, address to, uint256 tokenId, bytes data) returns()
-func (_RegRelay *RegRelayTransactor) SafeTransferFrom0(opts *bind.TransactOpts, from common.Address, to common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
-	return _RegRelay.contract.Transact(opts, "safeTransferFrom0", from, to, tokenId, data)
+func (_RegStore *RegStoreTransactor) SafeTransferFrom0(opts *bind.TransactOpts, from common.Address, to common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
+	return _RegStore.contract.Transact(opts, "safeTransferFrom0", from, to, tokenId, data)
 }
 
 // SafeTransferFrom0 is a paid mutator transaction binding the contract method 0xb88d4fde.
 //
 // Solidity: function safeTransferFrom(address from, address to, uint256 tokenId, bytes data) returns()
-func (_RegRelay *RegRelaySession) SafeTransferFrom0(from common.Address, to common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
-	return _RegRelay.Contract.SafeTransferFrom0(&_RegRelay.TransactOpts, from, to, tokenId, data)
+func (_RegStore *RegStoreSession) SafeTransferFrom0(from common.Address, to common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
+	return _RegStore.Contract.SafeTransferFrom0(&_RegStore.TransactOpts, from, to, tokenId, data)
 }
 
 // SafeTransferFrom0 is a paid mutator transaction binding the contract method 0xb88d4fde.
 //
 // Solidity: function safeTransferFrom(address from, address to, uint256 tokenId, bytes data) returns()
-func (_RegRelay *RegRelayTransactorSession) SafeTransferFrom0(from common.Address, to common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
-	return _RegRelay.Contract.SafeTransferFrom0(&_RegRelay.TransactOpts, from, to, tokenId, data)
+func (_RegStore *RegStoreTransactorSession) SafeTransferFrom0(from common.Address, to common.Address, tokenId *big.Int, data []byte) (*types.Transaction, error) {
+	return _RegStore.Contract.SafeTransferFrom0(&_RegStore.TransactOpts, from, to, tokenId, data)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
 // Solidity: function setApprovalForAll(address operator, bool approved) returns()
-func (_RegRelay *RegRelayTransactor) SetApprovalForAll(opts *bind.TransactOpts, operator common.Address, approved bool) (*types.Transaction, error) {
-	return _RegRelay.contract.Transact(opts, "setApprovalForAll", operator, approved)
+func (_RegStore *RegStoreTransactor) SetApprovalForAll(opts *bind.TransactOpts, operator common.Address, approved bool) (*types.Transaction, error) {
+	return _RegStore.contract.Transact(opts, "setApprovalForAll", operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
 // Solidity: function setApprovalForAll(address operator, bool approved) returns()
-func (_RegRelay *RegRelaySession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
-	return _RegRelay.Contract.SetApprovalForAll(&_RegRelay.TransactOpts, operator, approved)
+func (_RegStore *RegStoreSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
+	return _RegStore.Contract.SetApprovalForAll(&_RegStore.TransactOpts, operator, approved)
 }
 
 // SetApprovalForAll is a paid mutator transaction binding the contract method 0xa22cb465.
 //
 // Solidity: function setApprovalForAll(address operator, bool approved) returns()
-func (_RegRelay *RegRelayTransactorSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
-	return _RegRelay.Contract.SetApprovalForAll(&_RegRelay.TransactOpts, operator, approved)
+func (_RegStore *RegStoreTransactorSession) SetApprovalForAll(operator common.Address, approved bool) (*types.Transaction, error) {
+	return _RegStore.Contract.SetApprovalForAll(&_RegStore.TransactOpts, operator, approved)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address from, address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelayTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.contract.Transact(opts, "transferFrom", from, to, tokenId)
+func (_RegStore *RegStoreTransactor) TransferFrom(opts *bind.TransactOpts, from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.contract.Transact(opts, "transferFrom", from, to, tokenId)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address from, address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelaySession) TransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.Contract.TransferFrom(&_RegRelay.TransactOpts, from, to, tokenId)
+func (_RegStore *RegStoreSession) TransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.Contract.TransferFrom(&_RegStore.TransactOpts, from, to, tokenId)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address from, address to, uint256 tokenId) returns()
-func (_RegRelay *RegRelayTransactorSession) TransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
-	return _RegRelay.Contract.TransferFrom(&_RegRelay.TransactOpts, from, to, tokenId)
+func (_RegStore *RegStoreTransactorSession) TransferFrom(from common.Address, to common.Address, tokenId *big.Int) (*types.Transaction, error) {
+	return _RegStore.Contract.TransferFrom(&_RegStore.TransactOpts, from, to, tokenId)
 }
 
-// RegRelayApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the RegRelay contract.
-type RegRelayApprovalIterator struct {
-	Event *RegRelayApproval // Event containing the contract specifics and raw log
+// UpdateURI is a paid mutator transaction binding the contract method 0x31d41c69.
+//
+// Solidity: function updateURI(uint256 relayId, string uri) returns()
+func (_RegStore *RegStoreTransactor) UpdateURI(opts *bind.TransactOpts, relayId *big.Int, uri string) (*types.Transaction, error) {
+	return _RegStore.contract.Transact(opts, "updateURI", relayId, uri)
+}
+
+// UpdateURI is a paid mutator transaction binding the contract method 0x31d41c69.
+//
+// Solidity: function updateURI(uint256 relayId, string uri) returns()
+func (_RegStore *RegStoreSession) UpdateURI(relayId *big.Int, uri string) (*types.Transaction, error) {
+	return _RegStore.Contract.UpdateURI(&_RegStore.TransactOpts, relayId, uri)
+}
+
+// UpdateURI is a paid mutator transaction binding the contract method 0x31d41c69.
+//
+// Solidity: function updateURI(uint256 relayId, string uri) returns()
+func (_RegStore *RegStoreTransactorSession) UpdateURI(relayId *big.Int, uri string) (*types.Transaction, error) {
+	return _RegStore.Contract.UpdateURI(&_RegStore.TransactOpts, relayId, uri)
+}
+
+// RegStoreApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the RegStore contract.
+type RegStoreApprovalIterator struct {
+	Event *RegStoreApproval // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -570,7 +591,7 @@ type RegRelayApprovalIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *RegRelayApprovalIterator) Next() bool {
+func (it *RegStoreApprovalIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -579,7 +600,7 @@ func (it *RegRelayApprovalIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(RegRelayApproval)
+			it.Event = new(RegStoreApproval)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -594,7 +615,7 @@ func (it *RegRelayApprovalIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(RegRelayApproval)
+		it.Event = new(RegStoreApproval)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -610,19 +631,19 @@ func (it *RegRelayApprovalIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *RegRelayApprovalIterator) Error() error {
+func (it *RegStoreApprovalIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *RegRelayApprovalIterator) Close() error {
+func (it *RegStoreApprovalIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// RegRelayApproval represents a Approval event raised by the RegRelay contract.
-type RegRelayApproval struct {
+// RegStoreApproval represents a Approval event raised by the RegStore contract.
+type RegStoreApproval struct {
 	Owner    common.Address
 	Approved common.Address
 	TokenId  *big.Int
@@ -632,7 +653,7 @@ type RegRelayApproval struct {
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
 // Solidity: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
-func (_RegRelay *RegRelayFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, approved []common.Address, tokenId []*big.Int) (*RegRelayApprovalIterator, error) {
+func (_RegStore *RegStoreFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, approved []common.Address, tokenId []*big.Int) (*RegStoreApprovalIterator, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
@@ -647,17 +668,17 @@ func (_RegRelay *RegRelayFilterer) FilterApproval(opts *bind.FilterOpts, owner [
 		tokenIdRule = append(tokenIdRule, tokenIdItem)
 	}
 
-	logs, sub, err := _RegRelay.contract.FilterLogs(opts, "Approval", ownerRule, approvedRule, tokenIdRule)
+	logs, sub, err := _RegStore.contract.FilterLogs(opts, "Approval", ownerRule, approvedRule, tokenIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayApprovalIterator{contract: _RegRelay.contract, event: "Approval", logs: logs, sub: sub}, nil
+	return &RegStoreApprovalIterator{contract: _RegStore.contract, event: "Approval", logs: logs, sub: sub}, nil
 }
 
 // WatchApproval is a free log subscription operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
 // Solidity: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
-func (_RegRelay *RegRelayFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *RegRelayApproval, owner []common.Address, approved []common.Address, tokenId []*big.Int) (event.Subscription, error) {
+func (_RegStore *RegStoreFilterer) WatchApproval(opts *bind.WatchOpts, sink chan<- *RegStoreApproval, owner []common.Address, approved []common.Address, tokenId []*big.Int) (event.Subscription, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
@@ -672,7 +693,7 @@ func (_RegRelay *RegRelayFilterer) WatchApproval(opts *bind.WatchOpts, sink chan
 		tokenIdRule = append(tokenIdRule, tokenIdItem)
 	}
 
-	logs, sub, err := _RegRelay.contract.WatchLogs(opts, "Approval", ownerRule, approvedRule, tokenIdRule)
+	logs, sub, err := _RegStore.contract.WatchLogs(opts, "Approval", ownerRule, approvedRule, tokenIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -682,8 +703,8 @@ func (_RegRelay *RegRelayFilterer) WatchApproval(opts *bind.WatchOpts, sink chan
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(RegRelayApproval)
-				if err := _RegRelay.contract.UnpackLog(event, "Approval", log); err != nil {
+				event := new(RegStoreApproval)
+				if err := _RegStore.contract.UnpackLog(event, "Approval", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -707,18 +728,18 @@ func (_RegRelay *RegRelayFilterer) WatchApproval(opts *bind.WatchOpts, sink chan
 // ParseApproval is a log parse operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
 //
 // Solidity: event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
-func (_RegRelay *RegRelayFilterer) ParseApproval(log types.Log) (*RegRelayApproval, error) {
-	event := new(RegRelayApproval)
-	if err := _RegRelay.contract.UnpackLog(event, "Approval", log); err != nil {
+func (_RegStore *RegStoreFilterer) ParseApproval(log types.Log) (*RegStoreApproval, error) {
+	event := new(RegStoreApproval)
+	if err := _RegStore.contract.UnpackLog(event, "Approval", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// RegRelayApprovalForAllIterator is returned from FilterApprovalForAll and is used to iterate over the raw logs and unpacked data for ApprovalForAll events raised by the RegRelay contract.
-type RegRelayApprovalForAllIterator struct {
-	Event *RegRelayApprovalForAll // Event containing the contract specifics and raw log
+// RegStoreApprovalForAllIterator is returned from FilterApprovalForAll and is used to iterate over the raw logs and unpacked data for ApprovalForAll events raised by the RegStore contract.
+type RegStoreApprovalForAllIterator struct {
+	Event *RegStoreApprovalForAll // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -732,7 +753,7 @@ type RegRelayApprovalForAllIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *RegRelayApprovalForAllIterator) Next() bool {
+func (it *RegStoreApprovalForAllIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -741,7 +762,7 @@ func (it *RegRelayApprovalForAllIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(RegRelayApprovalForAll)
+			it.Event = new(RegStoreApprovalForAll)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -756,7 +777,7 @@ func (it *RegRelayApprovalForAllIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(RegRelayApprovalForAll)
+		it.Event = new(RegStoreApprovalForAll)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -772,19 +793,19 @@ func (it *RegRelayApprovalForAllIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *RegRelayApprovalForAllIterator) Error() error {
+func (it *RegStoreApprovalForAllIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *RegRelayApprovalForAllIterator) Close() error {
+func (it *RegStoreApprovalForAllIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// RegRelayApprovalForAll represents a ApprovalForAll event raised by the RegRelay contract.
-type RegRelayApprovalForAll struct {
+// RegStoreApprovalForAll represents a ApprovalForAll event raised by the RegStore contract.
+type RegStoreApprovalForAll struct {
 	Owner    common.Address
 	Operator common.Address
 	Approved bool
@@ -794,7 +815,7 @@ type RegRelayApprovalForAll struct {
 // FilterApprovalForAll is a free log retrieval operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
 // Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-func (_RegRelay *RegRelayFilterer) FilterApprovalForAll(opts *bind.FilterOpts, owner []common.Address, operator []common.Address) (*RegRelayApprovalForAllIterator, error) {
+func (_RegStore *RegStoreFilterer) FilterApprovalForAll(opts *bind.FilterOpts, owner []common.Address, operator []common.Address) (*RegStoreApprovalForAllIterator, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
@@ -805,17 +826,17 @@ func (_RegRelay *RegRelayFilterer) FilterApprovalForAll(opts *bind.FilterOpts, o
 		operatorRule = append(operatorRule, operatorItem)
 	}
 
-	logs, sub, err := _RegRelay.contract.FilterLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
+	logs, sub, err := _RegStore.contract.FilterLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayApprovalForAllIterator{contract: _RegRelay.contract, event: "ApprovalForAll", logs: logs, sub: sub}, nil
+	return &RegStoreApprovalForAllIterator{contract: _RegStore.contract, event: "ApprovalForAll", logs: logs, sub: sub}, nil
 }
 
 // WatchApprovalForAll is a free log subscription operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
 // Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-func (_RegRelay *RegRelayFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sink chan<- *RegRelayApprovalForAll, owner []common.Address, operator []common.Address) (event.Subscription, error) {
+func (_RegStore *RegStoreFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sink chan<- *RegStoreApprovalForAll, owner []common.Address, operator []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
@@ -826,7 +847,7 @@ func (_RegRelay *RegRelayFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sin
 		operatorRule = append(operatorRule, operatorItem)
 	}
 
-	logs, sub, err := _RegRelay.contract.WatchLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
+	logs, sub, err := _RegStore.contract.WatchLogs(opts, "ApprovalForAll", ownerRule, operatorRule)
 	if err != nil {
 		return nil, err
 	}
@@ -836,8 +857,8 @@ func (_RegRelay *RegRelayFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sin
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(RegRelayApprovalForAll)
-				if err := _RegRelay.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
+				event := new(RegStoreApprovalForAll)
+				if err := _RegStore.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -861,18 +882,18 @@ func (_RegRelay *RegRelayFilterer) WatchApprovalForAll(opts *bind.WatchOpts, sin
 // ParseApprovalForAll is a log parse operation binding the contract event 0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31.
 //
 // Solidity: event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
-func (_RegRelay *RegRelayFilterer) ParseApprovalForAll(log types.Log) (*RegRelayApprovalForAll, error) {
-	event := new(RegRelayApprovalForAll)
-	if err := _RegRelay.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
+func (_RegStore *RegStoreFilterer) ParseApprovalForAll(log types.Log) (*RegStoreApprovalForAll, error) {
+	event := new(RegStoreApprovalForAll)
+	if err := _RegStore.contract.UnpackLog(event, "ApprovalForAll", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// RegRelayBatchMetadataUpdateIterator is returned from FilterBatchMetadataUpdate and is used to iterate over the raw logs and unpacked data for BatchMetadataUpdate events raised by the RegRelay contract.
-type RegRelayBatchMetadataUpdateIterator struct {
-	Event *RegRelayBatchMetadataUpdate // Event containing the contract specifics and raw log
+// RegStoreBatchMetadataUpdateIterator is returned from FilterBatchMetadataUpdate and is used to iterate over the raw logs and unpacked data for BatchMetadataUpdate events raised by the RegStore contract.
+type RegStoreBatchMetadataUpdateIterator struct {
+	Event *RegStoreBatchMetadataUpdate // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -886,7 +907,7 @@ type RegRelayBatchMetadataUpdateIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *RegRelayBatchMetadataUpdateIterator) Next() bool {
+func (it *RegStoreBatchMetadataUpdateIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -895,7 +916,7 @@ func (it *RegRelayBatchMetadataUpdateIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(RegRelayBatchMetadataUpdate)
+			it.Event = new(RegStoreBatchMetadataUpdate)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -910,7 +931,7 @@ func (it *RegRelayBatchMetadataUpdateIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(RegRelayBatchMetadataUpdate)
+		it.Event = new(RegStoreBatchMetadataUpdate)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -926,19 +947,19 @@ func (it *RegRelayBatchMetadataUpdateIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *RegRelayBatchMetadataUpdateIterator) Error() error {
+func (it *RegStoreBatchMetadataUpdateIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *RegRelayBatchMetadataUpdateIterator) Close() error {
+func (it *RegStoreBatchMetadataUpdateIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// RegRelayBatchMetadataUpdate represents a BatchMetadataUpdate event raised by the RegRelay contract.
-type RegRelayBatchMetadataUpdate struct {
+// RegStoreBatchMetadataUpdate represents a BatchMetadataUpdate event raised by the RegStore contract.
+type RegStoreBatchMetadataUpdate struct {
 	FromTokenId *big.Int
 	ToTokenId   *big.Int
 	Raw         types.Log // Blockchain specific contextual infos
@@ -947,21 +968,21 @@ type RegRelayBatchMetadataUpdate struct {
 // FilterBatchMetadataUpdate is a free log retrieval operation binding the contract event 0x6bd5c950a8d8df17f772f5af37cb3655737899cbf903264b9795592da439661c.
 //
 // Solidity: event BatchMetadataUpdate(uint256 _fromTokenId, uint256 _toTokenId)
-func (_RegRelay *RegRelayFilterer) FilterBatchMetadataUpdate(opts *bind.FilterOpts) (*RegRelayBatchMetadataUpdateIterator, error) {
+func (_RegStore *RegStoreFilterer) FilterBatchMetadataUpdate(opts *bind.FilterOpts) (*RegStoreBatchMetadataUpdateIterator, error) {
 
-	logs, sub, err := _RegRelay.contract.FilterLogs(opts, "BatchMetadataUpdate")
+	logs, sub, err := _RegStore.contract.FilterLogs(opts, "BatchMetadataUpdate")
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayBatchMetadataUpdateIterator{contract: _RegRelay.contract, event: "BatchMetadataUpdate", logs: logs, sub: sub}, nil
+	return &RegStoreBatchMetadataUpdateIterator{contract: _RegStore.contract, event: "BatchMetadataUpdate", logs: logs, sub: sub}, nil
 }
 
 // WatchBatchMetadataUpdate is a free log subscription operation binding the contract event 0x6bd5c950a8d8df17f772f5af37cb3655737899cbf903264b9795592da439661c.
 //
 // Solidity: event BatchMetadataUpdate(uint256 _fromTokenId, uint256 _toTokenId)
-func (_RegRelay *RegRelayFilterer) WatchBatchMetadataUpdate(opts *bind.WatchOpts, sink chan<- *RegRelayBatchMetadataUpdate) (event.Subscription, error) {
+func (_RegStore *RegStoreFilterer) WatchBatchMetadataUpdate(opts *bind.WatchOpts, sink chan<- *RegStoreBatchMetadataUpdate) (event.Subscription, error) {
 
-	logs, sub, err := _RegRelay.contract.WatchLogs(opts, "BatchMetadataUpdate")
+	logs, sub, err := _RegStore.contract.WatchLogs(opts, "BatchMetadataUpdate")
 	if err != nil {
 		return nil, err
 	}
@@ -971,8 +992,8 @@ func (_RegRelay *RegRelayFilterer) WatchBatchMetadataUpdate(opts *bind.WatchOpts
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(RegRelayBatchMetadataUpdate)
-				if err := _RegRelay.contract.UnpackLog(event, "BatchMetadataUpdate", log); err != nil {
+				event := new(RegStoreBatchMetadataUpdate)
+				if err := _RegStore.contract.UnpackLog(event, "BatchMetadataUpdate", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -996,18 +1017,18 @@ func (_RegRelay *RegRelayFilterer) WatchBatchMetadataUpdate(opts *bind.WatchOpts
 // ParseBatchMetadataUpdate is a log parse operation binding the contract event 0x6bd5c950a8d8df17f772f5af37cb3655737899cbf903264b9795592da439661c.
 //
 // Solidity: event BatchMetadataUpdate(uint256 _fromTokenId, uint256 _toTokenId)
-func (_RegRelay *RegRelayFilterer) ParseBatchMetadataUpdate(log types.Log) (*RegRelayBatchMetadataUpdate, error) {
-	event := new(RegRelayBatchMetadataUpdate)
-	if err := _RegRelay.contract.UnpackLog(event, "BatchMetadataUpdate", log); err != nil {
+func (_RegStore *RegStoreFilterer) ParseBatchMetadataUpdate(log types.Log) (*RegStoreBatchMetadataUpdate, error) {
+	event := new(RegStoreBatchMetadataUpdate)
+	if err := _RegStore.contract.UnpackLog(event, "BatchMetadataUpdate", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// RegRelayMetadataUpdateIterator is returned from FilterMetadataUpdate and is used to iterate over the raw logs and unpacked data for MetadataUpdate events raised by the RegRelay contract.
-type RegRelayMetadataUpdateIterator struct {
-	Event *RegRelayMetadataUpdate // Event containing the contract specifics and raw log
+// RegStoreMetadataUpdateIterator is returned from FilterMetadataUpdate and is used to iterate over the raw logs and unpacked data for MetadataUpdate events raised by the RegStore contract.
+type RegStoreMetadataUpdateIterator struct {
+	Event *RegStoreMetadataUpdate // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1021,7 +1042,7 @@ type RegRelayMetadataUpdateIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *RegRelayMetadataUpdateIterator) Next() bool {
+func (it *RegStoreMetadataUpdateIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1030,7 +1051,7 @@ func (it *RegRelayMetadataUpdateIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(RegRelayMetadataUpdate)
+			it.Event = new(RegStoreMetadataUpdate)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1045,7 +1066,7 @@ func (it *RegRelayMetadataUpdateIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(RegRelayMetadataUpdate)
+		it.Event = new(RegStoreMetadataUpdate)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1061,19 +1082,19 @@ func (it *RegRelayMetadataUpdateIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *RegRelayMetadataUpdateIterator) Error() error {
+func (it *RegStoreMetadataUpdateIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *RegRelayMetadataUpdateIterator) Close() error {
+func (it *RegStoreMetadataUpdateIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// RegRelayMetadataUpdate represents a MetadataUpdate event raised by the RegRelay contract.
-type RegRelayMetadataUpdate struct {
+// RegStoreMetadataUpdate represents a MetadataUpdate event raised by the RegStore contract.
+type RegStoreMetadataUpdate struct {
 	TokenId *big.Int
 	Raw     types.Log // Blockchain specific contextual infos
 }
@@ -1081,21 +1102,21 @@ type RegRelayMetadataUpdate struct {
 // FilterMetadataUpdate is a free log retrieval operation binding the contract event 0xf8e1a15aba9398e019f0b49df1a4fde98ee17ae345cb5f6b5e2c27f5033e8ce7.
 //
 // Solidity: event MetadataUpdate(uint256 _tokenId)
-func (_RegRelay *RegRelayFilterer) FilterMetadataUpdate(opts *bind.FilterOpts) (*RegRelayMetadataUpdateIterator, error) {
+func (_RegStore *RegStoreFilterer) FilterMetadataUpdate(opts *bind.FilterOpts) (*RegStoreMetadataUpdateIterator, error) {
 
-	logs, sub, err := _RegRelay.contract.FilterLogs(opts, "MetadataUpdate")
+	logs, sub, err := _RegStore.contract.FilterLogs(opts, "MetadataUpdate")
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayMetadataUpdateIterator{contract: _RegRelay.contract, event: "MetadataUpdate", logs: logs, sub: sub}, nil
+	return &RegStoreMetadataUpdateIterator{contract: _RegStore.contract, event: "MetadataUpdate", logs: logs, sub: sub}, nil
 }
 
 // WatchMetadataUpdate is a free log subscription operation binding the contract event 0xf8e1a15aba9398e019f0b49df1a4fde98ee17ae345cb5f6b5e2c27f5033e8ce7.
 //
 // Solidity: event MetadataUpdate(uint256 _tokenId)
-func (_RegRelay *RegRelayFilterer) WatchMetadataUpdate(opts *bind.WatchOpts, sink chan<- *RegRelayMetadataUpdate) (event.Subscription, error) {
+func (_RegStore *RegStoreFilterer) WatchMetadataUpdate(opts *bind.WatchOpts, sink chan<- *RegStoreMetadataUpdate) (event.Subscription, error) {
 
-	logs, sub, err := _RegRelay.contract.WatchLogs(opts, "MetadataUpdate")
+	logs, sub, err := _RegStore.contract.WatchLogs(opts, "MetadataUpdate")
 	if err != nil {
 		return nil, err
 	}
@@ -1105,8 +1126,8 @@ func (_RegRelay *RegRelayFilterer) WatchMetadataUpdate(opts *bind.WatchOpts, sin
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(RegRelayMetadataUpdate)
-				if err := _RegRelay.contract.UnpackLog(event, "MetadataUpdate", log); err != nil {
+				event := new(RegStoreMetadataUpdate)
+				if err := _RegStore.contract.UnpackLog(event, "MetadataUpdate", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1130,18 +1151,18 @@ func (_RegRelay *RegRelayFilterer) WatchMetadataUpdate(opts *bind.WatchOpts, sin
 // ParseMetadataUpdate is a log parse operation binding the contract event 0xf8e1a15aba9398e019f0b49df1a4fde98ee17ae345cb5f6b5e2c27f5033e8ce7.
 //
 // Solidity: event MetadataUpdate(uint256 _tokenId)
-func (_RegRelay *RegRelayFilterer) ParseMetadataUpdate(log types.Log) (*RegRelayMetadataUpdate, error) {
-	event := new(RegRelayMetadataUpdate)
-	if err := _RegRelay.contract.UnpackLog(event, "MetadataUpdate", log); err != nil {
+func (_RegStore *RegStoreFilterer) ParseMetadataUpdate(log types.Log) (*RegStoreMetadataUpdate, error) {
+	event := new(RegStoreMetadataUpdate)
+	if err := _RegStore.contract.UnpackLog(event, "MetadataUpdate", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// RegRelayTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the RegRelay contract.
-type RegRelayTransferIterator struct {
-	Event *RegRelayTransfer // Event containing the contract specifics and raw log
+// RegStoreTransferIterator is returned from FilterTransfer and is used to iterate over the raw logs and unpacked data for Transfer events raised by the RegStore contract.
+type RegStoreTransferIterator struct {
+	Event *RegStoreTransfer // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1155,7 +1176,7 @@ type RegRelayTransferIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *RegRelayTransferIterator) Next() bool {
+func (it *RegStoreTransferIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1164,7 +1185,7 @@ func (it *RegRelayTransferIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(RegRelayTransfer)
+			it.Event = new(RegStoreTransfer)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1179,7 +1200,7 @@ func (it *RegRelayTransferIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(RegRelayTransfer)
+		it.Event = new(RegStoreTransfer)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1195,19 +1216,19 @@ func (it *RegRelayTransferIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *RegRelayTransferIterator) Error() error {
+func (it *RegStoreTransferIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *RegRelayTransferIterator) Close() error {
+func (it *RegStoreTransferIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// RegRelayTransfer represents a Transfer event raised by the RegRelay contract.
-type RegRelayTransfer struct {
+// RegStoreTransfer represents a Transfer event raised by the RegStore contract.
+type RegStoreTransfer struct {
 	From    common.Address
 	To      common.Address
 	TokenId *big.Int
@@ -1217,7 +1238,7 @@ type RegRelayTransfer struct {
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
-func (_RegRelay *RegRelayFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address, tokenId []*big.Int) (*RegRelayTransferIterator, error) {
+func (_RegStore *RegStoreFilterer) FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address, tokenId []*big.Int) (*RegStoreTransferIterator, error) {
 
 	var fromRule []interface{}
 	for _, fromItem := range from {
@@ -1232,17 +1253,17 @@ func (_RegRelay *RegRelayFilterer) FilterTransfer(opts *bind.FilterOpts, from []
 		tokenIdRule = append(tokenIdRule, tokenIdItem)
 	}
 
-	logs, sub, err := _RegRelay.contract.FilterLogs(opts, "Transfer", fromRule, toRule, tokenIdRule)
+	logs, sub, err := _RegStore.contract.FilterLogs(opts, "Transfer", fromRule, toRule, tokenIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &RegRelayTransferIterator{contract: _RegRelay.contract, event: "Transfer", logs: logs, sub: sub}, nil
+	return &RegStoreTransferIterator{contract: _RegStore.contract, event: "Transfer", logs: logs, sub: sub}, nil
 }
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
-func (_RegRelay *RegRelayFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *RegRelayTransfer, from []common.Address, to []common.Address, tokenId []*big.Int) (event.Subscription, error) {
+func (_RegStore *RegStoreFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *RegStoreTransfer, from []common.Address, to []common.Address, tokenId []*big.Int) (event.Subscription, error) {
 
 	var fromRule []interface{}
 	for _, fromItem := range from {
@@ -1257,7 +1278,7 @@ func (_RegRelay *RegRelayFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan
 		tokenIdRule = append(tokenIdRule, tokenIdItem)
 	}
 
-	logs, sub, err := _RegRelay.contract.WatchLogs(opts, "Transfer", fromRule, toRule, tokenIdRule)
+	logs, sub, err := _RegStore.contract.WatchLogs(opts, "Transfer", fromRule, toRule, tokenIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1267,8 +1288,8 @@ func (_RegRelay *RegRelayFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(RegRelayTransfer)
-				if err := _RegRelay.contract.UnpackLog(event, "Transfer", log); err != nil {
+				event := new(RegStoreTransfer)
+				if err := _RegStore.contract.UnpackLog(event, "Transfer", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1292,9 +1313,9 @@ func (_RegRelay *RegRelayFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan
 // ParseTransfer is a log parse operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
-func (_RegRelay *RegRelayFilterer) ParseTransfer(log types.Log) (*RegRelayTransfer, error) {
-	event := new(RegRelayTransfer)
-	if err := _RegRelay.contract.UnpackLog(event, "Transfer", log); err != nil {
+func (_RegStore *RegStoreFilterer) ParseTransfer(log types.Log) (*RegStoreTransfer, error) {
+	event := new(RegStoreTransfer)
+	if err := _RegStore.contract.UnpackLog(event, "Transfer", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
