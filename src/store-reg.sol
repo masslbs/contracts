@@ -19,7 +19,7 @@ contract StoreReg is ERC721 {
 
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
-        _registrationTokenRedeemMessage = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32MASS Store Registration Redemption"));
+        _registrationTokenRedeemMessage = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n34", "MASS Store Registration Redemption"));
     }
 
     function registerStore(uint256 storeId, address owner, bytes32 rootHash) public {
