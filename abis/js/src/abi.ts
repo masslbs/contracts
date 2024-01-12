@@ -88,145 +88,6 @@ export const paymentFactoryConfig = {
 export const relayRegABI = [
   { stateMutability: 'nonpayable', type: 'constructor', inputs: [] },
   {
-    type: 'error',
-    inputs: [
-      { name: 'sender', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'owner', internalType: 'address', type: 'address' },
-    ],
-    name: 'ERC721IncorrectOwner',
-  },
-  {
-    type: 'error',
-    inputs: [
-      { name: 'operator', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'ERC721InsufficientApproval',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'approver', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidApprover',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'operator', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidOperator',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidOwner',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'receiver', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidReceiver',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'sender', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidSender',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
-    name: 'ERC721NonexistentToken',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'owner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'approved',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'tokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-    ],
-    name: 'Approval',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'owner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'operator',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      { name: 'approved', internalType: 'bool', type: 'bool', indexed: false },
-    ],
-    name: 'ApprovalForAll',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: '_fromTokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-      {
-        name: '_toTokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'BatchMetadataUpdate',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: '_tokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'MetadataUpdate',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'from', internalType: 'address', type: 'address', indexed: true },
-      { name: 'to', internalType: 'address', type: 'address', indexed: true },
-      {
-        name: 'tokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-    ],
-    name: 'Transfer',
-  },
-  {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
@@ -360,80 +221,6 @@ export const relayRegABI = [
     name: 'updateURI',
     outputs: [],
   },
-]
-
-/**
- *
- */
-export const relayRegAddress = {
-  31337: '0x9Bb7b35b7DA4999aF4133F89D9bD52417E8fA185',
-}
-
-/**
- *
- */
-export const relayRegConfig = { address: relayRegAddress, abi: relayRegABI }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// StoreReg
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
- */
-export const storeRegABI = [
-  {
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-    inputs: [{ name: 'r', internalType: 'contract RelayReg', type: 'address' }],
-  },
-  {
-    type: 'error',
-    inputs: [
-      { name: 'sender', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'owner', internalType: 'address', type: 'address' },
-    ],
-    name: 'ERC721IncorrectOwner',
-  },
-  {
-    type: 'error',
-    inputs: [
-      { name: 'operator', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'ERC721InsufficientApproval',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'approver', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidApprover',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'operator', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidOperator',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidOwner',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'receiver', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidReceiver',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'sender', internalType: 'address', type: 'address' }],
-    name: 'ERC721InvalidSender',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
-    name: 'ERC721NonexistentToken',
-  },
   {
     type: 'event',
     anonymous: false,
@@ -483,6 +270,38 @@ export const storeRegABI = [
     type: 'event',
     anonymous: false,
     inputs: [
+      {
+        name: '_fromTokenId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: '_toTokenId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'BatchMetadataUpdate',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: '_tokenId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'MetadataUpdate',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
       { name: 'from', internalType: 'address', type: 'address', indexed: true },
       { name: 'to', internalType: 'address', type: 'address', indexed: true },
       {
@@ -493,6 +312,80 @@ export const storeRegABI = [
       },
     ],
     name: 'Transfer',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+    ],
+    name: 'ERC721IncorrectOwner',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'operator', internalType: 'address', type: 'address' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'ERC721InsufficientApproval',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'approver', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidApprover',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'operator', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidOperator',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidOwner',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'receiver', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidReceiver',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'sender', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidSender',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
+    name: 'ERC721NonexistentToken',
+  },
+]
+
+/**
+ *
+ */
+export const relayRegAddress = {
+  31337: '0x9Bb7b35b7DA4999aF4133F89D9bD52417E8fA185',
+}
+
+/**
+ *
+ */
+export const relayRegConfig = { address: relayRegAddress, abi: relayRegABI }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// StoreReg
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ *
+ */
+export const storeRegABI = [
+  {
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [{ name: 'r', internalType: 'contract RelayReg', type: 'address' }],
   },
   {
     stateMutability: 'nonpayable',
@@ -590,6 +483,29 @@ export const storeRegABI = [
     outputs: [],
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
+      { name: 'token', internalType: 'address', type: 'address' },
+    ],
+    name: 'registrationTokenPublish',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'storeId', internalType: 'uint256', type: 'uint256' },
+      { name: 'v', internalType: 'uint8', type: 'uint8' },
+      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
+      { name: 's', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'regstrationTokenRedeem',
+    outputs: [],
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
@@ -663,6 +579,16 @@ export const storeRegABI = [
       { name: '', internalType: 'uint256', type: 'uint256' },
       { name: '', internalType: 'address', type: 'address' },
     ],
+    name: 'storesToRegistrationTokens',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
     name: 'storesToUsers',
     outputs: [{ name: '', internalType: 'enum AccessLevel', type: 'uint8' }],
   },
@@ -718,13 +644,120 @@ export const storeRegABI = [
     name: 'updateRootHash',
     outputs: [],
   },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'approved',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'tokenId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+    ],
+    name: 'Approval',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'owner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'operator',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'approved', internalType: 'bool', type: 'bool', indexed: false },
+    ],
+    name: 'ApprovalForAll',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'tokenId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+    ],
+    name: 'Transfer',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+    ],
+    name: 'ERC721IncorrectOwner',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'operator', internalType: 'address', type: 'address' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'ERC721InsufficientApproval',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'approver', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidApprover',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'operator', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidOperator',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidOwner',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'receiver', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidReceiver',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'sender', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidSender',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
+    name: 'ERC721NonexistentToken',
+  },
 ]
 
 /**
  *
  */
 export const storeRegAddress = {
-  31337: '0x1f16280dcfA5D21ef5ba0205D7a33E6D8264eB6c',
+  31337: '0xdCE48902370b67Ca57F7F3974667d5E473BCd2e3',
 }
 
 /**
