@@ -2,6 +2,7 @@
 pragma solidity ^0.8.21;
 
 import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import "./relay-reg.sol";
 
 enum AccessLevel { Zero, Clerk, Admin, Owner } // note: currently owner is not really used
@@ -19,8 +20,8 @@ contract StoreReg is ERC721 {
 
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
-        _registrationTokenRedeemMessage = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n34", "MASS Store Registration Redemption"));
     }
+
 
     function registerStore(uint256 storeId, address owner, bytes32 rootHash) public {
         // safe mint checks if id is taken
@@ -87,6 +88,10 @@ contract StoreReg is ERC721 {
         require(acl != AccessLevel.Zero && acl != AccessLevel.Clerk, "no such user");
     }
 
+    function getTokenMessageHash(address user) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", Strings.toHexString(user)));
+    }
+
     // adds a new one-time use registration token to the store
     function registrationTokenPublish(uint256 storeId, address token) public {
         bool has = hasAtLeastAccess(storeId, msg.sender, AccessLevel.Admin);
@@ -96,7 +101,7 @@ contract StoreReg is ERC721 {
 
     // redeem one of the registration tokens. (v,r,s) are the signature
     function regstrationTokenRedeem(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
-        address recovered = ecrecover(_registrationTokenRedeemMessage, v, r, s);
+        address recovered = ecrecover(getTokenMessageHash(user), v, r, s);
         bool isAllowed = storesToRegistrationTokens[storeId][recovered];
         require(isAllowed, "no such token");
         delete storesToRegistrationTokens[storeId][recovered];

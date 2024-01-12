@@ -426,6 +426,13 @@ export const storeRegABI = [
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
+    stateMutability: 'pure',
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'getTokenMessageHash',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [
@@ -751,13 +758,21 @@ export const storeRegABI = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'ERC721NonexistentToken',
   },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'value', internalType: 'uint256', type: 'uint256' },
+      { name: 'length', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'StringsInsufficientHexLength',
+  },
 ]
 
 /**
  *
  */
 export const storeRegAddress = {
-  31337: '0xdCE48902370b67Ca57F7F3974667d5E473BCd2e3',
+  31337: '0x8C6b55d23eDbf47A456588EEf0E80426ad9937f4',
 }
 
 /**

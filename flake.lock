@@ -34,11 +34,11 @@
     "forge-std": {
       "flake": false,
       "locked": {
-        "lastModified": 1703285350,
-        "narHash": "sha256-m/dGDWwyN0DfSmJk66QLCnW+njOeVJvdFMzZN6bevFQ=",
+        "lastModified": 1705000202,
+        "narHash": "sha256-4JwhG/Jknx9qilWaQQtYo9x0tGPkR3dzkWbhZqamS1g=",
         "owner": "foundry-rs",
         "repo": "forge-std",
-        "rev": "87a2a0afc5fafd6297538a45a52ac19e71a84562",
+        "rev": "36c303b7ffdd842d06b1ec2744c9b9b5fb3083f3",
         "type": "github"
       },
       "original": {
@@ -53,16 +53,15 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1704705059,
-        "narHash": "sha256-fAfVGg4xrFsJy9EE9abkdxxMNEM80+V56JmUjaRnpIE=",
+        "lastModified": 1705050572,
+        "narHash": "sha256-FAkkeH9co480M2XKxiyB1vzCedqixqMtx547PhqAuyo=",
         "owner": "shazow",
         "repo": "foundry.nix",
-        "rev": "ee8da03e7b8526fe289ff76af74319a429b46e5d",
+        "rev": "2750a5910018a1a082bd09356f39a8f19f289392",
         "type": "github"
       },
       "original": {
         "owner": "shazow",
-        "ref": "monthly",
         "repo": "foundry.nix",
         "type": "github"
       }
@@ -83,11 +82,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1704161960,
-        "narHash": "sha256-QGua89Pmq+FBAro8NriTuoO/wNaUtugt29/qqA8zeeM=",
+        "lastModified": 1704842529,
+        "narHash": "sha256-OTeQA+F8d/Evad33JMfuXC89VMetQbsU4qcaePchGr4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "63143ac2c9186be6d9da6035fa22620018c85932",
+        "rev": "eabe8d3eface69f5bb16c18f8662a702f50c20d5",
         "type": "github"
       },
       "original": {
@@ -99,11 +98,11 @@
     "openzeppelin-contracts": {
       "flake": false,
       "locked": {
-        "lastModified": 1704377273,
-        "narHash": "sha256-h5D1OB2xNzw+PTWxKwgp9YPtVuvP2Nz3Ew2CfT3wpJM=",
+        "lastModified": 1705017708,
+        "narHash": "sha256-d0FyZJEs1wJOAmLDcgSHf/02Y3tOOjO6G8BK/5i2b3w=",
         "owner": "OpenZeppelin",
         "repo": "openzeppelin-contracts",
-        "rev": "ef68ac3ed83f85e4ce078b26170280c468ffeabb",
+        "rev": "920225a1c7e6e749ba23b10ed076b04f454290e8",
         "type": "github"
       },
       "original": {

@@ -3,7 +3,7 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     utils.url = "github:numtide/flake-utils";
-    foundry.url = "github:shazow/foundry.nix/monthly";
+    foundry.url = "github:shazow/foundry.nix";
     forge-std = {
       url = "github:foundry-rs/forge-std";
       flake = false;

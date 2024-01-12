@@ -3,7 +3,9 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
+import "forge-std/console.sol";
 import "../src/store-reg.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 
 contract StoreUsersTest is Test {
@@ -72,7 +74,7 @@ contract StoreUsersTest is Test {
         vm.prank(addrOwner);
         s.registrationTokenPublish(storeId, token);
         // new user wants to redeem the token
-        bytes32 regMsg = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n34MASS Store Registration Redemption"));
+        bytes32 regMsg = s.getTokenMessageHash(addrNewUser);
         (uint8 sigv, bytes32 sigr, bytes32 sigs) = vm.sign(tokenPk, regMsg);
         vm.prank(addrNewUser);
         s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrNewUser);
