@@ -91,8 +91,7 @@ contract StoreReg is ERC721 {
 
     // adds a new one-time use registration token to the store
     function registrationTokenPublish(uint256 storeId, address token) public {
-        bool has = hasAtLeastAccess(storeId, msg.sender, AccessLevel.Admin);
-        require(has, "access denied");
+        requireOnlyAdminOrHigher(storeId, msg.sender);
         storesToRegistrationTokens[storeId][token] = true;
     }
 
