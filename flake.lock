@@ -53,16 +53,17 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1705050572,
-        "narHash": "sha256-FAkkeH9co480M2XKxiyB1vzCedqixqMtx547PhqAuyo=",
+        "lastModified": 1704964255,
+        "narHash": "sha256-ycOn/YR6cFgddtHlWj6xtDZuh4wpe6YAQxrVZjOA9lg=",
         "owner": "shazow",
         "repo": "foundry.nix",
-        "rev": "2750a5910018a1a082bd09356f39a8f19f289392",
+        "rev": "d5172f514d1cfa5e01e13ce31f624b990c9f53f4",
         "type": "github"
       },
       "original": {
         "owner": "shazow",
         "repo": "foundry.nix",
+        "rev": "d5172f514d1cfa5e01e13ce31f624b990c9f53f4",
         "type": "github"
       }
     },
@@ -82,11 +83,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1704842529,
-        "narHash": "sha256-OTeQA+F8d/Evad33JMfuXC89VMetQbsU4qcaePchGr4=",
+        "lastModified": 1705242415,
+        "narHash": "sha256-a8DRYrNrzTudvO7XHUPNJD89Wbf1ZZT0VbwCsPnHWaE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "eabe8d3eface69f5bb16c18f8662a702f50c20d5",
+        "rev": "ea780f3de2d169f982564128804841500e85e373",
         "type": "github"
       },
       "original": {
@@ -98,11 +99,11 @@
     "openzeppelin-contracts": {
       "flake": false,
       "locked": {
-        "lastModified": 1705017708,
-        "narHash": "sha256-d0FyZJEs1wJOAmLDcgSHf/02Y3tOOjO6G8BK/5i2b3w=",
+        "lastModified": 1705252382,
+        "narHash": "sha256-SvH1euotjSI/qurUyYdw19TIxPWkYw7ODiFxrs7P3ZQ=",
         "owner": "OpenZeppelin",
         "repo": "openzeppelin-contracts",
-        "rev": "920225a1c7e6e749ba23b10ed076b04f454290e8",
+        "rev": "2fb73e5004859889e8293134c70e6c13a186faf0",
         "type": "github"
       },
       "original": {
@@ -141,11 +142,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1701680307,
-        "narHash": "sha256-kAuep2h5ajznlPMD9rnQyffWG8EM/C73lejGofXvdM8=",
+        "lastModified": 1705309234,
+        "narHash": "sha256-uNRRNRKmJyCRC/8y1RqBkqWBLM034y4qN7EprSdmgyA=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "4022d587cbbfd70fe950c1e2083a02621806a725",
+        "rev": "1ef2e671c3b0c19053962c07dbda38332dcebf26",
         "type": "github"
       },
       "original": {

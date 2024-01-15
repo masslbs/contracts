@@ -10,8 +10,6 @@ enum AccessLevel { Zero, Clerk, Admin, Owner } // note: currently owner is not r
 contract StoreReg is ERC721 {
     RelayReg public relayReg;
 
-    bytes32 private _registrationTokenRedeemMessage;
-
     // info per store
     mapping(uint256 => bytes32) public rootHashes;
     mapping(uint256 => uint256[]) internal relays;
@@ -21,7 +19,6 @@ contract StoreReg is ERC721 {
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
     }
-
 
     function registerStore(uint256 storeId, address owner, bytes32 rootHash) public {
         // safe mint checks if id is taken
@@ -101,6 +98,10 @@ contract StoreReg is ERC721 {
 
     // redeem one of the registration tokens. (v,r,s) are the signature
     function regstrationTokenRedeem(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
+        // see if user is already registered
+        bool hasAlready = hasAtLeastAccess(storeId, user, AccessLevel.Clerk);
+        require(!hasAlready, "already registered");
+        // check signature
         address recovered = ecrecover(getTokenMessageHash(user), v, r, s);
         bool isAllowed = storesToRegistrationTokens[storeId][recovered];
         require(isAllowed, "no such token");

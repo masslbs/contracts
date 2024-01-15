@@ -84,6 +84,13 @@ contract StoreUsersTest is Test {
         vm.prank(addrSomeoneElse);
         vm.expectRevert("no such token");
         s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrSomeoneElse);
-
+        // cant register a user twice
+        (address token2, uint256 tokenPk2) = makeAddrAndKey("token2");
+        vm.prank(addrOwner);
+        s.registrationTokenPublish(storeId, token2);
+        (sigv, sigr, sigs) = vm.sign(tokenPk2, regMsg);
+        vm.prank(addrNewUser);
+        vm.expectRevert("already registered");
+        s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrNewUser);
     }
 }
