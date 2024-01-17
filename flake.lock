@@ -50,7 +50,9 @@
     "foundry": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1704964255,
@@ -69,41 +71,28 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1666753130,
-        "narHash": "sha256-Wff1dGPFSneXJLI2c0kkdWTgxnQ416KE6X4KnFkgPYQ=",
-        "owner": "NixOS",
+        "lastModified": 1705331948,
+        "narHash": "sha256-qjQXfvrAT1/RKDFAMdl8Hw3m4tLVvMCc8fMqzJv0pP4=",
+        "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "f540aeda6f677354f1e7144ab04352f61aaa0118",
+        "rev": "b8dd8be3c790215716e7c12b247f45ca525867e2",
         "type": "github"
       },
       "original": {
-        "id": "nixpkgs",
-        "type": "indirect"
-      }
-    },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1705242415,
-        "narHash": "sha256-a8DRYrNrzTudvO7XHUPNJD89Wbf1ZZT0VbwCsPnHWaE=",
-        "owner": "NixOS",
+        "owner": "nixos",
+        "ref": "nixos-23.11",
         "repo": "nixpkgs",
-        "rev": "ea780f3de2d169f982564128804841500e85e373",
         "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "ref": "nixpkgs-unstable",
-        "type": "indirect"
       }
     },
     "openzeppelin-contracts": {
       "flake": false,
       "locked": {
-        "lastModified": 1705252382,
-        "narHash": "sha256-SvH1euotjSI/qurUyYdw19TIxPWkYw7ODiFxrs7P3ZQ=",
+        "lastModified": 1705443170,
+        "narHash": "sha256-oUafnsanCFHqyBt6Fb/LjkftM4/Dmd6bWiy98CGhoHE=",
         "owner": "OpenZeppelin",
         "repo": "openzeppelin-contracts",
-        "rev": "2fb73e5004859889e8293134c70e6c13a186faf0",
+        "rev": "692dbc560f48b2a5160e6e4f78302bb93314cd88",
         "type": "github"
       },
       "original": {
@@ -117,7 +106,7 @@
         "ds-tests": "ds-tests",
         "forge-std": "forge-std",
         "foundry": "foundry",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs",
         "openzeppelin-contracts": "openzeppelin-contracts",
         "utils": "utils"
       }
