@@ -2,11 +2,16 @@
 #
 
 set -e
+if [ -f "$1" ]; then
+    fname="$1"
+else
+    fname="/tmp/deploy.s.sol/31337/run-latest.json" 
+fi
 
 function get_addr()
 {
 	local reg=$1
-	local addr=$(jq -r ".transactions[] | select(.contractName==\"${reg}\") | select(.transactionType==\"CREATE2\") | .contractAddress" /tmp/deploy.s.sol/31337/run-latest.json)
+	local addr=$(jq -r ".transactions[] | select(.contractName==\"${reg}\") | select(.transactionType==\"CREATE2\") | .contractAddress" $fname)
 	eval $reg="'$addr'"
 }
 
