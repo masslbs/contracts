@@ -34,11 +34,11 @@
     "forge-std": {
       "flake": false,
       "locked": {
-        "lastModified": 1705000202,
-        "narHash": "sha256-4JwhG/Jknx9qilWaQQtYo9x0tGPkR3dzkWbhZqamS1g=",
+        "lastModified": 1707342946,
+        "narHash": "sha256-8FS9HPZYZDrQP3ImDVCScdDbGG80NM7TuV+CHeYog10=",
         "owner": "foundry-rs",
         "repo": "forge-std",
-        "rev": "36c303b7ffdd842d06b1ec2744c9b9b5fb3083f3",
+        "rev": "17c554b7dd5cc3a63e7fb9db035718e619ee7653",
         "type": "github"
       },
       "original": {
@@ -71,11 +71,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1705331948,
-        "narHash": "sha256-qjQXfvrAT1/RKDFAMdl8Hw3m4tLVvMCc8fMqzJv0pP4=",
+        "lastModified": 1707238373,
+        "narHash": "sha256-WKxT0yLzWbFZwYi92lI0yWJpYtRaFSWHGX8QXzejapw=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "b8dd8be3c790215716e7c12b247f45ca525867e2",
+        "rev": "fb0c047e30b69696acc42e669d02452ca1b55755",
         "type": "github"
       },
       "original": {
@@ -88,11 +88,11 @@
     "openzeppelin-contracts": {
       "flake": false,
       "locked": {
-        "lastModified": 1705443170,
-        "narHash": "sha256-oUafnsanCFHqyBt6Fb/LjkftM4/Dmd6bWiy98CGhoHE=",
+        "lastModified": 1707297625,
+        "narHash": "sha256-lBQ8ToR+O6NS7ZSG0OCAjhW5rvlCplgzugE+wZC/c4E=",
         "owner": "OpenZeppelin",
         "repo": "openzeppelin-contracts",
-        "rev": "692dbc560f48b2a5160e6e4f78302bb93314cd88",
+        "rev": "17a8955cd8ed2c9a269421a11c2e2774b796e305",
         "type": "github"
       },
       "original": {
