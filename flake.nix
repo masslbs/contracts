@@ -103,6 +103,7 @@
               --input-file src/store-reg.sol \
               --input-file src/relay-reg.sol \
               --input-file src/payment-factory.sol \
+              --input-file src/testing-eddies.sol \
               -o $out/abi
             # overwrite for abis/sol/IERC1155Errors.abi
             solc --abi --allow-paths  ${openzeppelin-contracts} --input-file ${openzeppelin-contracts}/contracts/token/ERC20/ERC20.sol -o $out/abi --overwrite
