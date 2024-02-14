@@ -19,8 +19,8 @@ Run `nix develop` to enter the devShell.
 
 To create and delopy the contract to a local testnet first
 
-- start anvil run `anvil`
-- in a seprate terminal run `deploy-market` which will delopy the contrat to the local testnet
+- start anvil and deploy the contract locally run `run-and-deploy`
+- to redeploy the contract run `deploy-market`
 
 ## Generating ABI.ts
 

@@ -38,37 +38,31 @@
         ];
       };
 
-      deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
+      mk_deploy_market = name: contract: (pkgs.writeShellScriptBin name ''
         export PATH=$PATH:${pkgs.solc}/bin
         tmp=$(mktemp -d)
         pushd $PWD
         ${pkgs.foundry-bin}/bin/forge \
-          script $PWD/script/deploy.s.sol --target-contract Deploy \
+          script $PWD/script/deploy.s.sol --target-contract ${contract} \
           --root=$PWD --lib-paths=$PWD \
           --fork-url http://localhost:8545 --broadcast --no-auto-detect -o $tmp --cache-path=$tmp/cache
         popd
-      '';
+      '');
 
-      # TODO: re-use deploy_market via a nix function maybede
-      deploy_test_market = pkgs.writeShellScriptBin "deploy-test-market" ''
-        export PATH=$PATH:${pkgs.solc}/bin
-        tmp=$(mktemp -d)
-        pushd $PWD
-        ${pkgs.foundry-bin}/bin/forge \
-          script $PWD/script/deploy.s.sol --target-contract TestingDeploy \
-          --root=$PWD --lib-paths=$PWD \
-          --fork-url http://localhost:8545 --broadcast --no-auto-detect -o $tmp --cache-path=$tmp/cache
-        popd
-      '';
+      deploy_market = mk_deploy_market "deploy-market" "Deploy";
 
+      run_and_deploy = pkgs.writeShellScriptBin "run-and-deploy" ''
+        ${pkgs.foundry-bin}/bin/anvil | (grep -m 1 "Listening on "; ${deploy_market}/bin/deploy-market)
+      '';
 
       buildInputs = with pkgs; [
         # smart contract dependencies
         foundry-bin
         nodePackages.pnpm
         solc
+        run_and_deploy
         deploy_market
-        deploy_test_market
+        (mk_deploy_market "deploy-test-market" "TestingDeploy")
       ];
 
       remappings-txt = ''
@@ -118,6 +112,7 @@
             cp ${remappings} $out/remappings.txt
             cp ./script/* $out/script/
             cp ./update_env.sh $out/bin/
+            cp ${run_and_deploy}/bin/run-and-deploy $out/bin/run-and-deploy
             cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
             substituteInPlace $out/bin/deploy-market \
                --replace "pushd \$PWD" "pushd $out" \
