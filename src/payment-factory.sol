@@ -12,7 +12,7 @@ contract SweepERC20Payment {
         address factory
     ) payable {
         require(msg.sender == factory);
-        // if we are transfering ether
+        // if we are transfering an erc20
         uint256 balance = erc20.balanceOf(address(this));
         // not enough was sent so return what we have
         if (balance < amount) {
@@ -64,7 +64,6 @@ contract SweepEtherPayment {
 
 /// @title Provides functions around payments addresses
 contract PaymentFactory {
-    address lastPaymentAddress;
 
     function getBytecode(
         address merchant,

@@ -49,12 +49,26 @@
         popd
       '';
 
+      # TODO: re-use deploy_market via a nix function maybede
+      deploy_test_market = pkgs.writeShellScriptBin "deploy-test-market" ''
+        export PATH=$PATH:${pkgs.solc}/bin
+        tmp=$(mktemp -d)
+        pushd $PWD
+        ${pkgs.foundry-bin}/bin/forge \
+          script $PWD/script/deploy.s.sol --target-contract TestingDeploy \
+          --root=$PWD --lib-paths=$PWD \
+          --fork-url http://localhost:8545 --broadcast --no-auto-detect -o $tmp --cache-path=$tmp/cache
+        popd
+      '';
+
+
       buildInputs = with pkgs; [
         # smart contract dependencies
         foundry-bin
         nodePackages.pnpm
         solc
         deploy_market
+        deploy_test_market
       ];
 
       remappings-txt = ''
@@ -89,6 +103,7 @@
               --input-file src/store-reg.sol \
               --input-file src/relay-reg.sol \
               --input-file src/payment-factory.sol \
+              --input-file src/testing-eddies.sol \
               -o $out/abi
             # overwrite for abis/sol/IERC1155Errors.abi
             solc --abi --allow-paths  ${openzeppelin-contracts} --input-file ${openzeppelin-contracts}/contracts/token/ERC20/ERC20.sol -o $out/abi --overwrite
