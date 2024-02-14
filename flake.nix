@@ -77,8 +77,9 @@
           ${pkgs.foundry-bin}/bin/anvil | (grep -m 1 "Listening on "; ${deploy}/bin/deploy-market)
         '';
 
-      deploy_market_local = mk_deploy_market "deploy-market" "." "Deploy" false;
+      deploy_market_local = mk_deploy_market "deploy-market" "." "TestingDeploy" false;
       deploy_market = mk_deploy_market "deploy-market" self "Deploy" true;
+      deploy_market_test = mk_deploy_market "deploy-test-market" self "TestingDeploy" true;
 
       run_and_deploy_local = mk_run_and_deploy deploy_market_local;
       run_and_deploy = mk_run_and_deploy deploy_market;
@@ -143,7 +144,8 @@
           installPhase = ''
             mkdir -p $out/{bin,abi};
             cp ./update_env.sh $out/bin/
-            ln -s  ${deploy_market}/bin/deploy-market $out/bin/deploy-market
+            ln -s ${deploy_market}/bin/deploy-market $out/bin/deploy-market
+            ln -s ${deploy_market_test}/bin/deploy-test-market $out/bin/deploy-test-market
             ln -s ${run_and_deploy}/bin/run-and-deploy $out/bin/run-and-deploy
           '';
         };

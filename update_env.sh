@@ -11,7 +11,7 @@ fi
 function get_addr()
 {
 	local reg=$1
-	local addr=$(jq -r ".transactions[] | select(.contractName==\"${reg}\") | select(.transactionType==\"CREATE2\") | .contractAddress" $fname)
+	local addr=$(jq -r ".transactions[] | select(.contractName==\"${reg}\") | select(.transactionType | startswith(\"CREATE\")) | .contractAddress" $fname)
 	eval $reg="'$addr'"
 }
 
@@ -23,3 +23,6 @@ echo "STORE_REGISTRY_ADDRESS=$StoreReg"
 
 get_addr PaymentFactory
 echo "PAYMENT_FACTORY_ADDRESS=$PaymentFactory"
+
+get_addr EuroDollarToken
+test -n "$EuroDollarToken" && echo "ERC20_TOKEN_ADDRESS=$EuroDollarToken"
