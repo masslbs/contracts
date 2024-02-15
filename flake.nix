@@ -28,6 +28,7 @@
     forge-std,
     openzeppelin-contracts,
     ds-tests,
+    self, # This is the output of the flake itself, e.g. the location in nix/store of the source code
     ...
   }:
     utils.lib.eachDefaultSystem (system: let
@@ -38,31 +39,46 @@
         ];
       };
 
-      mk_deploy_market = name: contract: (pkgs.writeShellScriptBin name ''
-        export PATH=$PATH:${pkgs.solc}/bin
-        tmp=$(mktemp -d)
-        pushd $PWD
-        ${pkgs.foundry-bin}/bin/forge \
-          script $PWD/script/deploy.s.sol --target-contract ${contract} \
-          --root=$PWD --lib-paths=$PWD \
-          --fork-url http://localhost:8545 --broadcast --no-auto-detect -o $tmp --cache-path=$tmp/cache
-        popd
+      private_key = "export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+
+      mk_deploy_market = name: path: contract: immut: (pkgs.writeShellScriptBin name ''
+        ${
+          if immut
+          then ''
+            tmp=$(mktemp -d)
+            export FOUNDRY_BROADCAST=$tmp
+            export FOUNDRY_CACHE_PATH=$tmp
+            export FOUNDRY_OUT=$tmp
+          ''
+          else ""
+        }
+         ${private_key}
+          export FOUNDRY_ROOT=${path}
+          export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
+          pushd ${path}
+          ${pkgs.foundry-bin}/bin/forge \
+          script ${path}/script/deploy.s.sol --target-contract ${contract} \
+            --fork-url http://localhost:8545 --broadcast
+          popd
       '');
 
-      deploy_market = mk_deploy_market "deploy-market" "Deploy";
+      mk_run_and_deploy = deploy:
+        pkgs.writeShellScriptBin "run-and-deploy" ''
+          ${pkgs.foundry-bin}/bin/anvil | (grep -m 1 "Listening on "; ${deploy}/bin/deploy-market)
+        '';
 
-      run_and_deploy = pkgs.writeShellScriptBin "run-and-deploy" ''
-        ${pkgs.foundry-bin}/bin/anvil | (grep -m 1 "Listening on "; ${deploy_market}/bin/deploy-market)
-      '';
+      deploy_market_local = mk_deploy_market "deploy-market" "." "Deploy" false;
+      deploy_market = mk_deploy_market "deploy-market" self "Deploy" true;
+
+      run_and_deploy_local = mk_run_and_deploy deploy_market_local;
+      run_and_deploy = mk_run_and_deploy deploy_market;
 
       buildInputs = with pkgs; [
-        # smart contract dependencies
         foundry-bin
         nodePackages.pnpm
         solc
-        run_and_deploy
         deploy_market
-        (mk_deploy_market "deploy-test-market" "TestingDeploy")
+        run_and_deploy
       ];
 
       remappings-txt = ''
@@ -73,12 +89,18 @@
       remappings = pkgs.writeText "remapping.txt" remappings-txt;
     in {
       devShell = pkgs.mkShell {
-        inherit buildInputs;
+        # local devshell scripts need to come first.
+        buildInputs =
+          [
+            deploy_market_local
+            run_and_deploy_local
+          ]
+          ++ buildInputs;
 
         shellHook = ''
-          export PS1="[contracts] $PS1"
-          export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-          ln -sfn ${remappings} remappings.txt
+          ${private_key}
+           export PS1="[contracts] $PS1"
+           cp -f ${remappings} remappings.txt
         '';
       };
       packages = {
@@ -91,8 +113,6 @@
           dontConfigure = true;
 
           buildPhase = ''
-            cp ${remappings} ./remappings.txt
-            forge compile --no-auto-detect
             solc ${builtins.replaceStrings ["\n"] [" "] remappings-txt} --abi   \
               --input-file src/store-reg.sol \
               --input-file src/relay-reg.sol \
@@ -108,20 +128,10 @@
           '';
 
           installPhase = ''
-            mkdir -p $out/{bin,script,abi};
-            cp ${remappings} $out/remappings.txt
-            cp ./script/* $out/script/
+            mkdir -p $out/{bin,abi};
             cp ./update_env.sh $out/bin/
-            cp ${run_and_deploy}/bin/run-and-deploy $out/bin/run-and-deploy
-            cp ${deploy_market}/bin/deploy-market $out/bin/deploy-market
-            substituteInPlace $out/bin/deploy-market \
-               --replace "pushd \$PWD" "pushd $out" \
-               --replace "script \$PWD/" "script $out/" \
-               --replace "root=\$PWD" "root=$out" \
-               --replace "lib-paths=\$PWD" "lib-paths=$out"
-            cp -r ./src $out/src
-            ln -s /tmp/ $out/broadcast
-            #
+            ln -s  ${deploy_market}/bin/deploy-market $out/bin/deploy-market
+            ln -s ${run_and_deploy}/bin/run-and-deploy $out/bin/run-and-deploy
           '';
         };
       };
