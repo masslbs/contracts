@@ -19,6 +19,10 @@
       url = "github:dapphub/ds-test";
       flake = false;
     };
+    uniswap = {
+      url = "git+https://github.com/uniswap/universal-router.git?submodules=1";
+      flake = false;
+    };
   };
 
   outputs = {
@@ -28,6 +32,7 @@
     forge-std,
     openzeppelin-contracts,
     ds-tests,
+    uniswap,
     self, # This is the output of the flake itself, e.g. the location in nix/store of the source code
     ...
   }:
@@ -85,6 +90,10 @@
         forge-std/=${forge-std}/src
         openzeppelin-contracts/=${openzeppelin-contracts}/
         ds-test/=${ds-tests}/src
+        uniswap/=${uniswap}
+        solmate/=${uniswap}/solmate/
+        permit2/=${uniswap}/permit2/
+        @openzeppelin/=${openzeppelin-contracts}/
       '';
       remappings = pkgs.writeText "remapping.txt" remappings-txt;
     in {

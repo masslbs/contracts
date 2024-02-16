@@ -34,11 +34,11 @@
     "forge-std": {
       "flake": false,
       "locked": {
-        "lastModified": 1707342946,
-        "narHash": "sha256-8FS9HPZYZDrQP3ImDVCScdDbGG80NM7TuV+CHeYog10=",
+        "lastModified": 1708025636,
+        "narHash": "sha256-/tR72EnPr3ONEZHPpw6b2pKG6dYWziIFQFglSBo4WNM=",
         "owner": "foundry-rs",
         "repo": "forge-std",
-        "rev": "17c554b7dd5cc3a63e7fb9db035718e619ee7653",
+        "rev": "1d0766bc5d814f117c7b1e643828f7d85024fb51",
         "type": "github"
       },
       "original": {
@@ -55,11 +55,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1705309865,
-        "narHash": "sha256-HkTSsjmR3DE1xKr1M0bBWKyTl4f616166Przd2mwNxw=",
+        "lastModified": 1707037862,
+        "narHash": "sha256-jCNrmFDx+neh7Uz0Q2kmqz19Yyz8OxnGoZpzd2w3SME=",
         "owner": "shazow",
         "repo": "foundry.nix",
-        "rev": "883243b30a4b8dbb1b515b79b750e2caf7df1a79",
+        "rev": "03b8af1efb00c51dceaac92462dc77b1b57683e0",
         "type": "github"
       },
       "original": {
@@ -71,11 +71,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1707238373,
-        "narHash": "sha256-WKxT0yLzWbFZwYi92lI0yWJpYtRaFSWHGX8QXzejapw=",
+        "lastModified": 1707978831,
+        "narHash": "sha256-UblFdWQ2MMZNzD9C/w8+7RjAJ2QIbebbzHUniQ/a44o=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "fb0c047e30b69696acc42e669d02452ca1b55755",
+        "rev": "c68a9fc85c2cb3a313be6ff40511635544dde8da",
         "type": "github"
       },
       "original": {
@@ -88,11 +88,11 @@
     "openzeppelin-contracts": {
       "flake": false,
       "locked": {
-        "lastModified": 1707297625,
-        "narHash": "sha256-lBQ8ToR+O6NS7ZSG0OCAjhW5rvlCplgzugE+wZC/c4E=",
+        "lastModified": 1708040448,
+        "narHash": "sha256-j8NCevyZPBsSzKpP+NDrLtDqgpFqvDfzA1fvv2TM2Co=",
         "owner": "OpenZeppelin",
         "repo": "openzeppelin-contracts",
-        "rev": "17a8955cd8ed2c9a269421a11c2e2774b796e305",
+        "rev": "96e5c0830a83b61197dd4e29df59cb56499600ef",
         "type": "github"
       },
       "original": {
@@ -108,6 +108,7 @@
         "foundry": "foundry",
         "nixpkgs": "nixpkgs",
         "openzeppelin-contracts": "openzeppelin-contracts",
+        "uniswap": "uniswap",
         "utils": "utils"
       }
     },
@@ -124,6 +125,24 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "uniswap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1705083322,
+        "narHash": "sha256-af8wzuyoynDkRSel7eWXxmYuJL6TsM4fOp/vAQ5eodk=",
+        "ref": "refs/heads/main",
+        "rev": "41183d6eb154f0ab0e74a0e911a5ef9ea51fc4bd",
+        "revCount": 220,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/uniswap/universal-router.git"
+      },
+      "original": {
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/uniswap/universal-router.git"
       }
     },
     "utils": {
