@@ -1,0 +1,3 @@
+forge-std/=/nix/store/h62n7d08d3yydk515wda1sn5alwd0scf-source/src
+openzeppelin-contracts/=/nix/store/nhkzqlmbxczqlyvb7gbp3w0hflvsqlsw-source/
+ds-test/=/nix/store/kzbay453qngnh77mckqkmpca0vyrrp6f-source/src
