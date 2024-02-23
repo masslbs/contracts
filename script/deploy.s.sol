@@ -12,11 +12,6 @@ contract Deploy is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-        this.create();
-        vm.stopBroadcast();
-    }
-
-    function create() external {
         // need to be the address of the PRIVATE_KEY
         address testAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
         // root hash for the store
@@ -30,6 +25,7 @@ contract Deploy is Script {
         new PaymentFactory{salt: salt}();
         // create a test store
         store.registerStore(1, testAddress, rootHash);
+        vm.stopBroadcast();
     }
 }
 
