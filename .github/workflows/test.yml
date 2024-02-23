@@ -6,6 +6,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    services:
+      anvil:
+        image: ghcr.io/foundry-rs/foundry:latest
+        ports:
+          - 8545:8545
+        options: --entrypoint anvil
+        env:
+          ANVIL_IP_ADDR: 0.0.0.0
     steps:
       - uses: actions/checkout@v4
       - name: Install Nix
@@ -14,3 +22,7 @@ jobs:
       - uses: DeterminateSystems/flake-checker-action@main
       - name: Run Tests
         run: nix develop -c forge test --no-auto-detect
+      - name: build ABIs
+        run: nix build '.#market-build'
+      - name: deploy market to anvil
+        run: nix develop -c deploy-market
