@@ -1,5 +1,4 @@
 name: test
-run-name: ${{ github.actor }} is running Foundry tests
 on: [push]
 jobs:
   solidity-tests:
@@ -29,7 +28,7 @@ jobs:
       - name: check broadcasts
         run: |
           export $(./update_env.sh broadcast/deploy.s.sol/31337/run-latest.json | xargs)
-          test -n "$RELAY_REGISTRY_ADDRESS"
-          test -n "$STORE_REGISTRY_ADDRESS"
-          test -n "$PAYMENT_FACTORY_ADDRESS"
-          test -n "$THIS_SHOULD_FAIL"
+          test -n "$RELAY_REGISTRY_ADDRESS" || { echo "RELAY_REGISTRY_ADDRESS not set"; exit 1; }
+          test -n "$STORE_REGISTRY_ADDRESS" || { echo "STORE_REGISTRY_ADDRESS not set"; exit 1; }
+          test -n "$PAYMENT_FACTORY_ADDRESS" || { echo "PAYMENT_FACTORY_ADDRESS not set"; exit 1; }
+
