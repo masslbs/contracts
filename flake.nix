@@ -62,7 +62,10 @@
           ''
           else ""
         }
-         ${private_key}
+          if [ -z "$PRIVATE_KEY" ]; then
+            echo "PRIVATE_KEY not set, using default"
+            ${private_key}
+          fi
           export FOUNDRY_ROOT=${path}
           export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
           pushd ${path}
