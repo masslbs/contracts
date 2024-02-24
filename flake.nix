@@ -56,8 +56,8 @@
           if immut
           then ''
             tmp=$(mktemp -d)
-            export FOUNDRY_BROADCAST=$tmp
-            export FOUNDRY_CACHE_PATH=$tmp
+            export FOUNDRY_BROADCAST=$tmp/broadcast
+            export FOUNDRY_CACHE_PATH=$tmp/cache
             export FOUNDRY_OUT=$tmp
           ''
           else ""
