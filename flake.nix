@@ -4,7 +4,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     utils.url = "github:numtide/flake-utils";
     foundry = {
-      url = "github:shazow/foundry.nix/monthly";
+      url = "github:shazow/foundry.nix?rev=883243b30a4b8dbb1b515b79b750e2caf7df1a79";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     forge-std = {
