@@ -1,59 +1,150 @@
 import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import "permit2/src/interfaces/IPermit2.sol";
 
-contract Payments  {
+import "./IPayments.sol";
+
+contract Payments is IPayments {
+  // Wrappers around ERC-20 operations that throw on failure (when the token
+  // contract returns false). Tokens that return no value (and instead revert or
+  // throw on failure) are also supported, non-reverting calls are assumed to be
+  // successful.
   using SafeERC20 for IERC20;
 
   // a map of payment status indexed by the receipt hash
-  mapping(bytes32 => bool) public payments;
+  IPermit2 public immutable permit2;
 
-  // a struct to hold the payment details
-  payment struct {
-    uint256 ttl;          // deadline for the payment (block.timestamp)
-    bytes32 receipt;      // hash of the order details
-    address currency;     // address of the ERC20 token to be transferred
-    uint256 amount;       // amount of tokens to be transferred
-    address receiver;     // address that will receive the payment
-    bytes   receiverData; // data to be sent to the payoutAddress if it is a contract
-    // signature of a merchant's relay or signer
-    uint8 v;
-    bytes32 r;
-    bytes32 s;
+  constructor(
+    address _permit2
+  ) {
+    permit2 = IPermit2(_permit2);
+  }
+  // @inheritdoc IPayments
+  function payNative(
+    PaymentIntent calldata payment
+  ) external payable
+  {
+    require(block.timestamp <= payment.ttl, "Payment has expired");
+    require(msg.value == payment.amount, "Invalid payment amount");
+    payment.payee.transfer(msg.value);
   }
 
-  function makePayment(payment memory p) public {
-    require(p.ttl >= block.timestamp, "Payment has expired");
+  // @inheritdoc IPayments
+  function payToken (
+    PaymentIntent calldata payment,
+    bytes calldata permit2signature
+  ) external 
+  {
+    require(block.timestamp <= payment.ttl, "Payment has expired");
+  }
 
-    // transfer the ERC20 tokens to the merchant
-    IERC20(p.currency).transfer(p.merchant, p.amount);
+  // @inheritdoc IPayments
+  function payTokenPreAppoved (
+    PaymentIntent calldata payment,
+    address paymentToken
+  ) external 
+  {
+    require(block.timestamp <= payment.ttl, "Payment has expired");
+    IERC20(paymentToken).safeTransferFrom(msg.sender, payment.payee, payment.amount);
+  }
 
-    // if there is reciever data, call the receiver
-    if (p.receiverData.length > 0) {
-      (bool success, ) = p.merchant.call(p);
-      require(success, "Receiver call failed");
+  // @inheritdoc IPayments
+  function swapNativeAndPay(
+    PaymentIntent calldata payment
+  ) external payable 
+  {
+    require(block.timestamp <= payment.ttl, "Payment has expired");
+    require(msg.value == payment.amount, "Invalid payment amount");
+    payment.payee.transfer(msg.value);
+  }
+
+  // @inheritdoc IPayments
+  function swapTokenAndPay(
+    PaymentIntent calldata payment,
+    bytes calldata permit2signature
+  ) external 
+  {
+    require(block.timestamp <= payment.ttl, "Payment has expired");
+  }
+
+  // @inheritdoc IPayments
+  function swapTokenAndPayPreAppoved(
+    PaymentIntent calldata payment,
+    address paymentToken
+  ) external 
+  {
+    require(block.timestamp <= payment.ttl, "Payment has expired");
+    IERC20(paymentToken).safeTransferFrom(msg.sender, payment.payee, payment.amount);
+  }
+
+  // @inheritdoc IPayments
+  function multiPayNative(
+    PaymentIntent[] calldata payments
+  ) external payable
+  {
+    for (uint i = 0; i < payments.length; i++) {
+      require(block.timestamp <= payments[i].ttl, "Payment has expired");
+      require(msg.value == payments[i].amount, "Invalid payment amount");
+      payments[i].payee.transfer(msg.value);
     }
-
-    // send any remaining tokens to the sender
-    IERC20(p.currency).transfer(p.sender, IERC20(p.currency).balanceOf(address(this)));
-
-    // just need to hash signature 
-    bytes32 paymentHash = keccak256(abi.encodePacked(p.v, p.s, p.amount, p.r));
-
-    // mark the payment as completed
-    payments[paymentHash] = true;
   }
-}
 
-contract Escrow {
-  constructor(address arbiter, address merchant, address refund, address currency, uint256 amount, uint256 paymentId) {
-    let results = arbiter.call(abi.encodeWithSignature("isReleased(address,address,address,uint256,uint256)", merchant, currency, amount, paymentId));
-    if (results) {
-      // release the funds to the merchant
-      IERC20(currency).transfer(merchant, amount);
-    } else {
-      // refund the customer
-      IERC20(currency).transfer(refund, amount);
-      // 
+  // @inheritdoc IPayments
+  function multiPayToken(
+    PaymentIntent[] calldata payments,
+    bytes calldata permit2signature
+  ) external 
+  {
+    for (uint i = 0; i < payments.length; i++) {
+      require(block.timestamp <= payments[i].ttl, "Payment has expired");
+    }
+  }
+
+  // @inheritdoc IPayments
+  function multiPayTokenPreAppoved(
+    PaymentIntent[] calldata payments
+  ) external 
+  {
+    for (uint i = 0; i < payments.length; i++) {
+      require(block.timestamp <= payments[i].ttl, "Payment has expired");
+      IERC20(payments[i].currency).safeTransferFrom(msg.sender, payments[i].payee, payments[i].amount);
+    }
+  }
+
+  // @inheritdoc IPayments
+  function multiSwapAndPayNative(
+    PaymentIntent[] calldata payments,
+    address paymentToken
+  ) external payable
+  {
+    for (uint i = 0; i < payments.length; i++) {
+      require(block.timestamp <= payments[i].ttl, "Payment has expired");
+      require(msg.value == payments[i].amount, "Invalid payment amount");
+      payments[i].payee.transfer(msg.value);
+    }
+  }
+
+  // @inheritdoc IPayments
+  function multiSwapAndPayToken(
+    PaymentIntent[] calldata payments,
+    address paymentToken,
+    bytes calldata permit2signature
+  ) external 
+  {
+    for (uint i = 0; i < payments.length; i++) {
+      require(block.timestamp <= payments[i].ttl, "Payment has expired");
+    }
+  }
+
+  // @inheritdoc IPayments
+  function multiSwapAndPayTokenPreAppoved(
+    PaymentIntent[] calldata payments,
+    address paymentToken
+  ) external 
+  {
+    for (uint i = 0; i < payments.length; i++) {
+      require(block.timestamp <= payments[i].ttl, "Payment has expired");
+      IERC20(paymentToken).safeTransferFrom(msg.sender, payments[i].payee, payments[i].amount);
     }
   }
 }

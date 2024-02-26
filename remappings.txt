@@ -1,7 +1,5 @@
 forge-std/=/nix/store/lyh9x490nf7ywv9f1rx8y8798x68p7lj-source/src
 openzeppelin-contracts/=/nix/store/g7mlyg4l0pzfn824z7pki796rp1mccdl-source/
 ds-test/=/nix/store/kzbay453qngnh77mckqkmpca0vyrrp6f-source/src
-uniswap/=/nix/store/nl034h8k8mjgj5lldskrr33xcrfr9k61-source
-solmate/=/nix/store/nl034h8k8mjgj5lldskrr33xcrfr9k61-source/solmate/
-permit2/=/nix/store/nl034h8k8mjgj5lldskrr33xcrfr9k61-source/permit2/
+permit2/=/nix/store/l2978rqjc9gaigqigyba3k79sgvslf3c-source/
 @openzeppelin/=/nix/store/g7mlyg4l0pzfn824z7pki796rp1mccdl-source/

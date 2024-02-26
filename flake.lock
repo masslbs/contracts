@@ -101,6 +101,24 @@
         "type": "github"
       }
     },
+    "permit2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1696001773,
+        "narHash": "sha256-4B6aUQQRzpLiaK1J9bCdB30FDXYc2paDWD9rS2YEuj0=",
+        "ref": "refs/heads/main",
+        "rev": "cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
+        "revCount": 184,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/uniswap/permit2.git"
+      },
+      "original": {
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/uniswap/permit2.git"
+      }
+    },
     "root": {
       "inputs": {
         "ds-tests": "ds-tests",
@@ -108,7 +126,7 @@
         "foundry": "foundry",
         "nixpkgs": "nixpkgs",
         "openzeppelin-contracts": "openzeppelin-contracts",
-        "uniswap": "uniswap",
+        "permit2": "permit2",
         "utils": "utils"
       }
     },
@@ -125,24 +143,6 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
-      }
-    },
-    "uniswap": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1705083322,
-        "narHash": "sha256-af8wzuyoynDkRSel7eWXxmYuJL6TsM4fOp/vAQ5eodk=",
-        "ref": "refs/heads/main",
-        "rev": "41183d6eb154f0ab0e74a0e911a5ef9ea51fc4bd",
-        "revCount": 220,
-        "submodules": true,
-        "type": "git",
-        "url": "https://github.com/uniswap/universal-router.git"
-      },
-      "original": {
-        "submodules": true,
-        "type": "git",
-        "url": "https://github.com/uniswap/universal-router.git"
       }
     },
     "utils": {
