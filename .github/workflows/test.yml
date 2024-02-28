@@ -1,11 +1,18 @@
 name: test
-run-name: ${{ github.actor }} is running Foundry tests
 on: [push]
 jobs:
   solidity-tests:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    services:
+      anvil:
+        image: ghcr.io/foundry-rs/foundry:latest
+        ports:
+          - 8545:8545
+        options: --entrypoint anvil
+        env:
+          ANVIL_IP_ADDR: 0.0.0.0
     steps:
       - uses: actions/checkout@v4
       - name: Install Nix
@@ -14,3 +21,14 @@ jobs:
       - uses: DeterminateSystems/flake-checker-action@main
       - name: Run Tests
         run: nix develop -c forge test --no-auto-detect
+      - name: build ABIs
+        run: nix build '.#market-build'
+      - name: deploy market to anvil
+        run: nix develop -c deploy-market
+      - name: check broadcasts
+        run: |
+          export $(./update_env.sh broadcast/deploy.s.sol/31337/run-latest.json | xargs)
+          test -n "$RELAY_REGISTRY_ADDRESS" || { echo "RELAY_REGISTRY_ADDRESS not set"; exit 1; }
+          test -n "$STORE_REGISTRY_ADDRESS" || { echo "STORE_REGISTRY_ADDRESS not set"; exit 1; }
+          test -n "$PAYMENT_FACTORY_ADDRESS" || { echo "PAYMENT_FACTORY_ADDRESS not set"; exit 1; }
+
