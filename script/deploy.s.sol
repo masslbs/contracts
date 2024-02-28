@@ -5,6 +5,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 import "../src/store-reg.sol";
 import "../src/relay-reg.sol";
+import "../src/payment-factory.sol";
 
 contract Deploy is Script {
     bytes32 salt = bytes32(uint256(1));
@@ -21,6 +22,7 @@ contract Deploy is Script {
         // deploy store registary
         StoreReg store = new StoreReg{salt: salt}(relayReg);
         // create the payment factory
+        new PaymentFactory{salt: salt}();
         // create a test store
         store.registerStore(1, testAddress, rootHash);
         vm.stopBroadcast();
@@ -43,6 +45,8 @@ contract TestingDeploy is Script {
         RelayReg relayReg = new RelayReg{salt: salt}();
         // deploy store registary
         StoreReg store = new StoreReg{salt: salt}(relayReg);
+        // create the payment factory
+        new PaymentFactory{salt: salt}();
         // create a test store
         store.registerStore(1, testAddress, rootHash);
         new EuroDollarToken("Eddies", "EDD");
