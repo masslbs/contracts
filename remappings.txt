@@ -4,5 +4,3 @@ ds-test/=/nix/store/kzbay453qngnh77mckqkmpca0vyrrp6f-source/src
 @openzeppelin/=/nix/store/3m7b9qmn2gikg05w9vxshglv6b9n7d2x-source/
 permit2/=/nix/store/l2978rqjc9gaigqigyba3k79sgvslf3c-source/
 solmate=/nix/store/f0z4bmzqz8phsmxa6c5lj3x6swjqixxy-source/
-uniswap-v3-periphery=/nix/store/5vvk3lshl01zp44h7m0cs8fxq3f89kjf-source/
-@uniswap/v3-core=/nix/store/054lh1k1qd3cav0wmi8dyj503rcikifz-source/

@@ -128,8 +128,6 @@
         "openzeppelin-contracts": "openzeppelin-contracts",
         "permit2": "permit2",
         "solmate": "solmate",
-        "uniswap-v3-core": "uniswap-v3-core",
-        "uniswap-v3-periphery": "uniswap-v3-periphery",
         "utils": "utils"
       }
     },
@@ -161,38 +159,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
-        "type": "github"
-      }
-    },
-    "uniswap-v3-core": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1678998271,
-        "narHash": "sha256-CZyaNK9I+IOh7wAHALKApsO/3eQal7lGAVfSGX36/Ck=",
-        "owner": "uniswap",
-        "repo": "v3-core",
-        "rev": "d8b1c635c275d2a9450bd6a78f3fa2484fef73eb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "uniswap",
-        "repo": "v3-core",
-        "type": "github"
-      }
-    },
-    "uniswap-v3-periphery": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1695833468,
-        "narHash": "sha256-i86Th1Qy1IbihxiFy0uY1XUjwVTXQIJLurYDAU6JDOw=",
-        "owner": "uniswap",
-        "repo": "v3-periphery",
-        "rev": "697c2474757ea89fec12a4e6db16a574fe259610",
-        "type": "github"
-      },
-      "original": {
-        "owner": "uniswap",
-        "repo": "v3-periphery",
         "type": "github"
       }
     },

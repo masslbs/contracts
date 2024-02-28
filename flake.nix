@@ -27,14 +27,6 @@
       url = "git+https://github.com/uniswap/permit2.git?submodules=1";
       flake = false;
     };
-    uniswap-v3-periphery = {
-      url = "github:uniswap/v3-periphery";
-      flake = false;
-    };
-    uniswap-v3-core = {
-      url = "github:uniswap/v3-core";
-      flake = false;
-    };
   };
 
   outputs = {
@@ -46,8 +38,6 @@
     ds-tests,
     permit2,
     solmate,
-    uniswap-v3-periphery,
-    uniswap-v3-core,
     self, # This is the output of the flake itself, e.g. the location in nix/store of the source code
     ...
   }:
@@ -108,8 +98,6 @@
         @openzeppelin/=${openzeppelin-contracts}/
         permit2/=${permit2}/
         solmate=${solmate}/
-        uniswap-v3-periphery=${uniswap-v3-periphery}/
-        @uniswap/v3-core=${uniswap-v3-core}/
       '';
       remappings = pkgs.writeText "remapping.txt" remappings-txt;
     in {
