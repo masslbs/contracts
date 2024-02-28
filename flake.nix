@@ -19,8 +19,20 @@
       url = "github:dapphub/ds-test";
       flake = false;
     };
+    solmate = {
+      url = "github:transmissions11/solmate";
+      flake = false;
+    };
     permit2 = {
       url = "git+https://github.com/uniswap/permit2.git?submodules=1";
+      flake = false;
+    };
+    uniswap-v3-periphery = {
+      url = "github:uniswap/v3-periphery";
+      flake = false;
+    };
+    uniswap-v3-core = {
+      url = "github:uniswap/v3-core";
       flake = false;
     };
   };
@@ -33,6 +45,9 @@
     openzeppelin-contracts,
     ds-tests,
     permit2,
+    solmate,
+    uniswap-v3-periphery,
+    uniswap-v3-core,
     self, # This is the output of the flake itself, e.g. the location in nix/store of the source code
     ...
   }:
@@ -90,8 +105,11 @@
         forge-std/=${forge-std}/src
         openzeppelin-contracts/=${openzeppelin-contracts}/
         ds-test/=${ds-tests}/src
-        permit2/=${permit2}/
         @openzeppelin/=${openzeppelin-contracts}/
+        permit2/=${permit2}/
+        solmate=${solmate}/
+        uniswap-v3-periphery=${uniswap-v3-periphery}/
+        @uniswap/v3-core=${uniswap-v3-core}/
       '';
       remappings = pkgs.writeText "remapping.txt" remappings-txt;
     in {
