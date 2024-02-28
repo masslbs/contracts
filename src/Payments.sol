@@ -32,9 +32,10 @@ contract Payments is IPayments {
         if(payment.currency != ETH) revert InvalidPaymentToken();
         if(block.timestamp > payment.ttl) revert PaymentExpired();
         if(msg.value != payment.amount)   revert InvalidPaymentAmount();
-        // this also prevent reentrancy so it must come before the transfer
+        // this also prevents reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
         // call the fallback function
+        // TODO: it might make sense to check payeeAddress.code.length > 0 to save gas
         (bool success, ) = payment.payee.payeeAddress.call(abi.encode(payment));
         if(!success) revert PayeeRefusedPayment();
     }
@@ -44,6 +45,7 @@ contract Payments is IPayments {
         PaymentIntent calldata payment
     ) public 
     {
+        _usePaymentIntent(msg.sender, payment);
         // do a permit2 transfer
         permit2.permitTransferFrom(
             ISignatureTransfer.PermitTransferFrom({
@@ -58,7 +60,7 @@ contract Payments is IPayments {
                 requestedAmount: payment.amount,
                 to: payment.payee.payeeAddress
             }),
-            msg.sender, // TODO: get send from signature
+            msg.sender, 
             payment.permit2signature
         );
         (bool success, ) = payment.payee.payeeAddress.call(abi.encode(payment));
@@ -100,6 +102,11 @@ contract Payments is IPayments {
         for (uint i = 0; i < payments.length; i++) {
             pay(payments[i]);
         }
+    }
+
+    function hasPaymentBeenMade(address from, PaymentIntent calldata payment) public view returns (bool) {
+        (uint256 wordPos, uint256 bitPos) = bitmapPositions(payment);
+        return paymentBitmap[from][wordPos] & (1 << bitPos) != 0;
     }
 
     // @inheritdoc IPayments

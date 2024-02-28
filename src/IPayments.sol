@@ -30,7 +30,7 @@ struct PaymentIntent {
 
 
 // @title The Payments Contract
-// @notice Function for making payments and swapping tokens
+// @notice The Payments Contract validates a PaymentIntent and forwards the payment to the payee.
 interface IPayments {
   error PaymentExpired();
   error InvalidPaymentAmount();
