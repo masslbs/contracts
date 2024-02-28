@@ -38,7 +38,6 @@ interface IPayments {
   error PaymentAlreadyMade();
   error PayeeRefusedPayment();
 
-
   // @notice Makes a payment in native currency
   // @param PaymentIntent The payment details
   function payNative(
@@ -70,9 +69,18 @@ interface IPayments {
   ) external payable;
 
   // @notice Returns the id (hash) of the payment details
+  // @param payment The payment details
   function getPaymentId(
     PaymentIntent calldata payment
   ) external pure returns (uint256);
+
+  // @notice Returns whether a payment has been made
+  // @param from The address to use to make the payment
+  // @param payment The payment details
+  function hasPaymentBeenMade(
+    address from,
+    PaymentIntent calldata payment
+  ) external view returns (bool);
 
   // // @notice Swaps tokens and makes a payment
   // // @param payment The payment details

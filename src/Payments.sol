@@ -23,7 +23,6 @@ contract Payments is IPayments {
         permit2 = IPermit2(_permit2);
     }
 
-
     // @inheritdoc IPayments
     function payNative(
         PaymentIntent calldata payment
@@ -104,6 +103,7 @@ contract Payments is IPayments {
         }
     }
 
+    // @inheritdoc IPayments
     function hasPaymentBeenMade(address from, PaymentIntent calldata payment) public view returns (bool) {
         (uint256 wordPos, uint256 bitPos) = bitmapPositions(payment);
         return paymentBitmap[from][wordPos] & (1 << bitPos) != 0;
