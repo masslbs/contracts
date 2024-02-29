@@ -35,7 +35,7 @@ contract StoreReg is ERC721 {
         return relayReg.relayURIs(relays[id][0]);
     }
 
-    function registerStore(uint256 storeId, address owner, bytes32 rootHash) public {
+    function mint(uint256 storeId, address owner, bytes32 rootHash) public {
         // safe mint checks if id is taken
         _safeMint(owner, storeId);
         // update the hash

@@ -21,11 +21,11 @@ contract StoreTest is Test {
     }
 
     function testFailMintZeroAddress() public {
-        stores.registerStore(storeId, address(0), testHash);
+        stores.mint(storeId, address(0), testHash);
     }
 
     function testNewMintOwnerRegistered() public {
-        stores.registerStore(storeId, address(1), testHash);
+        stores.mint(storeId, address(1), testHash);
         uint256 slotOfNewOwner = stdstore
             .target(address(stores))
             .sig(stores.ownerOf.selector)
@@ -41,7 +41,7 @@ contract StoreTest is Test {
     }
 
     function testBalanceIncremented() public {
-        stores.registerStore(storeId, address(1), testHash);
+        stores.mint(storeId, address(1), testHash);
         uint256 slotBalance = stdstore
             .target(address(stores))
             .sig(stores.balanceOf.selector)
@@ -53,7 +53,7 @@ contract StoreTest is Test {
         );
         assertEq(balanceFirstMint, 1);
 
-        stores.registerStore(storeId+1, address(1), testHash);
+        stores.mint(storeId+1, address(1), testHash);
         uint256 balanceSecondMint = uint256(
             vm.load(address(stores), bytes32(slotBalance))
         );
@@ -63,7 +63,7 @@ contract StoreTest is Test {
     function testFail_accesControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
-        stores.registerStore(storeId, owner, testHash);
+        stores.mint(storeId, owner, testHash);
         stores.updateRootHash(storeId, testHashUpdate);
         assertEq(testHashUpdate, stores.rootHashes(storeId));
     }
@@ -71,7 +71,7 @@ contract StoreTest is Test {
     function test_accesControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
-        stores.registerStore(storeId, owner, testHash);
+        stores.mint(storeId, owner, testHash);
         vm.prank(owner);
         stores.updateRootHash(storeId, testHashUpdate);
         assertEq(testHashUpdate, stores.rootHashes(storeId));
@@ -80,10 +80,10 @@ contract StoreTest is Test {
     function test_accesControl_fromRelay() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
-        stores.registerStore(storeId, owner, testHash);
+        stores.mint(storeId, owner, testHash);
         address relayAddr = address(42);
         uint256 relayId = 23;
-        relays.registerRelay(relayId, relayAddr, "https://smthing.somewhere");
+        relays.mint(relayId, relayAddr, "https://smthing.somewhere");
         vm.prank(owner);
         uint256[] memory newRelays = new uint256[](1);
         newRelays[0] = relayId;
@@ -104,7 +104,7 @@ contract StoreTest is Test {
 
     function testSafeContractReceiver() public {
         Receiver receiver = new Receiver();
-        stores.registerStore(storeId, address(receiver), testHash);
+        stores.mint(storeId, address(receiver), testHash);
         uint256 slotBalance = stdstore
             .target(address(stores))
             .sig(stores.balanceOf.selector)

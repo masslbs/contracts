@@ -24,7 +24,7 @@ contract Deploy is Script {
         // create the payment factory
         new PaymentFactory{salt: salt}();
         // create a test store
-        store.registerStore(1, testAddress, rootHash);
+        store.mint(1, testAddress, rootHash);
         vm.stopBroadcast();
     }
 }
@@ -48,7 +48,7 @@ contract TestingDeploy is Script {
         // create the payment factory
         new PaymentFactory{salt: salt}();
         // create a test store
-        store.registerStore(1, testAddress, rootHash);
+        store.mint(1, testAddress, rootHash);
         new EuroDollarToken("Eddies", "EDD", 2);
         vm.stopBroadcast();
     }

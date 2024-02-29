@@ -19,7 +19,7 @@ contract RelayReg is ERC721 {
         return "RR";
     }
 
-    function registerRelay(uint256 newRelayId, address relay, string memory uri) public
+    function mint(uint256 newRelayId, address relay, string memory uri) public
     {
         _mint(relay, newRelayId);
         relayURIs[newRelayId] = uri;
