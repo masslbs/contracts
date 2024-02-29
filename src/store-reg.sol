@@ -15,7 +15,7 @@ contract StoreReg is ERC721 {
     mapping(uint256 storeid => bytes32) public rootHashes;
     mapping(uint256 storeid => uint256[]) public relays;
     mapping(uint256 storeid => mapping(address storeuser => AccessLevel)) public storesToUsers;
-    mapping(uint160 storeid => LibBitmap.Bitmap) private storesToRegistrationTokens;
+    mapping(uint160 storeid => LibBitmap.Bitmap) private invites;
 
     constructor(RelayReg r) ERC721() {
         relayReg = r;
@@ -119,7 +119,7 @@ contract StoreReg is ERC721 {
         requireOnlyAdminOrHigher(storeId, msg.sender);
         uint256 tokenId = uint256(uint160(token));
         // todo: make sure the bitshifts are correct
-        storesToRegistrationTokens[uint160(storeId >> 96)].set(storeId << 160 & tokenId); 
+        invites[uint160(storeId >> 96)].set(storeId << 160 & tokenId); 
     }
 
     // redeem one of the registration tokens. (v,r,s) are the signature
@@ -130,14 +130,13 @@ contract StoreReg is ERC721 {
         // check signature
         address recovered = ecrecover(getTokenMessageHash(user), v, r, s);
         uint160 _storeId = uint160(storeId >> 96);
-        uint256 tokenId = storeId << 160 & uint256(uint160(recovered));
-        bool isAllowed = storesToRegistrationTokens[_storeId].get(tokenId);
+        uint256 invite = storeId << 160 & uint256(uint160(recovered));
+        bool isAllowed = invites[_storeId].get(invite);
         require(isAllowed, "no such token");
-        storesToRegistrationTokens[_storeId].unset(tokenId);
+        invites[_storeId].unset(invite);
         // register the new user
         storesToUsers[storeId][user] = AccessLevel.Clerk;
     }
-
 
     // manually add user, identified by their wallet addr, to the store
     function registerUser(uint256 storeId, address addr, AccessLevel acl) public {
