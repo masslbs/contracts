@@ -104,6 +104,17 @@ contract Payments is IPayments {
     }
 
     // @inheritdoc IPayments
+    function revertPayment(address from, PaymentIntent calldata payment) public {
+        if(msg.sender != payment.payee.payeeAddress) revert NotPayee();
+        if(!payment.payee.canRevert) revert RevertNotAllowed();
+        (uint256 wordPos, uint256 bitPos) = bitmapPositions(payment);
+        if(paymentBitmap[from][wordPos] & (1 << bitPos) == 0) revert PaymentNotMade();
+
+        uint256 bit = 1 << bitPos;
+        paymentBitmap[msg.sender][wordPos] ^= bit;
+    }
+
+    // @inheritdoc IPayments
     function hasPaymentBeenMade(address from, PaymentIntent calldata payment) public view returns (bool) {
         (uint256 wordPos, uint256 bitPos) = bitmapPositions(payment);
         return paymentBitmap[from][wordPos] & (1 << bitPos) != 0;

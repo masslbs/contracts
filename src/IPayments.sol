@@ -6,6 +6,7 @@ pragma solidity ^0.8.21;
 struct PaymentEndpoint {
   address payeeAddress;
   bytes payload;
+  bool canRevert;
 }
 
 // @notice a struct to hold the payment details
@@ -37,6 +38,10 @@ interface IPayments {
   error InvalidPaymentToken();
   error PaymentAlreadyMade();
   error PayeeRefusedPayment();
+  // used to revert payments
+  error PaymentNotMade();
+  error NotPayee();
+  error RevertNotAllowed();
 
   // @notice Makes a payment in native currency
   // @param PaymentIntent The payment details

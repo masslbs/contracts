@@ -29,7 +29,7 @@ contract Deploy is Script {
     }
 }
 
-import "../src/testing-eddies.sol";
+import {MockERC20 as EuroDollarToken} from "solmate/src/test/utils/mocks/MockERC20.sol";
 contract TestingDeploy is Script {
     bytes32 salt = bytes32(uint256(1));
 
@@ -49,7 +49,7 @@ contract TestingDeploy is Script {
         new PaymentFactory{salt: salt}();
         // create a test store
         store.registerStore(1, testAddress, rootHash);
-        new EuroDollarToken("Eddies", "EDD");
+        new EuroDollarToken("Eddies", "EDD", 2);
         vm.stopBroadcast();
     }
 }
