@@ -1,22 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.21;
 
-import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import { ERC721 } from "solmate/src/tokens/ERC721.sol";
 
-contract RelayReg is ERC721URIStorage {
+contract RelayReg is ERC721 {
     uint256 private _relayIds;
 
     constructor() ERC721("RelayReg", "MMRR") {}
+    mapping(uint256 => string) public relayURIs;
 
     function registerRelay(uint256 newRelayId, address relay, string memory uri) public
     {
-        _safeMint(relay, newRelayId);
-        _setTokenURI(newRelayId, uri);
+        _mint(relay, newRelayId);
+        relayURIs[newRelayId] = uri;
     }
 
     function updateURI(uint256 relayId, string memory uri) public
     {
-         require(_ownerOf(relayId) == _msgSender(), "NOT_AUTHORIZED");
-        _setTokenURI(relayId, uri);
+         require(ownerOf(relayId) == msg.sender, "NOT_AUTHORIZED");
+        relayURIs[relayId] = uri;
+    }
+
+    function tokenURI(uint256 id) public view virtual override returns (string memory) {
+        return relayURIs[id];
     }
 }

@@ -87,19 +87,16 @@ contract StoreTest is Test {
         vm.prank(owner);
         uint256[] memory newRelays = new uint256[](1);
         newRelays[0] = relayId;
-        stores.updateRelays(storeId, newRelays);
+        stores.addRelay(storeId, relayId);
         uint256 wantCount = 1;
         uint256 count = stores.getRelayCount(storeId);
         assertEq(count, wantCount);
-        uint256[] memory gotRelays = stores.getAllRelays(storeId);
-        assertEq(gotRelays.length, wantCount);
-        assertEq(gotRelays[0], relayId);
         vm.prank(relayAddr);
         stores.updateRootHash(storeId, testHashUpdate);
         assertEq(testHashUpdate, stores.rootHashes(storeId));
         // now remove relay and check it cant change rootHash
         vm.prank(owner);
-        stores.updateRelays(storeId, new uint256[](0));
+        stores.removeRelay(storeId, 0);
         vm.expectRevert("access denied");
         vm.prank(relayAddr);
         stores.updateRootHash(storeId, testHashUpdate);

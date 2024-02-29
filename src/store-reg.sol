@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.21;
 
-import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+import { ERC721 } from "solmate/src/tokens/ERC721.sol";
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import "./relay-reg.sol";
 
@@ -12,12 +12,17 @@ contract StoreReg is ERC721 {
 
     // info per store
     mapping(uint256 => bytes32) public rootHashes;
-    mapping(uint256 => uint256[]) internal relays;
+    mapping(uint256 => uint256[]) public relays;
     mapping(uint256 => mapping(address => AccessLevel)) public storesToUsers;
+    // TODO: make this a bit map
     mapping(uint256 => mapping(address => bool)) public storesToRegistrationTokens;
 
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
+    }
+
+    function tokenURI(uint256 id) public view virtual override returns (string memory) {
+        return relayReg.relayURIs(relays[id][0]);
     }
 
     function registerStore(uint256 storeId, address owner, bytes32 rootHash) public {
@@ -40,14 +45,25 @@ contract StoreReg is ERC721 {
         return relays[storeId].length;
     }
 
-    function getAllRelays(uint256 storeId) public view returns (uint256[] memory) {
-        require(getRelayCount(storeId) > 0, "no relays configured");
-        return relays[storeId];
+    function addRelay(uint256 storeId, uint256 relayId) public {
+        requireOnlyAdminOrHigher(storeId, msg.sender);
+        relays[storeId].push(relayId);
     }
 
-    function updateRelays(uint256 storeId, uint256[] memory _relays) public {
+    function replaceRelay(uint256 storeId,  uint8 idx, uint256 relayId) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
-        relays[storeId] = _relays;
+        relays[storeId][idx] = relayId;
+    }
+
+    function removeRelay(uint256 storeId, uint8 idx) public {
+        requireOnlyAdminOrHigher(storeId, msg.sender);
+        uint last = relays[storeId].length - 1;
+        if(last == idx) {
+            relays[storeId].pop();
+        } else {
+            relays[storeId][idx] = relays[storeId][last];
+            relays[storeId].pop();
+        }
     }
 
     // access control
@@ -65,10 +81,8 @@ contract StoreReg is ERC721 {
     }
 
     function _checkIsOwner(uint256 storeId) view internal returns (bool) {
-         address owner = _ownerOf(storeId);
-         return _msgSender() == owner ||
-            isApprovedForAll(owner, msg.sender) ||
-            _msgSender() == getApproved(storeId);
+         address owner = ownerOf(storeId);
+         return msg.sender == owner;
     }
 
     function requireIsOwner(uint256 storeId) view internal {
@@ -131,7 +145,7 @@ contract StoreReg is ERC721 {
 
     function hasAtLeastAccess(uint256 storeId, address addr, AccessLevel want) public view returns (bool) {
         AccessLevel has = storesToUsers[storeId][addr];
-        address owner = _ownerOf(storeId);
+        address owner = ownerOf(storeId);
         if (want == AccessLevel.Clerk) {
             return has != AccessLevel.Zero || owner == addr;
         } else if (want == AccessLevel.Admin) {
