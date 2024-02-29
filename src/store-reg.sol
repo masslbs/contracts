@@ -54,6 +54,10 @@ contract StoreReg is ERC721 {
         return relays[storeId].length;
     }
 
+    function getAllRelays(uint256 storeId) public view returns (uint256[] memory) {
+        return relays[storeId];
+    }
+
     function addRelay(uint256 storeId, uint256 relayId) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
         relays[storeId].push(relayId);
