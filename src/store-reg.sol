@@ -10,12 +10,11 @@ enum AccessLevel { Zero, Clerk, Admin, Owner } // note: currently owner is not r
 contract StoreReg is ERC721 {
     RelayReg public relayReg;
 
-    // info per store
-    mapping(uint256 => bytes32) public rootHashes;
-    mapping(uint256 => uint256[]) public relays;
-    mapping(uint256 => mapping(address => AccessLevel)) public storesToUsers;
+    mapping(uint256 storeid => bytes32) public rootHashes;
+    mapping(uint256 storeid => uint256[]) public relays;
+    mapping(uint256 storeid => mapping(address storeuser => AccessLevel)) public storesToUsers;
     // TODO: make this a bit map
-    mapping(uint256 => mapping(address => bool)) public storesToRegistrationTokens;
+    mapping(uint256 storeid => mapping(address token => bool)) public storesToRegistrationTokens;
 
     constructor(RelayReg r) ERC721("Store", "MMSR") {
         relayReg = r;
@@ -33,14 +32,13 @@ contract StoreReg is ERC721 {
     }
 
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        require(hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk)
-            || _checkIsConfiguredRelay(storeId),
+        require(_checkIsConfiguredRelay(storeId) 
+            || hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk),
             "access denied");
         rootHashes[storeId] = hash;
     }
 
     // relay config things
-
     function getRelayCount(uint256 storeId) public view returns (uint256) {
         return relays[storeId].length;
     }
@@ -58,19 +56,17 @@ contract StoreReg is ERC721 {
     function removeRelay(uint256 storeId, uint8 idx) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
         uint last = relays[storeId].length - 1;
-        if(last == idx) {
-            relays[storeId].pop();
-        } else {
+        if(last != idx) {
             relays[storeId][idx] = relays[storeId][last];
-            relays[storeId].pop();
         }
+        relays[storeId].pop();
     }
 
     // access control
 
     function _checkIsConfiguredRelay(uint256 storeId) internal view returns (bool) {
-        uint256[] memory allRelays = relays[storeId];
-        for (uint256 index = 0; index < allRelays.length; index++) {
+        uint[] storage allRelays = relays[storeId];
+        for (uint index = 0; index < allRelays.length; index++) {
             uint256 relayId = allRelays[index];
             address relayAddr = relayReg.ownerOf(relayId);
             if (relayAddr == msg.sender) {
