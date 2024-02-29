@@ -1,23 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.21;
 
-import { ERC721 } from "solmate/src/tokens/ERC721.sol";
+import { ERC721 } from "solady/src/tokens/ERC721.sol";
+import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import "./relay-reg.sol";
 
 enum AccessLevel { Zero, Clerk, Admin, Owner } // note: currently owner is not really used
 
 contract StoreReg is ERC721 {
+    using LibBitmap for LibBitmap.Bitmap;
     RelayReg public relayReg;
 
     mapping(uint256 storeid => bytes32) public rootHashes;
     mapping(uint256 storeid => uint256[]) public relays;
     mapping(uint256 storeid => mapping(address storeuser => AccessLevel)) public storesToUsers;
-    // TODO: make this a bit map
-    mapping(uint256 storeid => mapping(address token => bool)) public storesToRegistrationTokens;
+    mapping(uint160 storeid => LibBitmap.Bitmap) private storesToRegistrationTokens;
 
-    constructor(RelayReg r) ERC721("Store", "MMSR") {
+    constructor(RelayReg r) ERC721() {
         relayReg = r;
+    }
+
+    function name() public pure override returns (string memory)
+    {
+        return "StoreRegestry";
+    }
+
+    function symbol() public pure override returns (string memory)
+    {
+        return "SR";
     }
 
     function tokenURI(uint256 id) public view virtual override returns (string memory) {
@@ -100,21 +111,25 @@ contract StoreReg is ERC721 {
     }
 
     // adds a new one-time use registration token to the store
-    function registrationTokenPublish(uint256 storeId, address token) public {
+    function publishInviteVerifier(uint256 storeId, address token) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
-        storesToRegistrationTokens[storeId][token] = true;
+        uint256 tokenId = uint256(uint160(token));
+        // todo: make sure the bitshifts are correct
+        storesToRegistrationTokens[uint160(storeId >> 96)].set(storeId << 160 & tokenId); 
     }
 
     // redeem one of the registration tokens. (v,r,s) are the signature
-    function regstrationTokenRedeem(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
+    function redeemInvite(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
         // see if user is already registered
         bool hasAlready = hasAtLeastAccess(storeId, user, AccessLevel.Clerk);
         require(!hasAlready, "already registered");
         // check signature
         address recovered = ecrecover(getTokenMessageHash(user), v, r, s);
-        bool isAllowed = storesToRegistrationTokens[storeId][recovered];
+        uint160 _storeId = uint160(storeId >> 96);
+        uint256 tokenId = storeId << 160 & uint256(uint160(recovered));
+        bool isAllowed = storesToRegistrationTokens[_storeId].get(tokenId);
         require(isAllowed, "no such token");
-        delete storesToRegistrationTokens[storeId][recovered];
+        storesToRegistrationTokens[_storeId].unset(tokenId);
         // register the new user
         storesToUsers[storeId][user] = AccessLevel.Clerk;
     }

@@ -127,23 +127,23 @@
         "nixpkgs": "nixpkgs",
         "openzeppelin-contracts": "openzeppelin-contracts",
         "permit2": "permit2",
-        "solmate": "solmate",
+        "solady": "solady",
         "utils": "utils"
       }
     },
-    "solmate": {
+    "solady": {
       "flake": false,
       "locked": {
-        "lastModified": 1705386494,
-        "narHash": "sha256-XLgPL3YPPMuQxqVkBZt3c3wAXB8XkpnQuXIZAABmm8g=",
-        "owner": "transmissions11",
-        "repo": "solmate",
-        "rev": "c892309933b25c03d32b1b0d674df7ae292ba925",
+        "lastModified": 1709040630,
+        "narHash": "sha256-cBdl2y5lYwjgkZpj13X+5Ml5Awfbq3f1fyTJ3BNXf+E=",
+        "owner": "Vectorized",
+        "repo": "solady",
+        "rev": "d699161248fdb571a35fe12f4bd3077032f33806",
         "type": "github"
       },
       "original": {
-        "owner": "transmissions11",
-        "repo": "solmate",
+        "owner": "Vectorized",
+        "repo": "solady",
         "type": "github"
       }
     },

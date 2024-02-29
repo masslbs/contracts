@@ -72,25 +72,25 @@ contract StoreUsersTest is Test {
     function testTokenRegistration() public {
         (address token, uint256 tokenPk) = makeAddrAndKey("token");
         vm.prank(addrOwner);
-        s.registrationTokenPublish(storeId, token);
+        s.publishInviteVerifier(storeId, token);
         // new user wants to redeem the token
         bytes32 regMsg = s.getTokenMessageHash(addrNewUser);
         (uint8 sigv, bytes32 sigr, bytes32 sigs) = vm.sign(tokenPk, regMsg);
         vm.prank(addrNewUser);
-        s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrNewUser);
+        s.redeemInvite(storeId, sigv, sigr, sigs, addrNewUser);
         vm.prank(addrOwner);
         assertEq(true, s.hasAtLeastAccess(storeId, addrNewUser, AccessLevel.Clerk));
         // try to use the token twice
         vm.prank(addrSomeoneElse);
         vm.expectRevert("no such token");
-        s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrSomeoneElse);
+        s.redeemInvite(storeId, sigv, sigr, sigs, addrSomeoneElse);
         // cant register a user twice
         (address token2, uint256 tokenPk2) = makeAddrAndKey("token2");
         vm.prank(addrOwner);
-        s.registrationTokenPublish(storeId, token2);
+        s.publishInviteVerifier(storeId, token2);
         (sigv, sigr, sigs) = vm.sign(tokenPk2, regMsg);
         vm.prank(addrNewUser);
         vm.expectRevert("already registered");
-        s.regstrationTokenRedeem(storeId, sigv, sigr, sigs, addrNewUser);
+        s.redeemInvite(storeId, sigv, sigr, sigs, addrNewUser);
     }
 }

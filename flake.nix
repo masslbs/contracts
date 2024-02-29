@@ -19,8 +19,8 @@
       url = "github:dapphub/ds-test";
       flake = false;
     };
-    solmate = {
-      url = "github:transmissions11/solmate";
+    solady = {
+      url = "github:Vectorized/solady";
       flake = false;
     };
     permit2 = {
@@ -37,7 +37,7 @@
     openzeppelin-contracts,
     ds-tests,
     permit2,
-    solmate,
+    solady,
     self, # This is the output of the flake itself, e.g. the location in nix/store of the source code
     ...
   }:
@@ -97,7 +97,7 @@
         ds-test/=${ds-tests}/src
         @openzeppelin/=${openzeppelin-contracts}/
         permit2/=${permit2}/
-        solmate=${solmate}/
+        solady=${solady}/
       '';
       remappings = pkgs.writeText "remapping.txt" remappings-txt;
     in {

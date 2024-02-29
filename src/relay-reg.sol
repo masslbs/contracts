@@ -1,13 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.21;
 
-import { ERC721 } from "solmate/src/tokens/ERC721.sol";
+import { ERC721 } from "solady/src/tokens/ERC721.sol";
 
 contract RelayReg is ERC721 {
     uint256 private _relayIds;
 
-    constructor() ERC721("RelayReg", "MMRR") {}
+    constructor() ERC721() {}
     mapping(uint256 => string) public relayURIs;
+
+    function name() public  pure override returns (string memory)
+    {
+        return "RelayRegestry";
+    }
+
+    function symbol() public  pure override returns (string memory)
+    {
+        return "RR";
+    }
 
     function registerRelay(uint256 newRelayId, address relay, string memory uri) public
     {

@@ -29,7 +29,7 @@ contract Deploy is Script {
     }
 }
 
-import {MockERC20 as EuroDollarToken} from "solmate/src/test/utils/mocks/MockERC20.sol";
+import {MockERC20 as EuroDollarToken} from "solady/test/utils/mocks/MockERC20.sol";
 contract TestingDeploy is Script {
     bytes32 salt = bytes32(uint256(1));
 
