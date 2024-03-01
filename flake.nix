@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Mass Labs
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 {
   description = "Mass Market Contracts";
   inputs = {
@@ -79,6 +83,7 @@
 
       buildInputs = with pkgs; [
         solc
+        reuse
         foundry-bin
         nodePackages.pnpm
         deploy_market

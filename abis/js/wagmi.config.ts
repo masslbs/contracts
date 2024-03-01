@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Mass Labs
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 import { foundry } from "@wagmi/cli/plugins";
 import * as chains from "wagmi/chains";
 import depolyerTx from "../../broadcast/deploy.s.sol/31337/run-latest.json" assert { type: "json" };

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Mass Labs
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 

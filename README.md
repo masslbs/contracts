@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024 Mass Labs
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # DMP SMART CONTRACTS
 
 The smart contracts that implement the Decentralized Market Protocol.
