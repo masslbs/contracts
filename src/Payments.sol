@@ -4,15 +4,17 @@ pragma solidity ^0.8.19;
 import { IPermit2 } from "permit2/src/interfaces/IPermit2.sol";
 import { ISignatureTransfer } from "permit2/src/interfaces/ISignatureTransfer.sol";
 import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
+import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
 
 import "./IPayments.sol";
 
 address constant ETH = address(0);
 
 contract Payments is IPayments {
+    using LibBitmap for LibBitmap.Bitmap;
     // a map of payment status indexed by the receipt hash
-    mapping(address payeer => mapping(uint256 payment => uint256)) paymentBitmap;
     IPermit2 permit2;
+    LibBitmap.Bitmap paymentBitmap;
 
     constructor(
         IPermit2 _permit2
@@ -31,10 +33,13 @@ contract Payments is IPayments {
         if(msg.value != payment.amount)   revert InvalidPaymentAmount();
         // this also prevents reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
-        // call the fallback function
-        // TODO: it might make sense to check payeeAddress.code.length > 0 to save gas
-        (bool success, ) = payment.payee.payeeAddress.call(abi.encode(payment));
-        if(!success) revert PayeeRefusedPayment();
+        if (payment.payee.payload.length > 0) {
+            (bool success, ) = payment.payee.payeeAddress.call{value: msg.value}(payment.payee.payload);
+            if(!success) revert PayeeRefusedPayment();
+        } else {
+            // EOA will always be able to receive the payment
+            payment.payee.payeeAddress.send(msg.value);
+        }
     }
 
     // @inheritdoc IPayments
@@ -105,17 +110,14 @@ contract Payments is IPayments {
     function revertPayment(address from, PaymentIntent calldata payment) public {
         if(msg.sender != payment.payee.payeeAddress) revert NotPayee();
         if(!payment.payee.canRevert) revert RevertNotAllowed();
-        (uint256 wordPos, uint256 bitPos) = bitmapPositions(payment);
-        if(paymentBitmap[from][wordPos] & (1 << bitPos) == 0) revert PaymentNotMade();
-
-        uint256 bit = 1 << bitPos;
-        paymentBitmap[msg.sender][wordPos] ^= bit;
+        uint paymentId = getPaymentId(payment);
+        bool flipped = paymentBitmap.toggle(uint256(uint160(from)) ^ paymentId);
+        if (flipped) revert PaymentNotMade();
     }
 
     // @inheritdoc IPayments
     function hasPaymentBeenMade(address from, PaymentIntent calldata payment) public view returns (bool) {
-        (uint256 wordPos, uint256 bitPos) = bitmapPositions(payment);
-        return paymentBitmap[from][wordPos] & (1 << bitPos) != 0;
+        return paymentBitmap.get(uint256(uint160(from)) ^ getPaymentId(payment));
     }
 
     // @inheritdoc IPayments
@@ -123,26 +125,12 @@ contract Payments is IPayments {
         return uint256(keccak256(abi.encode(payment)));
     }
 
-    /// @notice Returns the index of the bitmap and the bit position within the bitmap. 
-    /// @param payment The payment to get the associated word and bit positions
-    /// @return wordPos The word position or index into the nonceBitmap
-    /// @return bitPos The bit position
-    /// @dev The first 248 bits of the payment hash value is the index of the desired bitmap
-    /// @dev The last 8 bits of the nonce value is the position of the bit in the bitmap
-    function bitmapPositions(PaymentIntent calldata payment) private pure returns (uint256 wordPos, uint256 bitPos) {
-        uint256 id = getPaymentId(payment);
-        wordPos = uint248(id >> 8);
-        bitPos = uint8(id);
-    }
-
     /// @notice Checks whether a payment has been made and sets the bit at the bit position in the bitmap at the word position
     /// @param from The address to use to make the payment 
     /// @param payment The payment
     function _usePaymentIntent(address from, PaymentIntent calldata payment) internal {
-        (uint256 wordPos, uint256 bitPos) = bitmapPositions(payment);
-        uint256 bit = 1 << bitPos;
-        uint256 flipped = paymentBitmap[from][wordPos] ^= bit;
-
-        if (flipped & bit == 0) revert PaymentAlreadyMade();
+        uint paymentId = getPaymentId(payment);
+        bool flipped = paymentBitmap.toggle(uint256(uint160(from)) ^ paymentId);
+        if (!flipped) revert PaymentAlreadyMade();
     }
 }

@@ -5,7 +5,7 @@ pragma solidity ^0.8.19;
 // @member payeeAddress The address that will receive the payment
 // @member payload The payload to be sent to the payee
 struct PaymentEndpoint {
-  address payeeAddress;
+  address payable payeeAddress;
   bytes payload;
   bool canRevert;
 }
