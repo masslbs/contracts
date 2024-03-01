@@ -4,7 +4,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     utils.url = "github:numtide/flake-utils";
     foundry = {
-      url = "github:shazow/foundry.nix?rev=883243b30a4b8dbb1b515b79b750e2caf7df1a79";
+      url = "git+https://github.com/shazow/foundry.nix.git?ref=monthly";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     forge-std = {
@@ -122,6 +122,7 @@
               --input-file src/store-reg.sol \
               --input-file src/relay-reg.sol \
               --input-file src/payment-factory.sol \
+              --input-file ${solady}/test/utils/mocks/MockERC20.sol \
               -o $out/abi
             # overwrite for abis/sol/IERC1155Errors.abi
             solc --abi --allow-paths  ${solady} --input-file ${solady}/src/tokens/ERC20.sol -o $out/abi --overwrite
