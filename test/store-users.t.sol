@@ -15,7 +15,6 @@ contract StoreUsersTest is Test {
     address internal addrNewUser;
     uint256 pkNewUser;
     address internal addrSomeoneElse;
-    bytes32 internal testHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
 
     function setUp() public {
         addrOwner = msg.sender;
@@ -24,7 +23,7 @@ contract StoreUsersTest is Test {
         addrSomeoneElse = address(0x01a1257382B6b9a7BDFeF762379C085Ca50F1Ca9);
         s = new StoreReg(new RelayReg());
         storeId = 42;
-        s.mint(storeId, addrOwner, testHash);
+        s.mint(storeId, addrOwner);
     }
 
     function testUsersRegisterOwner() public {
