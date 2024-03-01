@@ -1,4 +1,5 @@
-pragma solidity ^0.8.21;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.19;
 
 import { IPermit2 } from "permit2/src/interfaces/IPermit2.sol";
 import { ISignatureTransfer } from "permit2/src/interfaces/ISignatureTransfer.sol";
@@ -14,10 +15,10 @@ contract Payments is IPayments {
     IPermit2 permit2;
 
     constructor(
-        address _permit2
+        IPermit2 _permit2
     ) 
     {
-        permit2 = IPermit2(_permit2);
+        permit2 = _permit2;
     }
 
     // @inheritdoc IPayments

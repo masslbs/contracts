@@ -1,4 +1,5 @@
-pragma solidity ^0.8.21;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.19;
 
 // @notice Where the payment will be sent including a possible payload
 // @member payeeAddress The address that will receive the payment

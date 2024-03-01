@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.21;
+pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol";
