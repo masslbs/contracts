@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "ds-tests": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1677883973,
-        "narHash": "sha256-wXtNq4ZUohndNGs9VttOI9m9VW5QlVKOPtR8+mv2fBM=",
-        "owner": "dapphub",
-        "repo": "ds-test",
-        "rev": "e282159d5170298eb2455a6c05280ab5a73a4ef0",
-        "type": "github"
-      },
-      "original": {
-        "owner": "dapphub",
-        "repo": "ds-test",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "locked": {
         "lastModified": 1644229661,
@@ -34,17 +18,19 @@
     "forge-std": {
       "flake": false,
       "locked": {
-        "lastModified": 1708025636,
-        "narHash": "sha256-/tR72EnPr3ONEZHPpw6b2pKG6dYWziIFQFglSBo4WNM=",
-        "owner": "foundry-rs",
-        "repo": "forge-std",
-        "rev": "1d0766bc5d814f117c7b1e643828f7d85024fb51",
-        "type": "github"
+        "lastModified": 1709159040,
+        "narHash": "sha256-+yYlgUdjovn5BeaOYv3oVfRlpxQq/a/V4W2GPNzVdXc=",
+        "ref": "refs/heads/master",
+        "rev": "2f6762e4f73f3d835457c220b5f62dfeeb6f6341",
+        "revCount": 314,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/foundry-rs/forge-std"
       },
       "original": {
-        "owner": "foundry-rs",
-        "repo": "forge-std",
-        "type": "github"
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/foundry-rs/forge-std"
       }
     },
     "foundry": {
@@ -105,7 +91,6 @@
     },
     "root": {
       "inputs": {
-        "ds-tests": "ds-tests",
         "forge-std": "forge-std",
         "foundry": "foundry",
         "nixpkgs": "nixpkgs",

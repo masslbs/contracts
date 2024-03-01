@@ -8,11 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     forge-std = {
-      url = "github:foundry-rs/forge-std";
-      flake = false;
-    };
-    ds-tests = {
-      url = "github:dapphub/ds-test";
+      url = "git+https://github.com/foundry-rs/forge-std?submodules=1";
       flake = false;
     };
     solady = {
@@ -30,7 +26,6 @@
     utils,
     foundry,
     forge-std,
-    ds-tests,
     permit2,
     solady,
     self, # This is the output of the flake itself, e.g. the location in nix/store of the source code
@@ -92,7 +87,7 @@
 
       remappings-txt = ''
         forge-std/=${forge-std}/src
-        ds-test/=${ds-tests}/src
+        ds-test/=${forge-std}/lib/ds-test/src
         permit2/=${permit2}/
         solady=${solady}/
       '';
