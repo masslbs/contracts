@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.19;
-import "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
+import "solady/src/tokens/ERC20.sol";
 
 /// @title Sweeps ERC20's from the payment address to the merchants address
 contract SweepERC20Payment {

@@ -3,16 +3,16 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     utils.url = "github:numtide/flake-utils";
+    solc = {
+      url = "github:hellwolf/solc.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     foundry = {
       url = "github:shazow/foundry.nix?rev=883243b30a4b8dbb1b515b79b750e2caf7df1a79";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     forge-std = {
       url = "github:foundry-rs/forge-std";
-      flake = false;
-    };
-    openzeppelin-contracts = {
-      url = "github:OpenZeppelin/openzeppelin-contracts";
       flake = false;
     };
     ds-tests = {
@@ -32,9 +32,9 @@
   outputs = {
     nixpkgs,
     utils,
+    solc,
     foundry,
     forge-std,
-    openzeppelin-contracts,
     ds-tests,
     permit2,
     solady,
@@ -46,6 +46,7 @@
         inherit system;
         overlays = [
           foundry.overlay
+          solc.overlay
         ];
       };
 
@@ -90,16 +91,14 @@
       buildInputs = with pkgs; [
         foundry-bin
         nodePackages.pnpm
-        solc
+        (solc.mkDefault pkgs solc_0_8_19)
         deploy_market
         run_and_deploy
       ];
 
       remappings-txt = ''
         forge-std/=${forge-std}/src
-        openzeppelin-contracts/=${openzeppelin-contracts}/
         ds-test/=${ds-tests}/src
-        @openzeppelin/=${openzeppelin-contracts}/
         permit2/=${permit2}/
         solady=${solady}/
       '';
@@ -136,7 +135,7 @@
               --input-file src/payment-factory.sol \
               -o $out/abi
             # overwrite for abis/sol/IERC1155Errors.abi
-            solc --abi --allow-paths  ${openzeppelin-contracts} --input-file ${openzeppelin-contracts}/contracts/token/ERC20/ERC20.sol -o $out/abi --overwrite
+            solc --abi --allow-paths  ${solady} --input-file ${solady}/src/tokens/ERC20.sol -o $out/abi --overwrite
           '';
 
           checkPhase = ''

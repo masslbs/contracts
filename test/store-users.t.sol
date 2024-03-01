@@ -5,8 +5,6 @@ import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
 import "forge-std/console.sol";
 import "../src/store-reg.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
-
 
 contract StoreUsersTest is Test {
     StoreReg internal s;

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
-import "openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol";
 import "forge-std/console.sol";
+import {Receiver} from "solady/src/accounts/Receiver.sol";
 import "../src/store-reg.sol";
 import "../src/relay-reg.sol";
 
@@ -103,7 +103,7 @@ contract StoreTest is Test {
     }
 
     function testSafeContractReceiver() public {
-        Receiver receiver = new Receiver();
+        Receiver receiver = new MockReceiver();
         stores.mint(storeId, address(receiver));
         uint256 slotBalance = stdstore
             .target(address(stores))
@@ -116,11 +116,4 @@ contract StoreTest is Test {
     }
 }
 
-
-contract Receiver is IERC721Receiver {
-    function onERC721Received(address,address,uint256,bytes calldata)
-        external override pure returns (bytes4) {
-        return this.onERC721Received.selector;
-    }
-}
-
+contract MockReceiver is Receiver {}

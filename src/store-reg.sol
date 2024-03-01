@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import { ERC721 } from "solady/src/tokens/ERC721.sol";
 import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import { LibString } from "solady/src/utils/LibString.sol";
 import "./relay-reg.sol";
 
 /// @notice AccessLevel is a enum that represents the different access levels of a user
@@ -163,7 +163,9 @@ contract StoreReg is ERC721 {
 
     /// @dev utility function to get the message hash for the invite verfication
     function _getTokenMessageHash(address user) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", Strings.toHexString(user)));
+        string memory hexAdd = LibString.toHexString(uint256(uint160(user)), 20);
+        return keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", hexAdd));
     }
 
     /// @notice redeem one of the invites. (v,r,s) are the signature
