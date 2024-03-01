@@ -73,7 +73,7 @@ contract StoreUsersTest is Test {
         vm.prank(addrOwner);
         s.publishInviteVerifier(storeId, token);
         // new user wants to redeem the token
-        bytes32 regMsg = s.getTokenMessageHash(addrNewUser);
+        bytes32 regMsg = s._getTokenMessageHash(addrNewUser);
         (uint8 sigv, bytes32 sigr, bytes32 sigs) = vm.sign(tokenPk, regMsg);
         vm.prank(addrNewUser);
         s.redeemInvite(storeId, sigv, sigr, sigs, addrNewUser);
