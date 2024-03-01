@@ -6,7 +6,12 @@ import "forge-std/Script.sol";
 import "../src/store-reg.sol";
 import "../src/relay-reg.sol";
 import "../src/payment-factory.sol";
-import {MockERC20 as EuroDollarToken} from "solady/test/utils/mocks/MockERC20.sol";
+import {MockERC20 } from "solady/test/utils/mocks/MockERC20.sol";
+
+contract EuroDollarToken is MockERC20 {
+    constructor (string memory _name, string memory _symbol, uint8 _decimals) MockERC20(_name, _symbol, _decimals) {
+    }
+}
 
 contract Deploy is Script {
     bytes32 salt = bytes32(uint256(1));
