@@ -4,14 +4,11 @@ The smart contracts that implement the Decentralized Market Protocol.
 
 # OVERVIEW
 
-This repo contains store registry and the payments factory.
-
-- Solidity Documention: https://dm-foundation.github.io/contracts
-- Stack
-  - [nix](nixos.wiki) - used for dependancy managment
-  - [Foundry](https://getfoundry.sh/) - Ethereum ToolKit; used for testing, deploying and compiling the contracts
+This repo contains store registry, relay registry and the payments factory.
 
 # DEVELOP
+
+[nix](nixos.wiki) is used for dependancy managment.
 
 Run `nix develop` to enter the devShell.
 
@@ -21,16 +18,6 @@ To create and delopy the contract to a local testnet first
 
 - start anvil and deploy the contract locally run `run-and-deploy`
 - to redeploy the contract run `deploy-market`
-
-## Generating ABI.ts
-
-To generate the ABI bindings for use in in viem.sh
-
-- Go to the abi directory. `cd ./abis/js`
-- install the dependancies `pnpm install .`
-- run wagmi cli `pnpm wagmi generate`
-
-The resulting binding should be written to `src/abi.ts`
 
 ## Generate Go abi
 

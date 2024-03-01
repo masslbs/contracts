@@ -3,10 +3,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     utils.url = "github:numtide/flake-utils";
-    solc = {
-      url = "github:hellwolf/solc.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     foundry = {
       url = "github:shazow/foundry.nix?rev=883243b30a4b8dbb1b515b79b750e2caf7df1a79";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,7 +28,6 @@
   outputs = {
     nixpkgs,
     utils,
-    solc,
     foundry,
     forge-std,
     ds-tests,
@@ -46,7 +41,6 @@
         inherit system;
         overlays = [
           foundry.overlay
-          solc.overlay
         ];
       };
 
@@ -89,9 +83,9 @@
       run_and_deploy = mk_run_and_deploy deploy_market;
 
       buildInputs = with pkgs; [
+        solc
         foundry-bin
         nodePackages.pnpm
-        (solc.mkDefault pkgs solc_0_8_19)
         deploy_market
         run_and_deploy
       ];
