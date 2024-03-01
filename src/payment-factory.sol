@@ -1,4 +1,7 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-FileCopyrightText: 2024 Mass Labs
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 pragma solidity ^0.8.19;
 import "solady/src/tokens/ERC20.sol";
 

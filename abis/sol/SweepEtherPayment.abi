@@ -1,1 +1,0 @@
-[{"inputs":[{"internalType":"address payable","name":"merchant","type":"address"},{"internalType":"address payable","name":"proof","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"factory","type":"address"}],"stateMutability":"payable","type":"constructor"}]
