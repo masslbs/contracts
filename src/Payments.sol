@@ -26,7 +26,7 @@ contract Payments is IPayments {
         permit2 = _permit2;
     }
 
-    // @inheritdoc IPayments
+    /// @inheritdoc IPayments
     function payNative(
         PaymentIntent calldata payment
     ) public payable
@@ -37,15 +37,13 @@ contract Payments is IPayments {
         // this also prevents reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
         if (payment.payee.payload.length > 0) {
-            (bool success, ) = payment.payee.payeeAddress.call{value: msg.value}(payment.payee.payload);
-            if(!success) revert PayeeRefusedPayment();
+            IPaymentEndpoint(payment.payee.payeeAddress).pay{value: msg.value}(payment);
         } else {
-            // EOA will always be able to receive the payment
-            payment.payee.payeeAddress.send(msg.value);
+            payment.payee.payeeAddress.transfer(msg.value);
         }
     }
 
-    // @inheritdoc IPayments
+    /// @inheritdoc IPayments
     function payToken (
         PaymentIntent calldata payment
     ) public 
@@ -68,11 +66,10 @@ contract Payments is IPayments {
             msg.sender, 
             payment.permit2signature
         );
-        (bool success, ) = payment.payee.payeeAddress.call(abi.encode(payment));
-        if(!success) revert PayeeRefusedPayment();
+        IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
     }
 
-    // @inheritdoc IPayments
+    /// @inheritdoc IPayments
     function payTokenPreAppoved (
         PaymentIntent calldata payment
     ) public 
@@ -81,11 +78,10 @@ contract Payments is IPayments {
         // this also prevent reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
         SafeTransferLib.safeTransferFrom(payment.currency, msg.sender, payment.payee.payeeAddress, payment.amount);
-        (bool success, ) = payment.payee.payeeAddress.call(abi.encode(payment));
-        if(!success) revert PayeeRefusedPayment();
+        IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
     }
 
-    // @inheritdoc IPayments
+    /// @inheritdoc IPayments
     function pay(
         PaymentIntent calldata payment
     ) public payable
@@ -99,7 +95,7 @@ contract Payments is IPayments {
         }
     }
 
-    // @inheritdoc IPayments
+    /// @inheritdoc IPayments
     function multiPay(
         PaymentIntent[] calldata payments
     ) public payable

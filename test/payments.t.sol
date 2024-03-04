@@ -31,7 +31,7 @@ contract PaymentsTest is Test {
                 receipt: bytes32(0),
                 currency: currency,
                 amount: 100,
-                payee: PaymentEndpoint({
+                payee: PaymentEndpointDetails({
                     payeeAddress: alice,
                     payload: new bytes(0),
                     canRevert: false
