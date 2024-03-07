@@ -39,7 +39,7 @@ contract Payments is IPayments {
         if (payment.payee.payload.length > 0) {
             IPaymentEndpoint(payment.payee.payeeAddress).pay{value: msg.value}(payment);
         } else {
-            payment.payee.payeeAddress.transfer(msg.value);
+            payable(payment.payee.payeeAddress).transfer(msg.value);
         }
     }
 
@@ -70,7 +70,7 @@ contract Payments is IPayments {
     }
 
     /// @inheritdoc IPayments
-    function payTokenPreAppoved (
+    function payTokenPreApproved (
         PaymentIntent calldata payment
     ) public 
     {
@@ -78,7 +78,9 @@ contract Payments is IPayments {
         // this also prevent reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
         SafeTransferLib.safeTransferFrom(payment.currency, msg.sender, payment.payee.payeeAddress, payment.amount);
-        IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
+        if (payment.payee.payload.length > 0) {
+          IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
+        }
     }
 
     /// @inheritdoc IPayments
@@ -91,7 +93,7 @@ contract Payments is IPayments {
         } else if(payment.permit2signature.length > 0) {
             payToken(payment);
         } else {
-            payTokenPreAppoved(payment);
+            payTokenPreApproved(payment);
         }
     }
 

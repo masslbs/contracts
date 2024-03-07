@@ -8,7 +8,7 @@ pragma solidity ^0.8.19;
 /// @member payeeAddress The address that will receive the payment
 /// @member payload The payload to be sent to the payee
 struct PaymentEndpointDetails {
-  address payable payeeAddress;
+  address payeeAddress;
   bytes payload;
   bool canRevert;
 }
@@ -61,7 +61,7 @@ interface IPayments {
 
   /// @notice Makes a payment in a ERC20 token with pre-approval
   /// @param payment The payment details
-  function payTokenPreAppoved (
+  function payTokenPreApproved (
     PaymentIntent calldata payment
   ) external;
 
