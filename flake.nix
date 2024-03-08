@@ -129,7 +129,7 @@
               --input-file ${solady}/test/utils/mocks/MockERC20.sol \
               -o $out/abi
             # overwrite for abis/sol/IERC1155Errors.abi
-            solc --abi --allow-paths  ${solady} --input-file ${solady}/src/tokens/ERC20.sol -o $out/abi --overwrite
+            solc --abi --allow-paths ${solady} --input-file ${solady}/src/tokens/ERC20.sol -o $out/abi --overwrite
           '';
 
           checkPhase = ''
