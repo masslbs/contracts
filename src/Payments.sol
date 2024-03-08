@@ -56,17 +56,16 @@ contract Payments is IPayments {
                     token: payment.currency,
                     amount: payment.amount
                 }),
-                nonce: getPaymentId(payment),
+                nonce: uint256(payment.receipt),
                 deadline: payment.ttl
             }),
             ISignatureTransfer.SignatureTransferDetails({
                 requestedAmount: payment.amount,
                 to: payment.payee.payeeAddress
             }),
-            msg.sender, 
+            msg.sender,
             payment.permit2signature
         );
-        IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
     }
 
     /// @inheritdoc IPayments

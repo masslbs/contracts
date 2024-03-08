@@ -75,16 +75,14 @@
       "flake": false,
       "locked": {
         "lastModified": 1696001773,
-        "narHash": "sha256-4B6aUQQRzpLiaK1J9bCdB30FDXYc2paDWD9rS2YEuj0=",
+        "narHash": "sha256-sevmJhYn5/odTvS9si+KFw/R234KNaNfrnECdkVcL9w=",
         "ref": "refs/heads/main",
         "rev": "cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
         "revCount": 184,
-        "submodules": true,
         "type": "git",
         "url": "https://github.com/uniswap/permit2.git"
       },
       "original": {
-        "submodules": true,
         "type": "git",
         "url": "https://github.com/uniswap/permit2.git"
       }

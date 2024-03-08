@@ -22,7 +22,7 @@ contract TestPaymentEndpoint is IPaymentEndpoint, DepositEvent {
     }
 }
 
-contract PaymentsTest is Test, DepositEvent {
+contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
     Payments internal payments;
     IPermit2 permit2;
     IPaymentEndpoint paymentEndpoint;
@@ -35,9 +35,21 @@ contract PaymentsTest is Test, DepositEvent {
         "PermitTransferFrom(TokenPermissions permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)"
     );
     bytes32 public constant _TOKEN_PERMISSIONS_TYPEHASH = keccak256("TokenPermissions(address token,uint256 amount)");
+
+    function setUp() public {
+        permit2 =  IPermit2(address(deployPermit2()));
+        payments = new Payments(
+            permit2
+        );
+        paymentEndpoint = new TestPaymentEndpoint();
+        testToken = new MockERC20("mock", "MCK", 18);
+        DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
+    }
+
     function getPermitTransferSignature(
         ISignatureTransfer.PermitTransferFrom memory permit,
         uint256 privateKey,
+        address spender,
         bytes32 domainSeparator
     ) internal view returns (bytes memory sig) {
         bytes32 tokenPermissions = keccak256(abi.encode(_TOKEN_PERMISSIONS_TYPEHASH, permit.permitted));
@@ -47,7 +59,7 @@ contract PaymentsTest is Test, DepositEvent {
                 domainSeparator,
                 keccak256(
                     abi.encode(
-                        _PERMIT_TRANSFER_FROM_TYPEHASH, tokenPermissions, address(this), permit.nonce, permit.deadline
+                        _PERMIT_TRANSFER_FROM_TYPEHASH, tokenPermissions, spender, permit.nonce, permit.deadline
                     )
                 )
             )
@@ -55,16 +67,6 @@ contract PaymentsTest is Test, DepositEvent {
 
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, msgHash);
         return bytes.concat(r, s, bytes1(v));
-    }
-
-    function setUp() public {
-        permit2 =  IPermit2(address(new DeployPermit2()));
-        payments = new Payments(
-            permit2
-        );
-        paymentEndpoint = new TestPaymentEndpoint();
-        testToken = new MockERC20("mock", "MCK", 18);
-                DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
     }
 
     function makeTestPayment100Native (uint256 amount, uint256 time, address currency) public {
@@ -156,6 +158,8 @@ contract PaymentsTest is Test, DepositEvent {
         uint256 fromPrivateKey = 0x12341234;
         address from = vm.addr(fromPrivateKey);
         testToken.mint(from, 100);
+        vm.prank(from);
+        testToken.approve(address(permit2), 100);
 
         ISignatureTransfer.PermitTransferFrom memory permit = ISignatureTransfer.PermitTransferFrom({
             permitted: ISignatureTransfer.TokenPermissions({
@@ -165,7 +169,8 @@ contract PaymentsTest is Test, DepositEvent {
             nonce: 0,
             deadline: 100
         });
-        bytes memory sig = getPermitTransferSignature(permit, fromPrivateKey,DOMAIN_SEPARATOR );
+
+        bytes memory sig = getPermitTransferSignature(permit, fromPrivateKey, address(payments), DOMAIN_SEPARATOR);
 
         vm.prank(from);
         payments.payToken(

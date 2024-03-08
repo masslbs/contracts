@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2024 Mass Labs
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
 {
   description = "Mass Market Contracts";
   inputs = {
@@ -20,7 +19,7 @@
       flake = false;
     };
     permit2 = {
-      url = "git+https://github.com/uniswap/permit2.git?submodules=1";
+      url = "git+https://github.com/uniswap/permit2.git";
       flake = false;
     };
   };
