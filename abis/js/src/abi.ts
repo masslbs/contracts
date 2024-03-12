@@ -657,8 +657,49 @@ export const storeRegABI = [
     ],
     name: 'Transfer',
   },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'storeId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'user',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'UserAdded',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'storeId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'users',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'UserRemoved',
+  },
   { type: 'error', inputs: [], name: 'AccountBalanceOverflow' },
   { type: 'error', inputs: [], name: 'BalanceQueryForZeroAddress' },
+  { type: 'error', inputs: [], name: 'InvalidAccessLevel' },
+  { type: 'error', inputs: [], name: 'NoVerifier' },
+  { type: 'error', inputs: [], name: 'NotAuthorized' },
   { type: 'error', inputs: [], name: 'NotOwnerNorApproved' },
   { type: 'error', inputs: [], name: 'TokenAlreadyExists' },
   { type: 'error', inputs: [], name: 'TokenDoesNotExist' },
@@ -671,7 +712,7 @@ export const storeRegABI = [
  *
  */
 export const storeRegAddress = {
-  31337: '0x735Cc2ddCBE61bF63B7EC410124fBb52C36F6B26',
+  31337: '0x888496131CBf75Ed442048CBB112c491DAB95F3B',
 }
 
 /**
