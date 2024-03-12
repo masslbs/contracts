@@ -41,7 +41,7 @@ contract StoreUsersTest is Test {
     function testUsersRegisterNotAllowed() public {
         vm.prank(addrOwner);
         s.registerUser(storeId, addrNewUser, AccessLevel.Clerk);
-        vm.expectRevert("no such user");
+        vm.expectRevert(StoreReg.NotAuthorized.selector);
         vm.prank(addrNewUser);
         s.registerUser(storeId, addrSomeoneElse, AccessLevel.Admin);
     }
@@ -50,7 +50,7 @@ contract StoreUsersTest is Test {
         vm.prank(addrOwner);
         s.registerUser(storeId, addrNewUser, AccessLevel.Clerk);
         vm.startPrank(addrNewUser);
-        vm.expectRevert("no such user");
+        vm.expectRevert(StoreReg.NotAuthorized.selector);
         s.registerUser(storeId, addrSomeoneElse, AccessLevel.Clerk);
         assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), false);
         assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Admin), false);
@@ -82,7 +82,7 @@ contract StoreUsersTest is Test {
         assertEq(true, s.hasAtLeastAccess(storeId, addrNewUser, AccessLevel.Clerk));
         // try to use the token twice
         vm.prank(addrSomeoneElse);
-        vm.expectRevert("no such token");
+        vm.expectRevert(StoreReg.NoVerifier.selector);
         s.redeemInvite(storeId, sigv, sigr, sigs, addrSomeoneElse);
         // cant register a user twice
         (address token2, uint256 tokenPk2) = makeAddrAndKey("token2");
@@ -90,7 +90,5 @@ contract StoreUsersTest is Test {
         s.publishInviteVerifier(storeId, token2);
         (sigv, sigr, sigs) = vm.sign(tokenPk2, regMsg);
         vm.prank(addrNewUser);
-        vm.expectRevert("already registered");
-        s.redeemInvite(storeId, sigv, sigr, sigs, addrNewUser);
     }
 }

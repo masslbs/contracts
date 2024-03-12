@@ -20,6 +20,12 @@ contract StoreReg is ERC721 {
     using LibBitmap for LibBitmap.Bitmap;
     RelayReg public relayReg;
 
+    event UserAdded(uint256 indexed storeId, address user);
+    event UserRemoved(uint256 indexed storeId, address users);
+    error NoVerifier();
+    error NotAuthorized();
+    error InvalidAccessLevel();
+
     /// @notice rootHashes is a mapping of store nfts to their state root hash
     mapping(uint256 storeid => bytes32) public rootHashes;
 
@@ -30,7 +36,7 @@ contract StoreReg is ERC721 {
     mapping(uint256 storeid => mapping(address storeuser => AccessLevel)) public storesToUsers;
 
     /// @notice invites is a mapping of store nfts to their one-time use registration invites
-    mapping(uint160 storeid => LibBitmap.Bitmap) private invites;
+    LibBitmap.Bitmap private invites;
 
     constructor(RelayReg r) ERC721() {
         relayReg = r;
@@ -66,10 +72,9 @@ contract StoreReg is ERC721 {
     /// @param storeId The store nft
     /// @param hash The new state root hash
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        require(_checkIsConfiguredRelay(storeId) 
-            || hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk),
-            "access denied");
-        rootHashes[storeId] = hash;
+        if(!(_checkIsConfiguredRelay(storeId) 
+            || hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk))) revert NotAuthorized();
+       rootHashes[storeId] = hash;
     }
 
     // relay config things
@@ -119,7 +124,6 @@ contract StoreReg is ERC721 {
     }
 
     // access control
-
     /// @dev checks if the sender is part of the configured relays
     /// @param storeId The store nft
     function _checkIsConfiguredRelay(uint256 storeId) internal view returns (bool) {
@@ -141,9 +145,7 @@ contract StoreReg is ERC721 {
     }
 
     function requireIsOwner(uint256 storeId) view internal {
-        require(_checkIsOwner(storeId),
-            "NOT_AUTHORIZED"
-        );
+        if(!_checkIsOwner(storeId)) revert NotAuthorized();
     }
 
     function requireOnlyAdminOrHigher(uint256 storeId, address who) public view {
@@ -151,7 +153,7 @@ contract StoreReg is ERC721 {
             return;
         }
         AccessLevel acl = storesToUsers[storeId][who];
-        require(acl != AccessLevel.Zero && acl != AccessLevel.Clerk, "no such user");
+        if(acl == AccessLevel.Zero || acl == AccessLevel.Clerk) revert NotAuthorized();
     }
 
     /// @notice adds a new one-time use registration invite to the store
@@ -159,9 +161,7 @@ contract StoreReg is ERC721 {
     /// @param verifier The address of the invite verifier (public key)
     function publishInviteVerifier(uint256 storeId, address verifier) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
-        uint256 verifierId = uint256(uint160(verifier));
-        // TODO: make sure the bitshifts are correct
-        invites[uint160(storeId >> 96)].set(storeId << 160 & verifierId); 
+        invites.set(_calulateInviteId(verifier, storeId));
     }
 
     /// @dev utility function to get the message hash for the invite verfication
@@ -178,18 +178,12 @@ contract StoreReg is ERC721 {
     /// @param s The s value of the signature
     /// @param user The address of the user to register. Will become a Clerk.
     function redeemInvite(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
-        // see if user is already registered
-        bool hasAlready = hasAtLeastAccess(storeId, user, AccessLevel.Clerk);
-        require(!hasAlready, "already registered");
         // check signature
         address recovered = ecrecover(_getTokenMessageHash(user), v, r, s);
-        uint160 _storeId = uint160(storeId >> 96);
-        uint256 invite = storeId << 160 & uint256(uint160(recovered));
-        bool isAllowed = invites[_storeId].get(invite);
-        require(isAllowed, "no such token");
-        invites[_storeId].unset(invite);
+        bool newIsSet = invites.toggle(_calulateInviteId(recovered, storeId));
+        if(newIsSet) revert NoVerifier();
         // register the new user
-        storesToUsers[storeId][user] = AccessLevel.Clerk;
+        _addUser(storeId, user, AccessLevel.Clerk);
     }
 
     /// @dev manually add user, identified by their wallet addr, to the store
@@ -198,10 +192,8 @@ contract StoreReg is ERC721 {
     /// @param acl The access level of the user. can only be clerk or admin.
     function registerUser(uint256 storeId, address addr, AccessLevel acl) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
-        require(addr != address(0), "can't be zero address");
-        require(acl == AccessLevel.Clerk || acl == AccessLevel.Admin, "invalid access level");
-        // that is the user we want to save on chain
-        storesToUsers[storeId][addr] = acl;
+        // save the user
+        _addUser(storeId, addr, acl);
     }
 
     /// @dev manually remove user, identified by their wallet addr, from the store
@@ -230,7 +222,18 @@ contract StoreReg is ERC721 {
         } else if (want == AccessLevel.Owner) {
             return addr == owner;
         }
-        require(false, "unhandled access level");
-        return false; // unreachable but need to return something
+        revert InvalidAccessLevel();
     }
+
+    function _addUser(uint256 storeId, address addr,  AccessLevel acl) internal {
+        storesToUsers[storeId][addr] = acl;
+        emit UserAdded(storeId, addr);
+    }
+
+    /// @notice calculates the invite id
+    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID. 
+    function _calulateInviteId(address verifier, uint256 storeId) internal pure returns (uint256) {
+        return uint256(uint160(verifier)) ^ uint256(keccak256(abi.encode(storeId)));
+    }
+
 }
