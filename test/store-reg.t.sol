@@ -100,7 +100,7 @@ contract StoreTest is Test {
         // now remove relay and check it cant change rootHash
         vm.prank(owner);
         stores.removeRelay(storeId, 0);
-        vm.expectRevert("access denied");
+        vm.expectRevert(StoreReg.NotAuthorized.selector);
         vm.prank(relayAddr);
         stores.updateRootHash(storeId, testHashUpdate);
     }
