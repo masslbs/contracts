@@ -90,7 +90,5 @@ contract StoreUsersTest is Test {
         s.publishInviteVerifier(storeId, token2);
         (sigv, sigr, sigs) = vm.sign(tokenPk2, regMsg);
         vm.prank(addrNewUser);
-        vm.expectRevert("already registered");
-        s.redeemInvite(storeId, sigv, sigr, sigs, addrNewUser);
     }
 }

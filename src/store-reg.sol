@@ -161,7 +161,7 @@ contract StoreReg is ERC721 {
     /// @param verifier The address of the invite verifier (public key)
     function publishInviteVerifier(uint256 storeId, address verifier) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
-        invites.set(uint256(uint160(verifier)) ^ storeId);
+        invites.set(_calulateInviteId(verifier, storeId));
     }
 
     /// @dev utility function to get the message hash for the invite verfication
@@ -178,12 +178,9 @@ contract StoreReg is ERC721 {
     /// @param s The s value of the signature
     /// @param user The address of the user to register. Will become a Clerk.
     function redeemInvite(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
-        // see if user is already registered
-        bool hasAlready = hasAtLeastAccess(storeId, user, AccessLevel.Clerk);
-        require(!hasAlready, "already registered");
         // check signature
         address recovered = ecrecover(_getTokenMessageHash(user), v, r, s);
-        bool newIsSet = invites.toggle(uint256(uint160(recovered)) ^ storeId);
+        bool newIsSet = invites.toggle(_calulateInviteId(recovered, storeId));
         if(newIsSet) revert NoVerifier();
         // register the new user
         _addUser(storeId, user, AccessLevel.Clerk);
@@ -195,9 +192,7 @@ contract StoreReg is ERC721 {
     /// @param acl The access level of the user. can only be clerk or admin.
     function registerUser(uint256 storeId, address addr, AccessLevel acl) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
-        require(addr != address(0), "can't be zero address");
-        if(acl != AccessLevel.Clerk && acl != AccessLevel.Admin) revert NotAuthorized();
-        // that is the user we want to save on chain
+        // save the user
         _addUser(storeId, addr, acl);
     }
 
@@ -234,4 +229,11 @@ contract StoreReg is ERC721 {
         storesToUsers[storeId][addr] = acl;
         emit UserAdded(storeId, addr);
     }
+
+    /// @notice calculates the invite id
+    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID. 
+    function _calulateInviteId(address verifier, uint256 storeId) internal pure returns (uint256) {
+        return uint256(uint160(verifier)) ^ uint256(keccak256(abi.encode(storeId)));
+    }
+
 }
