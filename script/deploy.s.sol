@@ -5,10 +5,10 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
-import "../src/store-reg.sol";
-import "../src/relay-reg.sol";
+import "../src/StoreReg.sol";
+import "../src/RelayReg.sol";
 import "../src/payment-factory.sol";
-import {MockERC20 } from "solady/test/utils/mocks/MockERC20.sol";
+import { MockERC20 } from "solady/test/utils/mocks/MockERC20.sol";
 
 contract EuroDollarToken is MockERC20 {
     constructor (string memory _name, string memory _symbol, uint8 _decimals) MockERC20(_name, _symbol, _decimals) {

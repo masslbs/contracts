@@ -12,24 +12,20 @@ contract RelayReg is ERC721 {
     constructor() ERC721() {}
     mapping(uint256 => string) public relayURIs;
 
-    function name() public  pure override returns (string memory)
-    {
+    function name() public  pure override returns (string memory) {
         return "RelayRegestry";
     }
 
-    function symbol() public  pure override returns (string memory)
-    {
+    function symbol() public  pure override returns (string memory) {
         return "RR";
     }
 
-    function mint(uint256 newRelayId, address relay, string memory uri) public
-    {
+    function mint(uint256 newRelayId, address relay, string memory uri) public {
         _mint(relay, newRelayId);
         relayURIs[newRelayId] = uri;
     }
 
-    function updateURI(uint256 relayId, string memory uri) public
-    {
+    function updateURI(uint256 relayId, string memory uri) public {
          require(ownerOf(relayId) == msg.sender, "NOT_AUTHORIZED");
         relayURIs[relayId] = uri;
     }

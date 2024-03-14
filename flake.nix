@@ -123,8 +123,8 @@
 
           buildPhase = ''
             solc ${builtins.replaceStrings ["\n"] [" "] remappings-txt} --abi   \
-              --input-file src/store-reg.sol \
-              --input-file src/relay-reg.sol \
+              --input-file src/StoreReg.sol \
+              --input-file src/RelayReg.sol \
               --input-file src/payment-factory.sol \
               --input-file ${solady}/test/utils/mocks/MockERC20.sol \
               -o $out/abi
