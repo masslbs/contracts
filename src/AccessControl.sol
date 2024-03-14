@@ -69,7 +69,7 @@ abstract contract AccessControl is ERC721 {
     }
 
     /// @notice checks if a user has all the permissions
-    function hasAllorMorePermissions(uint256 id, address user, uint256 perms) public view returns (bool) {
+    function hasEnoughPermissions(uint256 id, address user, uint256 perms) public view returns (bool) {
         return permissionsStore[id][user] >= perms;
     }
 
