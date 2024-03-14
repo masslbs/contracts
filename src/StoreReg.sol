@@ -10,12 +10,6 @@ import { LibString } from "solady/src/utils/LibString.sol";
 import { RelayReg } from "./RelayReg.sol";
 import { AccessControl } from "./AccessControl.sol";
 
-/// @notice AccessLevel is a enum that represents the different access levels of a user
-/// @notice Zero no access
-/// @notice Clerk can read and write
-/// @notice Admin can read, write, and add other users
-/// @notice Owner only usable for hasAtLeastAccess checking
-
 contract StoreReg is AccessControl {
     using LibBitmap for LibBitmap.Bitmap;
     RelayReg public relayReg;
@@ -215,4 +209,11 @@ contract StoreReg is AccessControl {
         checkAllPermissions(storeId, getAllPermissions(storeId, user) | 1 << uint8(Permissions.removeUser));
         _removeUser(storeId, user);
     }
+
+    /// @notice calculates a unique index given an ID and an address
+    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID. 
+    function calculateIdx(uint256 id, address addr) internal pure returns (uint256) {
+        return uint256(uint160(addr)) ^ uint256(keccak256(abi.encode(id)));
+    }
+
 }
