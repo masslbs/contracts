@@ -25,7 +25,7 @@ contract StoreUsersTest is Test {
         (addrNewUser, pkNewUser) = makeAddrAndKey("newUser");
         addrSomeoneElse = address(0x01a1257382B6b9a7BDFeF762379C085Ca50F1Ca9);
         s = new StoreReg(new RelayReg());
-        clerk = s.CLERK();
+        clerk = s.STATE_UPDATER();
         admin = s.ADMIN();
         storeId = 42;
         s.mint(storeId, addrOwner);
@@ -60,8 +60,8 @@ contract StoreUsersTest is Test {
             abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 255)
         );
         s.registerUser(storeId, addrSomeoneElse, clerk);
-        assertEq(s.hasAllorMorePermissions(storeId, addrSomeoneElse, clerk), false);
-        assertEq(s.hasAllorMorePermissions(storeId, addrSomeoneElse, admin), false);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, clerk), false);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, admin), false);
     }
 
     function testUsersRegisterByAdmin() public {
@@ -69,10 +69,10 @@ contract StoreUsersTest is Test {
         s.registerUser(storeId, addrNewUser, admin);
         vm.startPrank(addrNewUser);
         s.registerUser(storeId, addrSomeoneElse, clerk);
-        assertEq(s.hasAllorMorePermissions(storeId, addrSomeoneElse, clerk), true);
-        assertEq(s.hasAllorMorePermissions(storeId, addrSomeoneElse, admin), false);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, clerk), true);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, admin), false);
         s.removeUser(storeId, addrSomeoneElse);
-        assertEq(s.hasAllorMorePermissions(storeId, addrSomeoneElse, clerk), false);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, clerk), false);
     }
 
     function testTokenRegistration() public {
@@ -85,7 +85,7 @@ contract StoreUsersTest is Test {
         vm.prank(addrNewUser);
         s.redeemInvite(storeId, sigv, sigr, sigs, addrNewUser);
         vm.prank(addrOwner);
-        assertEq(true, s.hasAllorMorePermissions(storeId, addrNewUser, clerk));
+        assertEq(true, s.hasEnoughPermissions(storeId, addrNewUser, clerk));
         // try to use the token twice
         vm.prank(addrSomeoneElse);
         vm.expectRevert(StoreReg.NoVerifier.selector);

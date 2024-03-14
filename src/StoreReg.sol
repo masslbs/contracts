@@ -40,12 +40,12 @@ contract StoreReg is AccessControl {
     }
 
     // Roles are bitmasks of the permissions
-    uint256 constant public CLERK =  (1 << uint8(Permissions.updateRootHash)); 
-    uint256 constant public RELAY_ADMIN =
+    uint256 constant public STATE_UPDATER =  (1 << uint8(Permissions.updateRootHash)); 
+    uint256 constant public RELAY_OPS =
         (1 << uint8(Permissions.addRelay)) | 
         (1 << uint8(Permissions.removeRelay)) |
         (1 << uint8(Permissions.replaceRelay)); 
-    uint256 constant public ADMIN =  RELAY_ADMIN | CLERK |
+    uint256 constant public ADMIN = RELAY_OPS | STATE_UPDATER |
         (1 << uint8(Permissions.registerUser)) |
         (1 << uint8(Permissions.removeUser)) |
         (1 << uint8(Permissions.publishInviteVerifier));
@@ -185,7 +185,7 @@ contract StoreReg is AccessControl {
         bool newIsSet = invites.toggle(calculateIdx(storeId, recovered));
         if(newIsSet) revert NoVerifier();
         // register the new user
-        _addUser(storeId, user, CLERK);
+        _addUser(storeId, user, STATE_UPDATER);
     }
 
     /**
@@ -215,5 +215,4 @@ contract StoreReg is AccessControl {
     function calculateIdx(uint256 id, address addr) internal pure returns (uint256) {
         return uint256(uint160(addr)) ^ uint256(keccak256(abi.encode(id)));
     }
-
 }

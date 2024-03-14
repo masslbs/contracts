@@ -30,7 +30,7 @@ abstract contract AccessControl is ERC721 {
     /// @param id the id of the ERC721
     /// @param perms the permissions to check
     function checkAllPermissions(uint256 id, uint256 perms) public view {
-        if(!hasAllorMorePermissions(id, msg.sender, perms) && ownerOf(id) != msg.sender) {
+        if(!hasEnoughPermissions(id, msg.sender, perms) && ownerOf(id) != msg.sender) {
             // we don't know which permision was missing so we use 0xff to signal that
             revert NotAuthorized(0xff);
         }
@@ -77,11 +77,4 @@ abstract contract AccessControl is ERC721 {
         emit UserAdded(id, user, perms);
         permissionsStore[id][user] = perms;
     }
-
-    /// @notice calculates a unique index given an ID and an address
-    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID. 
-    function calculateIdx(uint256 id, address addr) internal pure returns (uint256) {
-        return uint256(uint160(addr)) ^ uint256(keccak256(abi.encode(id)));
-    }
-
 }
