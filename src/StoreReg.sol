@@ -26,18 +26,16 @@ contract StoreReg is AccessControl {
     /// @notice invites is a mapping of store nfts to their one-time use registration invites
     LibBitmap.Bitmap private invites;
 
-    /// @notice Permissions the different permissions corrisponding to a function in the contract
-    enum Permissions {
-        addPermission,
-        removePermission,
-        updateRootHash,
-        addRelay,
-        removeRelay,
-        replaceRelay,
-        registerUser,
-        removeUser,
-        publishInviteVerifier
-    }
+    /// we could use enums here, but the are not exposed in the abi and change in order of functions would be brittle
+    uint8 constant public PERM_addPermission = 0;
+    uint8 constant public PERM_removePermission = 1;
+    uint8 constant public PERM_updateRootHash = 2;
+    uint8 constant public PERM_addRelay = 3;
+    uint8 constant public PERM_removeRelay = 4;
+    uint8 constant public PERM_replaceRelay = 5;
+    uint8 constant public PERM_registerUser = 6;
+    uint8 constant public PERM_removeUser = 7;
+    uint8 constant public PERM_publishInviteVerifier = 8;
 
     constructor(RelayReg r) ERC721() {
         relayReg = r;
@@ -70,9 +68,9 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param hash The new state root hash
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        if (!_checkIsConfiguredRelay(storeId) && !hasPermission(storeId, msg.sender, uint8(Permissions.updateRootHash)))
+        if (!_checkIsConfiguredRelay(storeId) && !hasPermission(storeId, msg.sender, PERM_updateRootHash))
         {
-            revert NotAuthorized(uint8(Permissions.updateRootHash));
+            revert NotAuthorized(PERM_updateRootHash);
         }
         rootHashes[storeId] = hash;
     }
@@ -99,7 +97,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param relayId The relay nft
     function addRelay(uint256 storeId, uint256 relayId) public {
-        permissionGuard(storeId, uint8(Permissions.addRelay));
+        permissionGuard(storeId, PERM_addRelay);
         relays[storeId].push(relayId);
     }
 
@@ -108,7 +106,7 @@ contract StoreReg is AccessControl {
     /// @param idx The index of the relay to replace
     /// @param relayId The new relay nft
     function replaceRelay(uint256 storeId, uint8 idx, uint256 relayId) public {
-        permissionGuard(storeId, uint8(Permissions.replaceRelay));
+        permissionGuard(storeId, PERM_replaceRelay);
         relays[storeId][idx] = relayId;
     }
 
@@ -116,7 +114,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param idx The index of the relay to remove
     function removeRelay(uint256 storeId, uint8 idx) public {
-        permissionGuard(storeId, uint8(Permissions.removeRelay));
+        permissionGuard(storeId, uint8(PERM_removeRelay));
         uint256 last = relays[storeId].length - 1;
         if (last != idx) {
             relays[storeId][idx] = relays[storeId][last];
@@ -146,7 +144,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param verifier The address of the invite verifier (public key)
     function publishInviteVerifier(uint256 storeId, address verifier) public {
-        permissionGuard(storeId, uint8(Permissions.publishInviteVerifier));
+        permissionGuard(storeId, uint8(PERM_publishInviteVerifier));
         invites.set(calculateIdx(storeId, verifier));
     }
 
@@ -168,7 +166,7 @@ contract StoreReg is AccessControl {
         bool newIsSet = invites.toggle(calculateIdx(storeId, recovered));
         if (newIsSet) revert NoVerifier();
         // register the new user
-        _addUser(storeId, user, (1 << uint8(Permissions.updateRootHash)));
+        _addUser(storeId, user, (1 << PERM_updateRootHash));
     }
 
     /**
@@ -180,7 +178,7 @@ contract StoreReg is AccessControl {
     /// @param user The address of the user
     /// @param perms The perimission to assign to the new users
     function registerUser(uint256 storeId, address user, uint256 perms) public {
-        allPermissionsGuard(storeId, perms | 1 << uint8(Permissions.registerUser));
+        allPermissionsGuard(storeId, perms | 1 << PERM_registerUser);
         // save the user
         _addUser(storeId, user, perms);
     }
@@ -189,19 +187,19 @@ contract StoreReg is AccessControl {
     /// @param storeId The store
     /// @param user The address of the user
     function removeUser(uint256 storeId, address user) public {
-        allPermissionsGuard(storeId, getAllPermissions(storeId, user) | 1 << uint8(Permissions.removeUser));
+        allPermissionsGuard(storeId, getAllPermissions(storeId, user) | 1 << PERM_removeUser);
         _removeUser(storeId, user);
     }
 
     // @dev adds a permision if the calling user has that permision and the permision to remove permisions
     function addPermission(uint256 storeId, address user, uint8 perm) public {
-        allPermissionsGuard(storeId, 1 << perm | 1 << uint8(Permissions.addPermission));
+        allPermissionsGuard(storeId, 1 << perm | 1 << PERM_addPermission);
         _addPermission(storeId, user, perm);
     }
 
     // @dev removes a permision if the calling user has that permision and the permision to remove permisions
     function removePermission(uint256 storeId, address user, uint8 perm) public {
-        allPermissionsGuard(storeId, 1 << perm | uint8(Permissions.removePermission));
+        allPermissionsGuard(storeId, 1 << perm | PERM_removePermission);
         _removePermission(storeId, user, perm);
     }
 
