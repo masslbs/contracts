@@ -6,9 +6,9 @@ pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
-import { StoreReg } from "../src/StoreReg.sol";
-import { RelayReg } from "../src/RelayReg.sol";
-import { AccessControl } from "../src/AccessControl.sol";
+import {StoreReg} from "../src/StoreReg.sol";
+import {RelayReg} from "../src/RelayReg.sol";
+import {AccessControl} from "../src/AccessControl.sol";
 
 contract StoreUsersTest is Test {
     StoreReg internal s;
@@ -46,9 +46,7 @@ contract StoreUsersTest is Test {
         vm.prank(addrOwner);
         s.registerUser(storeId, addrNewUser, clerk);
         vm.prank(addrNewUser);
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 255)
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 255));
         s.registerUser(storeId, addrSomeoneElse, admin);
     }
 
@@ -56,9 +54,7 @@ contract StoreUsersTest is Test {
         vm.prank(addrOwner);
         s.registerUser(storeId, addrNewUser, clerk);
         vm.startPrank(addrNewUser);
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 255)
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 255));
         s.registerUser(storeId, addrSomeoneElse, clerk);
         assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, clerk), false);
         assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, admin), false);

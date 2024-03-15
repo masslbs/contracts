@@ -4,14 +4,15 @@
 
 pragma solidity ^0.8.19;
 
-import { ERC721 } from "solady/src/tokens/ERC721.sol";
-import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
-import { LibString } from "solady/src/utils/LibString.sol";
-import { RelayReg } from "./RelayReg.sol";
-import { AccessControl } from "./AccessControl.sol";
+import {ERC721} from "solady/src/tokens/ERC721.sol";
+import {LibBitmap} from "solady/src/utils/LibBitmap.sol";
+import {LibString} from "solady/src/utils/LibString.sol";
+import {RelayReg} from "./RelayReg.sol";
+import {AccessControl} from "./AccessControl.sol";
 
 contract StoreReg is AccessControl {
     using LibBitmap for LibBitmap.Bitmap;
+
     RelayReg public relayReg;
 
     error NoVerifier();
@@ -42,16 +43,13 @@ contract StoreReg is AccessControl {
         relayReg = r;
     }
 
-    function name() public pure override returns (string memory)
-    {
+    function name() public pure override returns (string memory) {
         return "StoreRegistry";
     }
 
-    function symbol() public pure override returns (string memory)
-    {
+    function symbol() public pure override returns (string memory) {
         return "SR";
     }
-
 
     /// @notice Returns the metadata URI for a given store
     /// @param id The store nft
@@ -72,12 +70,11 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param hash The new state root hash
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        if(!_checkIsConfiguredRelay(storeId) 
-            && !hasPermission(storeId, msg.sender, uint8(Permissions.updateRootHash))
-          ) {
-                revert NotAuthorized(uint8(Permissions.updateRootHash));
-            }
-       rootHashes[storeId] = hash;
+        if (!_checkIsConfiguredRelay(storeId) && !hasPermission(storeId, msg.sender, uint8(Permissions.updateRootHash)))
+        {
+            revert NotAuthorized(uint8(Permissions.updateRootHash));
+        }
+        rootHashes[storeId] = hash;
     }
 
     /**
@@ -110,7 +107,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param idx The index of the relay to replace
     /// @param relayId The new relay nft
-    function replaceRelay(uint256 storeId,  uint8 idx, uint256 relayId) public {
+    function replaceRelay(uint256 storeId, uint8 idx, uint256 relayId) public {
         permissionGuard(storeId, uint8(Permissions.replaceRelay));
         relays[storeId][idx] = relayId;
     }
@@ -120,8 +117,8 @@ contract StoreReg is AccessControl {
     /// @param idx The index of the relay to remove
     function removeRelay(uint256 storeId, uint8 idx) public {
         permissionGuard(storeId, uint8(Permissions.removeRelay));
-        uint last = relays[storeId].length - 1;
-        if(last != idx) {
+        uint256 last = relays[storeId].length - 1;
+        if (last != idx) {
             relays[storeId][idx] = relays[storeId][last];
         }
         relays[storeId].pop();
@@ -130,8 +127,8 @@ contract StoreReg is AccessControl {
     /// @dev checks if the sender is part of the configured relays
     /// @param storeId The store nft
     function _checkIsConfiguredRelay(uint256 storeId) internal view returns (bool) {
-        uint[] storage allRelays = relays[storeId];
-        for (uint index = 0; index < allRelays.length; index++) {
+        uint256[] storage allRelays = relays[storeId];
+        for (uint256 index = 0; index < allRelays.length; index++) {
             uint256 relayId = allRelays[index];
             address relayAddr = relayReg.ownerOf(relayId);
             if (relayAddr == msg.sender) {
@@ -156,8 +153,7 @@ contract StoreReg is AccessControl {
     /// @dev utility function to get the message hash for the invite verfication
     function _getTokenMessageHash(address user) public pure returns (bytes32) {
         string memory hexAdd = LibString.toHexString(uint256(uint160(user)), 20);
-        return keccak256(
-            abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", hexAdd));
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", hexAdd));
     }
 
     /// @notice redeem one of the invites. (v,r,s) are the signature
@@ -170,7 +166,7 @@ contract StoreReg is AccessControl {
         // check signature
         address recovered = ecrecover(_getTokenMessageHash(user), v, r, s);
         bool newIsSet = invites.toggle(calculateIdx(storeId, recovered));
-        if(newIsSet) revert NoVerifier();
+        if (newIsSet) revert NoVerifier();
         // register the new user
         _addUser(storeId, user, (1 << uint8(Permissions.updateRootHash)));
     }
@@ -210,7 +206,7 @@ contract StoreReg is AccessControl {
     }
 
     /// @notice calculates a unique index given an ID and an address
-    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID. 
+    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID.
     function calculateIdx(uint256 id, address addr) internal pure returns (uint256) {
         return uint256(uint160(addr)) ^ uint256(keccak256(abi.encode(id)));
     }

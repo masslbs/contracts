@@ -7,27 +7,25 @@ pragma solidity ^0.8.21;
 import "forge-std/Test.sol";
 import {AccessControl} from "../src/AccessControl.sol";
 
-
 contract MockAccessControlNFT is AccessControl {
     uint8 internal permissionForTestFunction = 66;
 
-    constructor() {
-    }
+    constructor() {}
 
     function mint(uint256 _id, address _addr) public {
-        _mint(_addr, _id );
+        _mint(_addr, _id);
     }
 
-    function name() public  pure override returns (string memory) {
+    function name() public pure override returns (string memory) {
         return "RelayRegestry";
     }
 
-    function symbol() public  pure override returns (string memory) {
+    function symbol() public pure override returns (string memory) {
         return "RR";
     }
 
     function tokenURI(uint256 id) public view override returns (string memory) {
-        return ""; 
+        return "";
     }
 
     function addUser(uint256 id, address user, uint256 perms) public {
@@ -75,7 +73,7 @@ contract AccessControlTest is Test {
         assertTrue(ac.hasEnoughPermissions(store_id, address(this), ALL_PERMS));
     }
 
-    function test_shouldNotHavePerm () public {
+    function test_shouldNotHavePerm() public {
         for (uint8 i = 0; i < 0xff; i++) {
             assertFalse(ac.hasPermission(store_id, user, i));
         }
@@ -120,7 +118,6 @@ contract AccessControlTest is Test {
         emit PermissionAdded(store_id, user, perm);
         ac.addPermission(store_id, user, perm);
     }
-
 
     function test_addedPermissionSHouldExist() public {
         uint8 perm = 1;

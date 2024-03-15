@@ -3,17 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 pragma solidity ^0.8.19;
+
 import "solady/src/tokens/ERC20.sol";
 
 /// @title Sweeps ERC20's from the payment address to the merchants address
 contract SweepERC20Payment {
-    constructor (
-        address payable merchant,
-        address payable proof,
-        uint256 amount,
-        ERC20 erc20,
-        address factory
-    ) payable {
+    constructor(address payable merchant, address payable proof, uint256 amount, ERC20 erc20, address factory)
+        payable
+    {
         require(msg.sender == factory);
         // if we are transfering an erc20
         uint256 balance = erc20.balanceOf(address(this));
@@ -37,12 +34,7 @@ contract SweepERC20Payment {
 
 /// @title Sweeps ether from the payment address to the merchants address
 contract SweepEtherPayment {
-    constructor (
-        address payable merchant,
-        address payable proof,
-        uint256 amount,
-        address factory
-    ) payable {
+    constructor(address payable merchant, address payable proof, uint256 amount, address factory) payable {
         // we need to commit to the factory or anyone could deploy this sweep contracts
         // commiting allows the reciepts to have a single souce of truth
         require(msg.sender == factory);
@@ -67,13 +59,11 @@ contract SweepEtherPayment {
 
 /// @title Provides functions around payments addresses
 contract PaymentFactory {
-
-    function getBytecode(
-        address merchant,
-        address proof,
-        uint256 amount,
-        address currency
-    ) public view returns (bytes memory) {
+    function getBytecode(address merchant, address proof, uint256 amount, address currency)
+        public
+        view
+        returns (bytes memory)
+    {
         bytes memory bytecode;
         if (currency == address(0)) {
             bytecode = type(SweepEtherPayment).creationCode;
@@ -84,7 +74,6 @@ contract PaymentFactory {
         }
     }
 
-
     /// @notice Calulates the payament address given the following parameters
     /// @param merchant The merchant's address which the funds get sent to
     /// @param proof The address that the receipt or the refund will be sent to
@@ -92,29 +81,23 @@ contract PaymentFactory {
     /// @param currency The address of the ERC20 that is being used as payement. If that currency is Ether then use zero address `0x0000000000000000000000000000000000000000`.
     /// @param recieptHash The hash of the receipt used as salt for CREATE2
     /// @return The payment address
-    function getPaymentAddress(
-        address merchant,
-        address proof,
-        uint256 amount,
-        address currency,
-        bytes32 recieptHash
-    ) public view returns (address)  {
+    function getPaymentAddress(address merchant, address proof, uint256 amount, address currency, bytes32 recieptHash)
+        public
+        view
+        returns (address)
+    {
         bytes32 hash = keccak256(
-            abi.encodePacked(bytes1(0xff),
-                             address(this),
-                             recieptHash, // salt
-                             keccak256(
-                                 getBytecode(
-                                     merchant, 
-                                     proof, 
-                                     amount,
-                                     currency
-                             ))));
+            abi.encodePacked(
+                bytes1(0xff),
+                address(this),
+                recieptHash, // salt
+                keccak256(getBytecode(merchant, proof, amount, currency))
+            )
+        );
 
-                             // NOTE: cast last 20 bytes of hash to address
-                             return address(uint160(uint(hash)));
+        // NOTE: cast last 20 bytes of hash to address
+        return address(uint160(uint256(hash)));
     }
-
 
     /// @notice Given the parameters used to generate a payement address, this function will forward the payment to the merchant's address.
     /// @param merchant The merchant's address which the funds get sent to
@@ -132,9 +115,11 @@ contract PaymentFactory {
         address paymentContract;
         // if we are dealing with ether
         if (currency == address(0)) {
-            paymentContract  = address(new SweepEtherPayment{salt: recieptHash}(merchant, proof, amount, address(this)));
+            paymentContract = address(new SweepEtherPayment{salt: recieptHash}(merchant, proof, amount, address(this)));
         } else {
-            paymentContract  = address(new SweepERC20Payment{salt: recieptHash}(merchant, proof, amount, ERC20(currency), address(this)));
+            paymentContract = address(
+                new SweepERC20Payment{salt: recieptHash}(merchant, proof, amount, ERC20(currency), address(this))
+            );
         }
     }
 
@@ -151,7 +136,7 @@ contract PaymentFactory {
         address[] calldata currencys,
         bytes32[] calldata recieptHashes
     ) public {
-        for (uint i=0; i<merchants.length; i++) {
+        for (uint256 i = 0; i < merchants.length; i++) {
             processPayment(merchants[i], proofs[i], amounts[i], currencys[i], recieptHashes[i]);
         }
     }
