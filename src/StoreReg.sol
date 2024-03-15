@@ -39,16 +39,7 @@ contract StoreReg is AccessControl {
         publishInviteVerifier
     }
 
-    // Roles are bitmasks of the permissions
     uint256 constant public STATE_UPDATER =  (1 << uint8(Permissions.updateRootHash)); 
-    uint256 constant public RELAY_OPS =
-        (1 << uint8(Permissions.addRelay)) | 
-        (1 << uint8(Permissions.removeRelay)) |
-        (1 << uint8(Permissions.replaceRelay)); 
-    uint256 constant public ADMIN = RELAY_OPS | STATE_UPDATER |
-        (1 << uint8(Permissions.registerUser)) |
-        (1 << uint8(Permissions.removeUser)) |
-        (1 << uint8(Permissions.publishInviteVerifier));
 
     constructor(RelayReg r) ERC721() {
         relayReg = r;
@@ -86,7 +77,6 @@ contract StoreReg is AccessControl {
     function updateRootHash(uint256 storeId, bytes32 hash) public {
         if(!_checkIsConfiguredRelay(storeId) 
             && !hasPermission(storeId, msg.sender, uint8(Permissions.updateRootHash))
-            && ownerOf(storeId) != msg.sender
           ) {
                 revert NotAuthorized(uint8(Permissions.updateRootHash));
             }
@@ -115,7 +105,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param relayId The relay nft
     function addRelay(uint256 storeId, uint256 relayId) public {
-        checkPermission(storeId, uint8(Permissions.addRelay));
+        permissionGuard(storeId, uint8(Permissions.addRelay));
         relays[storeId].push(relayId);
     }
 
@@ -124,7 +114,7 @@ contract StoreReg is AccessControl {
     /// @param idx The index of the relay to replace
     /// @param relayId The new relay nft
     function replaceRelay(uint256 storeId,  uint8 idx, uint256 relayId) public {
-        checkPermission(storeId, uint8(Permissions.replaceRelay));
+        permissionGuard(storeId, uint8(Permissions.replaceRelay));
         relays[storeId][idx] = relayId;
     }
 
@@ -132,7 +122,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param idx The index of the relay to remove
     function removeRelay(uint256 storeId, uint8 idx) public {
-        checkPermission(storeId, uint8(Permissions.removeRelay));
+        permissionGuard(storeId, uint8(Permissions.removeRelay));
         uint last = relays[storeId].length - 1;
         if(last != idx) {
             relays[storeId][idx] = relays[storeId][last];
@@ -162,7 +152,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param verifier The address of the invite verifier (public key)
     function publishInviteVerifier(uint256 storeId, address verifier) public {
-        checkPermission(storeId, uint8(Permissions.publishInviteVerifier));
+        permissionGuard(storeId, uint8(Permissions.publishInviteVerifier));
         invites.set(calculateIdx(storeId, verifier));
     }
 
@@ -197,7 +187,7 @@ contract StoreReg is AccessControl {
     /// @param user The address of the user
     /// @param perms The perimission to assign to the new users
     function registerUser(uint256 storeId, address user, uint256 perms) public {
-        checkAllPermissions(storeId, perms | 1 << uint8(Permissions.registerUser));
+        allPermissionsGuard(storeId, perms | 1 << uint8(Permissions.registerUser));
         // save the user
         _addUser(storeId, user, perms);
     }
@@ -206,7 +196,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store
     /// @param user The address of the user
     function removeUser(uint256 storeId, address user) public {
-        checkAllPermissions(storeId, getAllPermissions(storeId, user) | 1 << uint8(Permissions.removeUser));
+        allPermissionsGuard(storeId, getAllPermissions(storeId, user) | 1 << uint8(Permissions.removeUser));
         _removeUser(storeId, user);
     }
 
