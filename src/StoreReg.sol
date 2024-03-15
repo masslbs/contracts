@@ -27,7 +27,6 @@ contract StoreReg is AccessControl {
 
     /// @notice Permissions the different permissions corrisponding to a function in the contract
     enum Permissions {
-        setPermissionBatch,
         addPermission,
         removePermission,
         updateRootHash,
@@ -38,8 +37,6 @@ contract StoreReg is AccessControl {
         removeUser,
         publishInviteVerifier
     }
-
-    uint256 constant public STATE_UPDATER =  (1 << uint8(Permissions.updateRootHash)); 
 
     constructor(RelayReg r) ERC721() {
         relayReg = r;
@@ -175,7 +172,7 @@ contract StoreReg is AccessControl {
         bool newIsSet = invites.toggle(calculateIdx(storeId, recovered));
         if(newIsSet) revert NoVerifier();
         // register the new user
-        _addUser(storeId, user, STATE_UPDATER);
+        _addUser(storeId, user, (1 << uint8(Permissions.updateRootHash)));
     }
 
     /**
@@ -198,6 +195,18 @@ contract StoreReg is AccessControl {
     function removeUser(uint256 storeId, address user) public {
         allPermissionsGuard(storeId, getAllPermissions(storeId, user) | 1 << uint8(Permissions.removeUser));
         _removeUser(storeId, user);
+    }
+
+    // @dev adds a permision if the calling user has that permision and the permision to remove permisions
+    function addPermission(uint256 storeId, address user, uint8 perm) public {
+        allPermissionsGuard(storeId, 1 << perm | 1 << uint8(Permissions.addPermission));
+        _addPermission(storeId, user, perm);
+    }
+
+    // @dev removes a permision if the calling user has that permision and the permision to remove permisions
+    function removePermission(uint256 storeId, address user, uint8 perm) public {
+        allPermissionsGuard(storeId, 1 << perm | uint8(Permissions.removePermission));
+        _removePermission(storeId, user, perm);
     }
 
     /// @notice calculates a unique index given an ID and an address

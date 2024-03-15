@@ -101,7 +101,7 @@ contract StoreTest is Test {
         vm.prank(owner);
         stores.removeRelay(storeId, 0);
         vm.expectRevert(
-            abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 3)
+            abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 2)
         );
         vm.prank(relayAddr);
         stores.updateRootHash(storeId, testHashUpdate);
