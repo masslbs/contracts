@@ -74,19 +74,22 @@
         '';
 
       deploy_market_local = mk_deploy_market "deploy-market" "." "TestingDeploy" false;
-      deploy_market = mk_deploy_market "deploy-market" self "Deploy" true;
       deploy_market_test = mk_deploy_market "deploy-test-market" self "TestingDeploy" true;
+      deploy_market_sepolia = pkgs.writeShellScriptBin "deploy-sepolia" ''
+        ${pkgs.foundry-bin}/bin/forge script --verifier sourcify ./script/deploy.s.sol:Deploy --rpc-url https://rpc.sepolia.org/ --broadcast --vvvv --no-auto-detect
+      '';
 
       run_and_deploy_local = mk_run_and_deploy deploy_market_local;
-      run_and_deploy = mk_run_and_deploy deploy_market;
+      run_and_deploy_test = mk_run_and_deploy deploy_market_test;
 
       buildInputs = with pkgs; [
         solc
         reuse
         foundry-bin
         nodePackages.pnpm
-        deploy_market
-        run_and_deploy
+        deploy_market_test
+        run_and_deploy_test
+        deploy_market_sepolia
       ];
 
       remappings-txt = ''
@@ -139,9 +142,8 @@
           installPhase = ''
             mkdir -p $out/{bin,abi};
             cp ./update_env.sh $out/bin/
-            ln -s ${deploy_market}/bin/deploy-market $out/bin/deploy-market
             ln -s ${deploy_market_test}/bin/deploy-test-market $out/bin/deploy-test-market
-            ln -s ${run_and_deploy}/bin/run-and-deploy $out/bin/run-and-deploy
+            ln -s ${run_and_deploy_test}/bin/run-and-deploy $out/bin/run-and-deploy
           '';
         };
       };
