@@ -139,4 +139,14 @@ contract AccessControlTest is Test {
         ac.removePermission(store_id, user, perm);
         assertFalse(ac.hasPermission(store_id, user, perm));
     }
+
+    function test_permsToBitmap() public {
+        uint8[] memory perms = new uint8[](3);
+        perms[0] = 1;
+        perms[1] = 2;
+        perms[2] = 3;
+        uint256 bitmap = ac.permsToBitmap(perms);
+        // bitmap == 1110
+        assertEq(bitmap, 14);
+    }
 }

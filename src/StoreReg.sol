@@ -27,15 +27,15 @@ contract StoreReg is AccessControl {
     LibBitmap.Bitmap private invites;
 
     /// we could use enums here, but the are not exposed in the abi and change in order of functions would be brittle
-    uint8 constant public PERM_addPermission = 0;
-    uint8 constant public PERM_removePermission = 1;
-    uint8 constant public PERM_updateRootHash = 2;
-    uint8 constant public PERM_addRelay = 3;
-    uint8 constant public PERM_removeRelay = 4;
-    uint8 constant public PERM_replaceRelay = 5;
-    uint8 constant public PERM_registerUser = 6;
-    uint8 constant public PERM_removeUser = 7;
-    uint8 constant public PERM_publishInviteVerifier = 8;
+    uint8 public constant PERM_addPermission = 0;
+    uint8 public constant PERM_removePermission = 1;
+    uint8 public constant PERM_updateRootHash = 2;
+    uint8 public constant PERM_addRelay = 3;
+    uint8 public constant PERM_removeRelay = 4;
+    uint8 public constant PERM_replaceRelay = 5;
+    uint8 public constant PERM_registerUser = 6;
+    uint8 public constant PERM_removeUser = 7;
+    uint8 public constant PERM_publishInviteVerifier = 8;
 
     constructor(RelayReg r) ERC721() {
         relayReg = r;
@@ -68,8 +68,7 @@ contract StoreReg is AccessControl {
     /// @param storeId The store nft
     /// @param hash The new state root hash
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        if (!_checkIsConfiguredRelay(storeId) && !hasPermission(storeId, msg.sender, PERM_updateRootHash))
-        {
+        if (!_checkIsConfiguredRelay(storeId) && !hasPermission(storeId, msg.sender, PERM_updateRootHash)) {
             revert NotAuthorized(PERM_updateRootHash);
         }
         rootHashes[storeId] = hash;

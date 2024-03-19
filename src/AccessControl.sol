@@ -34,7 +34,7 @@ abstract contract AccessControl is ERC721 {
 
     /// @notice checks if the caller has all the permissions and throws if it does not
     /// @param id the id of the ERC721
-    /// @param perms the permissions to check
+    /// @param perms the permissions to check as a bitmap of permissions
     function allPermissionsGuard(uint256 id, uint256 perms) public view {
         // we don't know which permision was missing so we use 0xff to signal that
         if (!hasEnoughPermissions(id, msg.sender, perms)) revert NotAuthorized(0xff);
@@ -65,7 +65,7 @@ abstract contract AccessControl is ERC721 {
         return permissionsStore[id][user] & (1 << perm) != 0 || ownerOf(id) == user;
     }
 
-    /// @notice checks if a user has the same or more permissions as perms
+    /// @notice checks if a user has the same or more permissions as perms. Where perms is a bitmap of permissions (1 << perm2 | 1 << perm2 ...) 
     /// @param id the id of the ERC721
     /// @param user the address of the user
     /// @param perms the permissions to check
@@ -73,5 +73,15 @@ abstract contract AccessControl is ERC721 {
         uint256 userPerms = permissionsStore[id][user];
         // converse nonimplication implemeted as XOR(OR(Q, P), P)
         return ((userPerms | perms) ^ userPerms) == 0 || ownerOf(id) == user;
+    }
+
+    /// @notice converts an array of permissions to a bitmap
+    /// @param perms the permissions to convert
+    function permsToBitmap(uint8[] memory perms) public pure returns (uint256) {
+        uint256 bitmap;
+        for (uint8 i = 0; i < perms.length; i++) {
+            bitmap |= 1 << perms[i];
+        }
+        return bitmap;
     }
 }
