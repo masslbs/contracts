@@ -65,7 +65,7 @@ abstract contract AccessControl is ERC721 {
         return permissionsStore[id][user] & (1 << perm) != 0 || ownerOf(id) == user;
     }
 
-    /// @notice checks if a user has the same or more permissions as perms. Where perms is a bitmap of permissions (1 << perm2 | 1 << perm2 ...) 
+    /// @notice checks if a user has the same or more permissions as perms. Where perms is a bitmap of permissions (1 << perm2 | 1 << perm2 ...)
     /// @param id the id of the ERC721
     /// @param user the address of the user
     /// @param perms the permissions to check
