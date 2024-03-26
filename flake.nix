@@ -92,13 +92,12 @@
         deploy_market_sepolia
       ];
 
-      remappings-txt = ''
+      remappings = pkgs.writeText "remapping.txt" ''
         forge-std/=${forge-std}/src
         ds-test/=${forge-std}/lib/ds-test/src
         permit2/=${permit2}/
         solady=${solady}/
       '';
-      remappings = pkgs.writeText "remapping.txt" remappings-txt;
     in {
       devShell = pkgs.mkShell {
         # local devshell scripts need to come first.
@@ -125,14 +124,8 @@
           dontConfigure = true;
 
           buildPhase = ''
-            solc ${builtins.replaceStrings ["\n"] [" "] remappings-txt} --abi   \
-              --input-file src/StoreReg.sol \
-              --input-file src/RelayReg.sol \
-              --input-file src/payment-factory.sol \
-              --input-file ${solady}/test/utils/mocks/MockERC20.sol \
-              -o $out/abi
-            # overwrite for abis/sol/IERC1155Errors.abi
-            solc --abi --allow-paths  ${solady} --input-file ${solady}/src/tokens/ERC20.sol -o $out/abi --overwrite
+            cp ${remappings} remappings.txt
+            forge compile --no-auto-detect
           '';
 
           checkPhase = ''
@@ -142,6 +135,7 @@
           installPhase = ''
             mkdir -p $out/{bin,abi};
             cp ./update_env.sh $out/bin/
+            cp -r ./out/{ERC20.sol,RelayReg.sol,StoreReg.sol,Payments.sol,payment-factory.sol} $out/abi
             ln -s ${deploy_market_test}/bin/deploy-test-market $out/bin/deploy-test-market
             ln -s ${run_and_deploy_test}/bin/run-and-deploy $out/bin/run-and-deploy
           '';
