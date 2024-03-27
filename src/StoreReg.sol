@@ -4,9 +4,9 @@
 
 pragma solidity ^0.8.19;
 
-import { ERC721 } from "solady/src/tokens/ERC721.sol";
-import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
-import { LibString } from "solady/src/utils/LibString.sol";
+import {ERC721} from "solady/src/tokens/ERC721.sol";
+import {LibBitmap} from "solady/src/utils/LibBitmap.sol";
+import {LibString} from "solady/src/utils/LibString.sol";
 import "./RelayReg.sol";
 
 /// @notice AccessLevel is a enum that represents the different access levels of a user
@@ -14,14 +14,21 @@ import "./RelayReg.sol";
 /// @notice Clerk can read and write
 /// @notice Admin can read, write, and add other users
 /// @notice Owner only usable for hasAtLeastAccess checking
-enum AccessLevel { Zero, Clerk, Admin, Owner } 
+enum AccessLevel {
+    Zero,
+    Clerk,
+    Admin,
+    Owner
+}
 
 contract StoreReg is ERC721 {
     using LibBitmap for LibBitmap.Bitmap;
+
     RelayReg public relayReg;
 
     event UserAdded(uint256 indexed storeId, address user);
     event UserRemoved(uint256 indexed storeId, address users);
+
     error NoVerifier();
     error NotAuthorized();
     error InvalidAccessLevel();
@@ -42,16 +49,13 @@ contract StoreReg is ERC721 {
         relayReg = r;
     }
 
-    function name() public pure override returns (string memory)
-    {
+    function name() public pure override returns (string memory) {
         return "StoreRegistry";
     }
 
-    function symbol() public pure override returns (string memory)
-    {
+    function symbol() public pure override returns (string memory) {
         return "SR";
     }
-
 
     /// @notice Returns the metadata URI for a given store
     /// @param id The store nft
@@ -72,9 +76,10 @@ contract StoreReg is ERC721 {
     /// @param storeId The store nft
     /// @param hash The new state root hash
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        if(!(_checkIsConfiguredRelay(storeId) 
-            || hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk))) revert NotAuthorized();
-       rootHashes[storeId] = hash;
+        if (!(_checkIsConfiguredRelay(storeId) || hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk))) {
+            revert NotAuthorized();
+        }
+        rootHashes[storeId] = hash;
     }
 
     // relay config things
@@ -106,7 +111,7 @@ contract StoreReg is ERC721 {
     /// @param storeId The store nft
     /// @param idx The index of the relay to replace
     /// @param relayId The new relay nft
-    function replaceRelay(uint256 storeId,  uint8 idx, uint256 relayId) public {
+    function replaceRelay(uint256 storeId, uint8 idx, uint256 relayId) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
         relays[storeId][idx] = relayId;
     }
@@ -116,8 +121,8 @@ contract StoreReg is ERC721 {
     /// @param idx The index of the relay to remove
     function removeRelay(uint256 storeId, uint8 idx) public {
         requireOnlyAdminOrHigher(storeId, msg.sender);
-        uint last = relays[storeId].length - 1;
-        if(last != idx) {
+        uint256 last = relays[storeId].length - 1;
+        if (last != idx) {
             relays[storeId][idx] = relays[storeId][last];
         }
         relays[storeId].pop();
@@ -127,8 +132,8 @@ contract StoreReg is ERC721 {
     /// @dev checks if the sender is part of the configured relays
     /// @param storeId The store nft
     function _checkIsConfiguredRelay(uint256 storeId) internal view returns (bool) {
-        uint[] storage allRelays = relays[storeId];
-        for (uint index = 0; index < allRelays.length; index++) {
+        uint256[] storage allRelays = relays[storeId];
+        for (uint256 index = 0; index < allRelays.length; index++) {
             uint256 relayId = allRelays[index];
             address relayAddr = relayReg.ownerOf(relayId);
             if (relayAddr == msg.sender) {
@@ -139,13 +144,13 @@ contract StoreReg is ERC721 {
     }
 
     /// @dev checks if the sender is the owner of the store
-    function _checkIsOwner(uint256 storeId) view internal returns (bool) {
-         address owner = ownerOf(storeId);
-         return msg.sender == owner;
+    function _checkIsOwner(uint256 storeId) internal view returns (bool) {
+        address owner = ownerOf(storeId);
+        return msg.sender == owner;
     }
 
-    function requireIsOwner(uint256 storeId) view internal {
-        if(!_checkIsOwner(storeId)) revert NotAuthorized();
+    function requireIsOwner(uint256 storeId) internal view {
+        if (!_checkIsOwner(storeId)) revert NotAuthorized();
     }
 
     function requireOnlyAdminOrHigher(uint256 storeId, address who) public view {
@@ -153,7 +158,7 @@ contract StoreReg is ERC721 {
             return;
         }
         AccessLevel acl = storesToUsers[storeId][who];
-        if(acl == AccessLevel.Zero || acl == AccessLevel.Clerk) revert NotAuthorized();
+        if (acl == AccessLevel.Zero || acl == AccessLevel.Clerk) revert NotAuthorized();
     }
 
     /// @notice adds a new one-time use registration invite to the store
@@ -167,8 +172,7 @@ contract StoreReg is ERC721 {
     /// @dev utility function to get the message hash for the invite verfication
     function _getTokenMessageHash(address user) public pure returns (bytes32) {
         string memory hexAdd = LibString.toHexString(uint256(uint160(user)), 20);
-        return keccak256(
-            abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", hexAdd));
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", hexAdd));
     }
 
     /// @notice redeem one of the invites. (v,r,s) are the signature
@@ -181,7 +185,7 @@ contract StoreReg is ERC721 {
         // check signature
         address recovered = ecrecover(_getTokenMessageHash(user), v, r, s);
         bool newIsSet = invites.toggle(_calulateInviteId(recovered, storeId));
-        if(newIsSet) revert NoVerifier();
+        if (newIsSet) revert NoVerifier();
         // register the new user
         _addUser(storeId, user, AccessLevel.Clerk);
     }
@@ -225,15 +229,14 @@ contract StoreReg is ERC721 {
         revert InvalidAccessLevel();
     }
 
-    function _addUser(uint256 storeId, address addr,  AccessLevel acl) internal {
+    function _addUser(uint256 storeId, address addr, AccessLevel acl) internal {
         storesToUsers[storeId][addr] = acl;
         emit UserAdded(storeId, addr);
     }
 
     /// @notice calculates the invite id
-    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID. 
+    /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID.
     function _calulateInviteId(address verifier, uint256 storeId) internal pure returns (uint256) {
         return uint256(uint160(verifier)) ^ uint256(keccak256(abi.encode(storeId)));
     }
-
 }

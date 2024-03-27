@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 pragma solidity ^0.8.19;
+
 import {DeployPermit2} from "permit2/test/utils/DeployPermit2.sol";
 import "permit2/src/interfaces/IPermit2.sol";
 
@@ -13,7 +14,7 @@ import "../src/IPayments.sol";
 import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
 
 interface DepositEvent {
-    event Deposit (address indexed sender, uint256 amount);
+    event Deposit(address indexed sender, uint256 amount);
 }
 
 contract TestPaymentEndpoint is IPaymentEndpoint, DepositEvent {
@@ -29,7 +30,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
     address payable alice = payable(address(19));
     address customer = address(20);
     MockERC20 testToken;
-        bytes32 DOMAIN_SEPARATOR;
+    bytes32 DOMAIN_SEPARATOR;
 
     bytes32 public constant _PERMIT_TRANSFER_FROM_TYPEHASH = keccak256(
         "PermitTransferFrom(TokenPermissions permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)"
@@ -37,10 +38,8 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
     bytes32 public constant _TOKEN_PERMISSIONS_TYPEHASH = keccak256("TokenPermissions(address token,uint256 amount)");
 
     function setUp() public {
-        permit2 =  IPermit2(address(deployPermit2()));
-        payments = new Payments(
-            permit2
-        );
+        permit2 = IPermit2(address(deployPermit2()));
+        payments = new Payments(permit2);
         paymentEndpoint = new TestPaymentEndpoint();
         testToken = new MockERC20("mock", "MCK", 18);
         DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
@@ -58,9 +57,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 "\x19\x01",
                 domainSeparator,
                 keccak256(
-                    abi.encode(
-                        _PERMIT_TRANSFER_FROM_TYPEHASH, tokenPermissions, spender, permit.nonce, permit.deadline
-                    )
+                    abi.encode(_PERMIT_TRANSFER_FROM_TYPEHASH, tokenPermissions, spender, permit.nonce, permit.deadline)
                 )
             )
         );
@@ -69,18 +66,14 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
         return bytes.concat(r, s, bytes1(v));
     }
 
-    function makeTestPayment100Native (uint256 amount, uint256 time, address currency) public {
+    function makeTestPayment100Native(uint256 amount, uint256 time, address currency) public {
         payments.payNative{value: amount}(
             PaymentIntent({
                 ttl: time,
                 receipt: bytes32(0),
                 currency: currency,
                 amount: 100,
-                payee: PaymentEndpointDetails({
-                    payeeAddress: alice,
-                    payload: new bytes(0),
-                    canRevert: false
-                }),
+                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
                 shopId: 1,
                 shopSignature: new bytes(65),
                 permit2signature: new bytes(0)
@@ -141,11 +134,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 receipt: bytes32(0),
                 currency: address(testToken),
                 amount: 100,
-                payee: PaymentEndpointDetails({
-                    payeeAddress: alice,
-                    payload: new bytes(0),
-                    canRevert: false
-                }),
+                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
                 shopId: 1,
                 shopSignature: new bytes(65),
                 permit2signature: new bytes(0)
@@ -162,10 +151,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
         testToken.approve(address(permit2), 100);
 
         ISignatureTransfer.PermitTransferFrom memory permit = ISignatureTransfer.PermitTransferFrom({
-            permitted: ISignatureTransfer.TokenPermissions({
-                token: address(testToken),
-                amount: 100
-            }),
+            permitted: ISignatureTransfer.TokenPermissions({token: address(testToken), amount: 100}),
             nonce: 0,
             deadline: 100
         });
@@ -179,14 +165,10 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 receipt: bytes32(0),
                 currency: address(testToken),
                 amount: 100,
-                payee: PaymentEndpointDetails({
-                    payeeAddress: alice,
-                    payload: new bytes(0),
-                    canRevert: false
-                }),
+                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
                 shopId: 1,
                 shopSignature: new bytes(65),
-                permit2signature: sig 
+                permit2signature: sig
             })
         );
         assertEq(testToken.balanceOf(address(alice)), 100);

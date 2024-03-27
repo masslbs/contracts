@@ -29,37 +29,22 @@ contract StoreTest is Test {
 
     function testNewMintOwnerRegistered() public {
         stores.mint(storeId, address(1));
-        uint256 slotOfNewOwner = stdstore
-            .target(address(stores))
-            .sig(stores.ownerOf.selector)
-            .with_key(storeId)
-            .find();
+        uint256 slotOfNewOwner = stdstore.target(address(stores)).sig(stores.ownerOf.selector).with_key(storeId).find();
 
-        uint160 ownerOfTokenIdOne = uint160(
-            uint256(
-                (vm.load(address(stores), bytes32(abi.encode(slotOfNewOwner))))
-            )
-        );
+        uint160 ownerOfTokenIdOne = uint160(uint256((vm.load(address(stores), bytes32(abi.encode(slotOfNewOwner))))));
         assertEq(address(ownerOfTokenIdOne), address(1));
     }
 
     function testBalanceIncremented() public {
         stores.mint(storeId, address(1));
-        uint256 slotBalance = stdstore
-            .target(address(stores))
-            .sig(stores.balanceOf.selector)
-            .with_key(address(1))
-            .find();
+        uint256 slotBalance =
+            stdstore.target(address(stores)).sig(stores.balanceOf.selector).with_key(address(1)).find();
 
-        uint256 balanceFirstMint = uint256(
-            vm.load(address(stores), bytes32(slotBalance))
-        );
+        uint256 balanceFirstMint = uint256(vm.load(address(stores), bytes32(slotBalance)));
         assertEq(balanceFirstMint, 1);
 
-        stores.mint(storeId+1, address(1));
-        uint256 balanceSecondMint = uint256(
-            vm.load(address(stores), bytes32(slotBalance))
-        );
+        stores.mint(storeId + 1, address(1));
+        uint256 balanceSecondMint = uint256(vm.load(address(stores), bytes32(slotBalance)));
         assertEq(balanceSecondMint, 2);
     }
 
@@ -108,11 +93,8 @@ contract StoreTest is Test {
     function testSafeContractReceiver() public {
         Receiver receiver = new MockReceiver();
         stores.mint(storeId, address(receiver));
-        uint256 slotBalance = stdstore
-            .target(address(stores))
-            .sig(stores.balanceOf.selector)
-            .with_key(address(receiver))
-            .find();
+        uint256 slotBalance =
+            stdstore.target(address(stores)).sig(stores.balanceOf.selector).with_key(address(receiver)).find();
 
         uint256 balance = uint256(vm.load(address(stores), bytes32(slotBalance)));
         assertEq(balance, 1);
