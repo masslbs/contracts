@@ -64,7 +64,7 @@
           pushd ${path}
           ${pkgs.foundry-bin}/bin/forge \
           script ${path}/script/deploy.s.sol:Deploy -s "runTestDeploy()"  \
-            --fork-url http://localhost:8545
+            --fork-url http://localhost:8545 --broadcast
           popd
       '');
 
