@@ -7,8 +7,8 @@ pragma solidity ^0.8.19;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import {Receiver} from "solady/src/accounts/Receiver.sol";
-import "../src/store-reg.sol";
-import "../src/relay-reg.sol";
+import "../src/StoreReg.sol";
+import "../src/RelayReg.sol";
 
 contract StoreTest is Test {
     using stdStorage for StdStorage;

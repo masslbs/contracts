@@ -7,7 +7,7 @@ pragma solidity ^0.8.19;
 import { ERC721 } from "solady/src/tokens/ERC721.sol";
 import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
 import { LibString } from "solady/src/utils/LibString.sol";
-import "./relay-reg.sol";
+import "./RelayReg.sol";
 
 /// @notice AccessLevel is a enum that represents the different access levels of a user
 /// @notice Zero no access
