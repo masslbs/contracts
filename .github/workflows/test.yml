@@ -31,7 +31,7 @@ jobs:
         run: nix develop -c deploy-market
       - name: check broadcasts
         run: |
-          export $(./update_env.sh broadcast/deploy.s.sol/31337/run-latest.json | xargs)
+          export $(nix shell .#market-build --command update_env.sh | xargs)
           test -n "$RELAY_REGISTRY_ADDRESS" || { echo "RELAY_REGISTRY_ADDRESS not set"; exit 1; }
           test -n "$STORE_REGISTRY_ADDRESS" || { echo "STORE_REGISTRY_ADDRESS not set"; exit 1; }
           test -n "$PAYMENT_FACTORY_ADDRESS" || { echo "PAYMENT_FACTORY_ADDRESS not set"; exit 1; }

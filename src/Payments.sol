@@ -4,10 +4,10 @@
 
 pragma solidity ^0.8.19;
 
-import { IPermit2 } from "permit2/src/interfaces/IPermit2.sol";
-import { ISignatureTransfer } from "permit2/src/interfaces/ISignatureTransfer.sol";
-import { SafeTransferLib } from "solady/src/utils/SafeTransferLib.sol";
-import { LibBitmap } from "solady/src/utils/LibBitmap.sol";
+import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
+import {ISignatureTransfer} from "permit2/src/interfaces/ISignatureTransfer.sol";
+import {SafeTransferLib} from "solady/src/utils/SafeTransferLib.sol";
+import {LibBitmap} from "solady/src/utils/LibBitmap.sol";
 
 import "./IPayments.sol";
 
@@ -16,24 +16,19 @@ address constant ETH = address(0);
 contract Payments is IPayments {
     using LibBitmap for LibBitmap.Bitmap;
     // a map of payment status indexed by the receipt hash
+
     IPermit2 permit2;
     LibBitmap.Bitmap paymentBitmap;
 
-    constructor(
-        IPermit2 _permit2
-    ) 
-    {
+    constructor(IPermit2 _permit2) {
         permit2 = _permit2;
     }
 
     /// @inheritdoc IPayments
-    function payNative(
-        PaymentIntent calldata payment
-    ) public payable
-    {
-        if(payment.currency != ETH) revert InvalidPaymentToken();
-        if(block.timestamp > payment.ttl) revert PaymentExpired();
-        if(msg.value != payment.amount)   revert InvalidPaymentAmount();
+    function payNative(PaymentIntent calldata payment) public payable {
+        if (payment.currency != ETH) revert InvalidPaymentToken();
+        if (block.timestamp > payment.ttl) revert PaymentExpired();
+        if (msg.value != payment.amount) revert InvalidPaymentAmount();
         // this also prevents reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
         if (payment.payee.payload.length > 0) {
@@ -44,18 +39,12 @@ contract Payments is IPayments {
     }
 
     /// @inheritdoc IPayments
-    function payToken (
-        PaymentIntent calldata payment
-    ) public 
-    {
+    function payToken(PaymentIntent calldata payment) public {
         _usePaymentIntent(msg.sender, payment);
         // do a permit2 transfer
         permit2.permitTransferFrom(
             ISignatureTransfer.PermitTransferFrom({
-                permitted: ISignatureTransfer.TokenPermissions({
-                    token: payment.currency,
-                    amount: payment.amount
-                }),
+                permitted: ISignatureTransfer.TokenPermissions({token: payment.currency, amount: payment.amount}),
                 nonce: uint256(payment.receipt),
                 deadline: payment.ttl
             }),
@@ -69,27 +58,21 @@ contract Payments is IPayments {
     }
 
     /// @inheritdoc IPayments
-    function payTokenPreApproved (
-        PaymentIntent calldata payment
-    ) public 
-    {
-        if(block.timestamp > payment.ttl) revert PaymentExpired();
+    function payTokenPreApproved(PaymentIntent calldata payment) public {
+        if (block.timestamp > payment.ttl) revert PaymentExpired();
         // this also prevent reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
         SafeTransferLib.safeTransferFrom(payment.currency, msg.sender, payment.payee.payeeAddress, payment.amount);
         if (payment.payee.payload.length > 0) {
-          IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
+            IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
         }
     }
 
     /// @inheritdoc IPayments
-    function pay(
-        PaymentIntent calldata payment
-    ) public payable
-    {
-        if(payment.currency == ETH) {
+    function pay(PaymentIntent calldata payment) public payable {
+        if (payment.currency == ETH) {
             payNative(payment);
-        } else if(payment.permit2signature.length > 0) {
+        } else if (payment.permit2signature.length > 0) {
             payToken(payment);
         } else {
             payTokenPreApproved(payment);
@@ -97,20 +80,17 @@ contract Payments is IPayments {
     }
 
     /// @inheritdoc IPayments
-    function multiPay(
-        PaymentIntent[] calldata payments
-    ) public payable
-    {
-        for (uint i = 0; i < payments.length; i++) {
+    function multiPay(PaymentIntent[] calldata payments) public payable {
+        for (uint256 i = 0; i < payments.length; i++) {
             pay(payments[i]);
         }
     }
 
     // @inheritdoc IPayments
     function revertPayment(address from, PaymentIntent calldata payment) public {
-        if(msg.sender != payment.payee.payeeAddress) revert NotPayee();
-        if(!payment.payee.canRevert) revert RevertNotAllowed();
-        uint paymentId = getPaymentId(payment);
+        if (msg.sender != payment.payee.payeeAddress) revert NotPayee();
+        if (!payment.payee.canRevert) revert RevertNotAllowed();
+        uint256 paymentId = getPaymentId(payment);
         bool flipped = paymentBitmap.toggle(uint256(uint160(from)) ^ paymentId);
         if (flipped) revert PaymentNotMade();
     }
@@ -126,10 +106,10 @@ contract Payments is IPayments {
     }
 
     /// @notice Checks whether a payment has been made and sets the bit at the bit position in the bitmap at the word position
-    /// @param from The address to use to make the payment 
+    /// @param from The address to use to make the payment
     /// @param payment The payment
     function _usePaymentIntent(address from, PaymentIntent calldata payment) internal {
-        uint paymentId = getPaymentId(payment);
+        uint256 paymentId = getPaymentId(payment);
         bool flipped = paymentBitmap.toggle(uint256(uint160(from)) ^ paymentId);
         if (!flipped) revert PaymentAlreadyMade();
     }
