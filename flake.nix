@@ -64,7 +64,7 @@
           export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
           pushd ${path}
           ${pkgs.foundry-bin}/bin/forge \
-          script ${path}/script/deploy.s.sol:Deploy -s "runTestDeploy()"  \
+            script ${path}/script/deploy.s.sol:Deploy -s "runTestDeploy()"  \
             --fork-url http://localhost:8545 --broadcast
           popd
       '');
