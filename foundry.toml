@@ -7,7 +7,7 @@ src = 'src'
 out = 'out'
 script = 'script'
 libs = ['lib']
-fs_permissions = [{access = "write", path = "./"}]
+fs_permissions = [{access = "write", path = "."}]
 
 [rpc_endpoints]
 sepolia = "${SEPOLIA_RPC_URL}"
