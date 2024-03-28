@@ -7,7 +7,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 import "../src/StoreReg.sol";
 import "../src/RelayReg.sol";
-import "../src/payment-factory.sol";
+import "../src/PaymentFactory.sol";
 import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
 
 contract EuroDollar is MockERC20 {
