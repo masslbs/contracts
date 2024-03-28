@@ -154,7 +154,6 @@
             unset SSL_CERT_FILE
             export PRIVATE_KEY=0x1
             forge script ./script/deploy.s.sol:Deploy -s "runTestDeploy()" --no-auto-detect
-
           '';
 
           checkPhase = ''
@@ -164,11 +163,13 @@
           installPhase = ''
             mkdir -p $out/{bin,abi};
             cp ./deploymentAddresses.json $out/deploymentAddresses.json
+            # create ABI files for codegen
             for artifact in {ERC20,RelayReg,StoreReg,Payments,payment-factory}; do
                 cd out/$artifact.sol/
                 jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
                 cd ../../
             done
+            jq .abi out/deploy.s.sol/EuroDollar.json > $out/abi/EuroDollar.json
             ln -s ${deploy_market_test}/bin/deploy-test-market $out/bin/deploy-test-market
             ln -s ${run_and_deploy_test}/bin/run-and-deploy $out/bin/run-and-deploy
             ln -s ${update_env}/bin/update_env.sh $out/bin/update_env.sh
