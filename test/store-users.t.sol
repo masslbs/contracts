@@ -7,7 +7,7 @@ pragma solidity ^0.8.19;
 import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
 import "forge-std/console.sol";
-import "../src/store-reg.sol";
+import "../src/StoreReg.sol";
 
 contract StoreUsersTest is Test {
     StoreReg internal s;
