@@ -55,6 +55,7 @@
           ''
           else ""
         }
+          set -e
           if [ -z "$PRIVATE_KEY" ]; then
             echo "PRIVATE_KEY not set, using default"
             ${private_key}
