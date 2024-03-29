@@ -29,7 +29,7 @@ jobs:
         run: nix build '.#market-build'
       - name: deploy market to anvil
         run: |
-          nix shell github:masslbs/contracts#market-build --command deploy-test-market
+          nix develop .#market-build --command deploy-market
       - name: check broadcasts
         run: |
           export $(nix shell .#market-build --command update_env.sh | xargs)
