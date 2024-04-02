@@ -44,7 +44,7 @@
 
       private_key = "export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 
-      mk_deploy_market = name: path: immut: (pkgs.writeShellScriptBin name ''
+      mk_deploy_market = path: immut: (pkgs.writeShellScriptBin "deploy-market" ''
         ${
           if immut
           then ''
@@ -55,6 +55,7 @@
           ''
           else ""
         }
+          set -e
           if [ -z "$PRIVATE_KEY" ]; then
             echo "PRIVATE_KEY not set, using default"
             ${private_key}
@@ -62,9 +63,11 @@
           export FOUNDRY_ROOT=${path}
           export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
           pushd ${path}
-          ${pkgs.foundry-bin}/bin/forge \
-          script ${path}/script/deploy.s.sol:Deploy -s "runTestDeploy()"  \
-            --fork-url http://localhost:8545
+          ${pkgs.foundry-bin}/bin/forge script ${path}/script/deploy.s.sol:Deploy -s "${
+          if immut
+          then "runTestDeployImmut()"
+          else "runTestDeploy()"
+        }" --fork-url http://localhost:8545 --broadcast
           popd
       '');
 
@@ -97,22 +100,20 @@
         test -n "$EuroDollarToken" && echo "ERC20_TOKEN_ADDRESS=$Eddies"
       '';
 
-      deploy_market_local = mk_deploy_market "deploy-market" "." false;
-      deploy_market_test = mk_deploy_market "deploy-test-market" self true;
+      deploy_market_local = mk_deploy_market "." false;
+      deploy_market_store = mk_deploy_market self true;
       deploy_market_sepolia = pkgs.writeShellScriptBin "deploy-sepolia" ''
         ${pkgs.foundry-bin}/bin/forge script --verifier sourcify ./script/deploy.s.sol:Deploy --rpc-url https://rpc.sepolia.org/ --broadcast --vvvv --no-auto-detect
       '';
 
       run_and_deploy_local = mk_run_and_deploy deploy_market_local;
-      run_and_deploy_test = mk_run_and_deploy deploy_market_test;
+      run_and_deploy_store = mk_run_and_deploy deploy_market_store;
 
       buildInputs = with pkgs; [
+        jq
         solc
         reuse
         foundry-bin
-        deploy_market_test
-        run_and_deploy_test
-        deploy_market_sepolia
       ];
 
       remappings = pkgs.writeText "remapping.txt" ''
@@ -128,6 +129,7 @@
           [
             deploy_market_local
             run_and_deploy_local
+            deploy_market_sepolia
           ]
           ++ buildInputs;
 
@@ -139,7 +141,12 @@
       };
       packages = {
         market-build = pkgs.stdenv.mkDerivation {
-          inherit buildInputs;
+          buildInputs =
+            [
+              deploy_market_store
+              run_and_deploy_store
+            ]
+            ++ buildInputs;
           name = "mass-contracts";
 
           src = ./.;
@@ -162,9 +169,15 @@
           installPhase = ''
             mkdir -p $out/{bin,abi};
             cp ./deploymentAddresses.json $out/deploymentAddresses.json
-            cp -r ./out/{ERC20.sol,RelayReg.sol,StoreReg.sol,Payments.sol,payment-factory.sol} $out/abi
-            ln -s ${deploy_market_test}/bin/deploy-test-market $out/bin/deploy-test-market
-            ln -s ${run_and_deploy_test}/bin/run-and-deploy $out/bin/run-and-deploy
+            # create ABI files for codegen
+            for artifact in {ERC20,RelayReg,StoreReg,Payments,PaymentFactory}; do
+                cd out/$artifact.sol/
+                jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
+                cd ../../
+            done
+            jq .abi out/deploy.s.sol/EuroDollar.json > $out/abi/Eddies.json
+            ln -s ${deploy_market_store}/bin/deploy-market $out/bin/deploy-market
+            ln -s ${run_and_deploy_store}/bin/run-and-deploy $out/bin/run-and-deploy
             ln -s ${update_env}/bin/update_env.sh $out/bin/update_env.sh
           '';
         };

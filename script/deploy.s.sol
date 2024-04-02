@@ -7,7 +7,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 import "../src/StoreReg.sol";
 import "../src/RelayReg.sol";
-import "../src/payment-factory.sol";
+import "../src/PaymentFactory.sol";
 import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
 
 contract EuroDollar is MockERC20 {
@@ -17,7 +17,7 @@ contract EuroDollar is MockERC20 {
 contract Deploy is Script {
     bytes32 salt = bytes32(uint256(1));
 
-    function deployContracts(bool testERC20) internal {
+    function deployContracts(bool testERC20, bool mut) internal {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
         address testAddress = vm.addr(deployerPrivateKey);
@@ -41,15 +41,23 @@ contract Deploy is Script {
         vm.serializeAddress(addresses, "StoreReg", address(store));
         string memory out = vm.serializeAddress(addresses, "PaymentFactory", address(paymentFactory));
 
-        vm.writeJson(out, "./deploymentAddresses.json");
+        if (mut) vm.writeJson(out, "./deploymentAddresses.json");
         vm.stopBroadcast();
     }
 
+    // we don't want to deploy the test contract but do want to recoded the addresses
     function run() external {
-        deployContracts(false);
+        deployContracts(false, true);
     }
 
+    // we want to deploy the test contract and record the addresses
     function runTestDeploy() external {
-        deployContracts(true);
+        deployContracts(true, true);
+    }
+
+    // we want to deploy the test contract and cannot record the address
+    // since we are running from nix store, ect
+    function runTestDeployImmut() external {
+        deployContracts(true, false);
     }
 }

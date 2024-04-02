@@ -6,7 +6,7 @@ pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
-import "../src/payment-factory.sol";
+import "../src/PaymentFactory.sol";
 
 contract Payments is Test {
     PaymentFactory private factory;
