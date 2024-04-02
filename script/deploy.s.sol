@@ -5,54 +5,59 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
-import "../src/store-reg.sol";
-import "../src/relay-reg.sol";
-import "../src/payment-factory.sol";
-import {MockERC20 } from "solady/test/utils/mocks/MockERC20.sol";
+import "../src/StoreReg.sol";
+import "../src/RelayReg.sol";
+import "../src/PaymentFactory.sol";
+import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
 
-contract EuroDollarToken is MockERC20 {
-    constructor (string memory _name, string memory _symbol, uint8 _decimals) MockERC20(_name, _symbol, _decimals) {
-    }
+contract EuroDollar is MockERC20 {
+    constructor(string memory _name, string memory _symbol, uint8 _decimals) MockERC20(_name, _symbol, _decimals) {}
 }
 
 contract Deploy is Script {
     bytes32 salt = bytes32(uint256(1));
-    function run() external {
+
+    function deployContracts(bool testERC20, bool mut) internal {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-        // need to be the address of the PRIVATE_KEY
-        address testAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
+        address testAddress = vm.addr(deployerPrivateKey);
 
         // deploy relay registary
         RelayReg relayReg = new RelayReg{salt: salt}();
         // deploy store registary
         StoreReg store = new StoreReg{salt: salt}(relayReg);
         // create the payment factory
-        new PaymentFactory{salt: salt}();
+        PaymentFactory paymentFactory = new PaymentFactory{salt: salt}();
         // create a test store
         store.mint(1, testAddress);
+
+        string memory addresses;
+
+        if (testERC20) {
+            EuroDollar eddies = new EuroDollar{salt: salt}("Eddies", "EDD", 2);
+            vm.serializeAddress(addresses, "Eddies", address(eddies));
+        }
+        vm.serializeAddress(addresses, "RelayReg", address(relayReg));
+        vm.serializeAddress(addresses, "StoreReg", address(store));
+        string memory out = vm.serializeAddress(addresses, "PaymentFactory", address(paymentFactory));
+
+        if (mut) vm.writeJson(out, "./deploymentAddresses.json");
         vm.stopBroadcast();
     }
-}
 
-contract TestingDeploy is Script {
-    bytes32 salt = bytes32(uint256(1));
-
+    // we don't want to deploy the test contract but do want to recoded the addresses
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-        // need to be the address of the PRIVATE_KEY
-        address testAddress = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
+        deployContracts(false, true);
+    }
 
-        // deploy relay registary
-        RelayReg relayReg = new RelayReg{salt: salt}();
-        // deploy store registary
-        StoreReg store = new StoreReg{salt: salt}(relayReg);
-        // create the payment factory
-        new PaymentFactory{salt: salt}();
-        // create a test store
-        store.mint(1, testAddress);
-        new EuroDollarToken("Eddies", "EDD", 2);
-        vm.stopBroadcast();
+    // we want to deploy the test contract and record the addresses
+    function runTestDeploy() external {
+        deployContracts(true, true);
+    }
+
+    // we want to deploy the test contract and cannot record the address
+    // since we are running from nix store, ect
+    function runTestDeployImmut() external {
+        deployContracts(true, false);
     }
 }

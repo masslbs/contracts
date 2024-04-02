@@ -44,7 +44,7 @@
 
       private_key = "export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 
-      mk_deploy_market = name: path: contract: immut: (pkgs.writeShellScriptBin name ''
+      mk_deploy_market = path: immut: (pkgs.writeShellScriptBin "deploy-market" ''
         ${
           if immut
           then ''
@@ -55,6 +55,7 @@
           ''
           else ""
         }
+          set -e
           if [ -z "$PRIVATE_KEY" ]; then
             echo "PRIVATE_KEY not set, using default"
             ${private_key}
@@ -62,9 +63,11 @@
           export FOUNDRY_ROOT=${path}
           export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
           pushd ${path}
-          ${pkgs.foundry-bin}/bin/forge \
-          script ${path}/script/deploy.s.sol --target-contract ${contract} \
-            --fork-url http://localhost:8545 --broadcast
+          ${pkgs.foundry-bin}/bin/forge script ${path}/script/deploy.s.sol:Deploy -s "${
+          if immut
+          then "runTestDeployImmut()"
+          else "runTestDeploy()"
+        }" --fork-url http://localhost:8545 --broadcast
           popd
       '');
 
@@ -73,29 +76,52 @@
           ${pkgs.foundry-bin}/bin/anvil | (grep -m 1 "Listening on "; ${deploy}/bin/deploy-market)
         '';
 
-      deploy_market_local = mk_deploy_market "deploy-market" "." "TestingDeploy" false;
-      deploy_market = mk_deploy_market "deploy-market" self "Deploy" true;
-      deploy_market_test = mk_deploy_market "deploy-test-market" self "TestingDeploy" true;
+      update_env = pkgs.writeShellScriptBin "update_env.sh" ''
+        set -e
+
+        function get_addr()
+        {
+            local dir=$(dirname "$0")
+            local reg=$1
+            local addr=$(jq -r ".''${reg}" "''${dir}/../deploymentAddresses.json")
+            eval $reg="'$addr'"
+        }
+
+        get_addr RelayReg
+        echo "RELAY_REGISTRY_ADDRESS=$RelayReg"
+
+        get_addr StoreReg
+        echo "STORE_REGISTRY_ADDRESS=$StoreReg"
+
+        get_addr PaymentFactory
+        echo "PAYMENT_FACTORY_ADDRESS=$PaymentFactory"
+
+        get_addr Eddies
+        test -n "$EuroDollarToken" && echo "ERC20_TOKEN_ADDRESS=$Eddies"
+      '';
+
+      deploy_market_local = mk_deploy_market "." false;
+      deploy_market_store = mk_deploy_market self true;
+      deploy_market_sepolia = pkgs.writeShellScriptBin "deploy-sepolia" ''
+        ${pkgs.foundry-bin}/bin/forge script --verifier sourcify ./script/deploy.s.sol:Deploy --rpc-url https://rpc.sepolia.org/ --broadcast --vvvv --no-auto-detect
+      '';
 
       run_and_deploy_local = mk_run_and_deploy deploy_market_local;
-      run_and_deploy = mk_run_and_deploy deploy_market;
+      run_and_deploy_store = mk_run_and_deploy deploy_market_store;
 
       buildInputs = with pkgs; [
+        jq
         solc
         reuse
         foundry-bin
-        nodePackages.pnpm
-        deploy_market
-        run_and_deploy
       ];
 
-      remappings-txt = ''
+      remappings = pkgs.writeText "remapping.txt" ''
         forge-std/=${forge-std}/src
         ds-test/=${forge-std}/lib/ds-test/src
         permit2/=${permit2}/
         solady=${solady}/
       '';
-      remappings = pkgs.writeText "remapping.txt" remappings-txt;
     in {
       devShell = pkgs.mkShell {
         # local devshell scripts need to come first.
@@ -103,6 +129,7 @@
           [
             deploy_market_local
             run_and_deploy_local
+            deploy_market_sepolia
           ]
           ++ buildInputs;
 
@@ -114,7 +141,12 @@
       };
       packages = {
         market-build = pkgs.stdenv.mkDerivation {
-          inherit buildInputs;
+          buildInputs =
+            [
+              deploy_market_store
+              run_and_deploy_store
+            ]
+            ++ buildInputs;
           name = "mass-contracts";
 
           src = ./.;
@@ -122,14 +154,12 @@
           dontConfigure = true;
 
           buildPhase = ''
-            solc ${builtins.replaceStrings ["\n"] [" "] remappings-txt} --abi   \
-              --input-file src/store-reg.sol \
-              --input-file src/relay-reg.sol \
-              --input-file src/payment-factory.sol \
-              --input-file ${solady}/test/utils/mocks/MockERC20.sol \
-              -o $out/abi
-            # overwrite for abis/sol/IERC1155Errors.abi
-            solc --abi --allow-paths  ${solady} --input-file ${solady}/src/tokens/ERC20.sol -o $out/abi --overwrite
+            cp ${remappings} remappings.txt
+            forge compile --no-auto-detect
+            # forge script will fail trying to load SSL_CERT_FILE
+            unset SSL_CERT_FILE
+            export PRIVATE_KEY=0x1
+            forge script ./script/deploy.s.sol:Deploy -s "runTestDeploy()" --no-auto-detect
           '';
 
           checkPhase = ''
@@ -138,10 +168,17 @@
 
           installPhase = ''
             mkdir -p $out/{bin,abi};
-            cp ./update_env.sh $out/bin/
-            ln -s ${deploy_market}/bin/deploy-market $out/bin/deploy-market
-            ln -s ${deploy_market_test}/bin/deploy-test-market $out/bin/deploy-test-market
-            ln -s ${run_and_deploy}/bin/run-and-deploy $out/bin/run-and-deploy
+            cp ./deploymentAddresses.json $out/deploymentAddresses.json
+            # create ABI files for codegen
+            for artifact in {ERC20,RelayReg,StoreReg,Payments,PaymentFactory}; do
+                cd out/$artifact.sol/
+                jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
+                cd ../../
+            done
+            jq .abi out/deploy.s.sol/EuroDollar.json > $out/abi/Eddies.json
+            ln -s ${deploy_market_store}/bin/deploy-market $out/bin/deploy-market
+            ln -s ${run_and_deploy_store}/bin/run-and-deploy $out/bin/run-and-deploy
+            ln -s ${update_env}/bin/update_env.sh $out/bin/update_env.sh
           '';
         };
       };
