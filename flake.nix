@@ -4,11 +4,11 @@
 {
   description = "Mass Market Contracts";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/23.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
     foundry.url = "github:shazow/foundry.nix/47cf189ec395eda4b3e0623179d1075c8027ca97";
     forge-std = {
-      url = "git+https://github.com/foundry-rs/forge-std?submodules=1";
+      url = "github:foundry-rs/forge-std";
       flake = false;
     };
     solady = {
@@ -17,6 +17,10 @@
     };
     permit2 = {
       url = "github:uniswap/permit2";
+      flake = false;
+    };
+    ds-test = {
+      url = "github:dapphub/ds-test";
       flake = false;
     };
   };
@@ -28,6 +32,7 @@
     forge-std,
     permit2,
     solady,
+    ds-test,
     self,
     ...
   }:
@@ -116,7 +121,7 @@
 
         remappings = pkgs.writeText "remapping.txt" ''
           forge-std/=${forge-std}/src
-          ds-test/=${forge-std}/lib/ds-test/src
+          ds-test/=${ds-test}/src
           permit2/=${permit2}/
           solady=${solady}/
         '';
@@ -148,6 +153,14 @@
             ${private_key}
              export PS1="[contracts] $PS1"
              cp -f ${remappings} remappings.txt
+             # check remappings
+             while read line; do
+               dir=$(echo $line | cut -d'=' -f2-)
+               test -d "$dir" || {
+                 echo "WARNING: remapping not found: $line"
+                 exit 1
+               }
+            done < remappings.txt
           '';
         };
         packages = rec {
@@ -182,7 +195,7 @@
               mkdir -p $out/{bin,abi};
               cp ./deploymentAddresses.json $out/deploymentAddresses.json
               # create ABI files for codegen
-              for artifact in {ERC20,RelayReg,StoreReg,Payments,PaymentFactory}; do
+              for artifact in {ERC20,RelayReg,StoreReg,Payments,PaymentsByAddress}; do
                   cd out/$artifact.sol/
                   jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
                   cd ../../
