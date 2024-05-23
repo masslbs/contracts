@@ -8,9 +8,7 @@ import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
 import {ISignatureTransfer} from "permit2/src/interfaces/ISignatureTransfer.sol";
 import {SafeTransferLib} from "solady/src/utils/SafeTransferLib.sol";
 import {LibBitmap} from "solady/src/utils/LibBitmap.sol";
-
 import "./IPayments.sol";
-
 address constant ETH = address(0);
 
 contract Payments is IPayments {
@@ -31,7 +29,7 @@ contract Payments is IPayments {
         if (msg.value != payment.amount) revert InvalidPaymentAmount();
         // this also prevents reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
-        if (payment.payee.payload.length > 0) {
+        if (payment.payee.isPaymentEndpoint) {
             IPaymentEndpoint(payment.payee.payeeAddress).pay{value: msg.value}(payment);
         } else {
             payable(payment.payee.payeeAddress).transfer(msg.value);
@@ -63,7 +61,7 @@ contract Payments is IPayments {
         // this also prevent reentrancy so it must come before the transfer
         _usePaymentIntent(msg.sender, payment);
         SafeTransferLib.safeTransferFrom(payment.currency, msg.sender, payment.payee.payeeAddress, payment.amount);
-        if (payment.payee.payload.length > 0) {
+        if (payment.payee.isPaymentEndpoint) {
             IPaymentEndpoint(payment.payee.payeeAddress).pay(payment);
         }
     }
@@ -89,7 +87,6 @@ contract Payments is IPayments {
     // @inheritdoc IPayments
     function revertPayment(address from, PaymentIntent calldata payment) public {
         if (msg.sender != payment.payee.payeeAddress) revert NotPayee();
-        if (!payment.payee.canRevert) revert RevertNotAllowed();
         uint256 paymentId = getPaymentId(payment);
         bool flipped = paymentBitmap.toggle(uint256(uint160(from)) ^ paymentId);
         if (flipped) revert PaymentNotMade();

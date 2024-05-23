@@ -19,7 +19,7 @@ interface DepositEvent {
 
 contract TestPaymentEndpoint is IPaymentEndpoint, DepositEvent {
     function pay(PaymentIntent calldata payment) external payable {
-        emit Deposit(address(uint160(bytes20(payment.payee.payload))), msg.value);
+        emit Deposit(address(uint160(bytes20(payment.payee.payeeAddress))), msg.value);
     }
 }
 
@@ -73,7 +73,8 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 receipt: bytes32(0),
                 currency: currency,
                 amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
+                payee: PaymentEndpointDetails({payeeAddress: alice, chainId: 0, isPaymentEndpoint: false}),
+                payload: new bytes(0),
                 shopId: 1,
                 shopSignature: new bytes(65),
                 permit2signature: new bytes(0)
@@ -104,7 +105,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
 
     function test_PayEndpoint() public {
         vm.expectEmit();
-        emit Deposit(msg.sender, 100);
+        emit Deposit(address(paymentEndpoint), 100);
 
         payments.payNative{value: 100}(
             PaymentIntent({
@@ -114,10 +115,11 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 amount: 100,
                 payee: PaymentEndpointDetails({
                     payeeAddress: address(paymentEndpoint),
-                    payload: abi.encodePacked(msg.sender),
-                    canRevert: false
+                    chainId: 0,
+                    isPaymentEndpoint: true
                 }),
                 shopId: 1,
+                payload: new bytes(0),
                 shopSignature: new bytes(65),
                 permit2signature: new bytes(0)
             })
@@ -134,8 +136,9 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 receipt: bytes32(0),
                 currency: address(testToken),
                 amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
+                payee: PaymentEndpointDetails({payeeAddress: alice, chainId: 0, isPaymentEndpoint: false}),
                 shopId: 1,
+                payload: new bytes(0),
                 shopSignature: new bytes(65),
                 permit2signature: new bytes(0)
             })
@@ -165,7 +168,8 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 receipt: bytes32(0),
                 currency: address(testToken),
                 amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
+                payee: PaymentEndpointDetails({payeeAddress: alice, chainId: 0, isPaymentEndpoint: false}),
+                payload: new bytes(0),
                 shopId: 1,
                 shopSignature: new bytes(65),
                 permit2signature: sig

@@ -9,8 +9,8 @@ pragma solidity ^0.8.19;
 /// @member payload The payload to be sent to the payee
 struct PaymentEndpointDetails {
     address payeeAddress;
-    bytes payload;
-    bool canRevert;
+    uint256 chainId;
+    bool    isPaymentEndpoint;
 }
 
 /// @notice a struct to hold the payment details
@@ -18,19 +18,21 @@ struct PaymentEndpointDetails {
 /// @member receipt The hash of the order details
 /// @member amount The amount of tokens to be transferred
 /// @member currency The address of the ERC20 token to be transferred
-/// @member payee The address that will receive the payment
 /// @member shopId The id of thes shop
+/// @member payload Resvered for future use; the relay can use this to send data to the payee
+/// @member payee The address that will receive the payment
 /// @member signature The signature of a merchant's relay or signer
-/// @member permit2signature The signature of a permit2
+/// @member permit2signature The signature of a permit2 from the customer
 struct PaymentIntent {
     uint256 ttl;
     bytes32 receipt;
     address currency;
     uint256 amount;
-    PaymentEndpointDetails payee;
     uint256 shopId;
-    bytes shopSignature; // signature does not need to equal the payee's address
-    bytes permit2signature;
+    bytes   payload;     
+    PaymentEndpointDetails payee;
+    bytes   shopSignature; // signature does not need to equal the payee's address
+    bytes   permit2signature;
 }
 
 /// @title The Payments Contract
@@ -44,7 +46,6 @@ interface IPayments {
     // used to revert payments
     error PaymentNotMade();
     error NotPayee();
-    error RevertNotAllowed();
 
     /// @notice Makes a payment in native currency
     /// @param payment The payment details
