@@ -18,8 +18,8 @@ interface DepositEvent {
 }
 
 contract TestPaymentEndpoint is IPaymentEndpoint, DepositEvent {
-    function pay(PaymentIntent calldata payment) external payable {
-        emit Deposit(address(uint160(bytes20(payment.payee.payeeAddress))), msg.value);
+    function pay(PaymentRequest calldata payment) external payable {
+        emit Deposit(address(uint160(bytes20(payment.payeeAddress))), msg.value);
     }
 }
 
@@ -68,16 +68,16 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
 
     function makeTestPayment100Native(uint256 amount, uint256 time, address currency) public {
         payments.payNative{value: amount}(
-            PaymentIntent({
+            PaymentRequest({
                 ttl: time,
-                receipt: bytes32(0),
+                order: bytes32(0),
                 currency: currency,
                 amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, chainId: 0, isPaymentEndpoint: false}),
-                payload: new bytes(0),
+                payeeAddress: alice,
+                chainId: 0, 
+                isPaymentEndpoint: false,
                 shopId: 1,
-                shopSignature: new bytes(65),
-                permit2signature: new bytes(0)
+                shopSignature: new bytes(65)
             })
         );
     }
@@ -108,20 +108,16 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
         emit Deposit(address(paymentEndpoint), 100);
 
         payments.payNative{value: 100}(
-            PaymentIntent({
+            PaymentRequest({
                 ttl: 100,
-                receipt: bytes32(0),
+                order: bytes32(0),
                 currency: address(0),
                 amount: 100,
-                payee: PaymentEndpointDetails({
-                    payeeAddress: address(paymentEndpoint),
-                    chainId: 0,
-                    isPaymentEndpoint: true
-                }),
+                payeeAddress: address(paymentEndpoint),
+                chainId: 0,
+                isPaymentEndpoint: true,
                 shopId: 1,
-                payload: new bytes(0),
-                shopSignature: new bytes(65),
-                permit2signature: new bytes(0)
+                shopSignature: new bytes(65)
             })
         );
         assertEq(address(paymentEndpoint).balance, 100);
@@ -131,16 +127,16 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
         testToken.mint(address(this), 100);
         testToken.approve(address(payments), 100);
         payments.payTokenPreApproved(
-            PaymentIntent({
+            PaymentRequest({
                 ttl: 100,
-                receipt: bytes32(0),
+                order: bytes32(0),
                 currency: address(testToken),
                 amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, chainId: 0, isPaymentEndpoint: false}),
+                payeeAddress: alice, 
+                chainId: 0,
+                isPaymentEndpoint: false,
                 shopId: 1,
-                payload: new bytes(0),
-                shopSignature: new bytes(65),
-                permit2signature: new bytes(0)
+                shopSignature: new bytes(65)
             })
         );
         assertEq(testToken.balanceOf(address(alice)), 100);
@@ -163,17 +159,18 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
 
         vm.prank(from);
         payments.payToken(
-            PaymentIntent({
+            PaymentRequest({
                 ttl: 100,
-                receipt: bytes32(0),
+                order: bytes32(0),
                 currency: address(testToken),
                 amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, chainId: 0, isPaymentEndpoint: false}),
-                payload: new bytes(0),
+                payeeAddress: alice,
+                chainId: 0, 
+                isPaymentEndpoint: false,
                 shopId: 1,
-                shopSignature: new bytes(65),
-                permit2signature: sig
-            })
+                shopSignature: new bytes(65)
+            }),
+            sig
         );
         assertEq(testToken.balanceOf(address(alice)), 100);
     }
