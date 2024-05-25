@@ -44,14 +44,13 @@ contract SweepPayment {
                     erc20.transfer(refund, balance - payment.amount);
                 }
                 erc20.approve(address(paymentContract), payment.amount);
-                try paymentContract.payTokenPreApproved(payment)  {
+                // pay the mechant
+                try paymentContract.payTokenPreApproved(payment) {
                     // do nothing
                 } catch {
                     // refund the amount if the payment failed
                     erc20.transfer(refund, balance);
                 }
-                // pay the mechant
-                
             }
         }
         // need to prevent solidity from returning code
@@ -94,7 +93,7 @@ contract PaymentFactory {
 
     /// @notice Given the parameters used to generate a payement address, this function will forward the payment to the merchant's address.
     function processPayment(PaymentRequest calldata payment, address payable refund) public {
-         try new SweepPayment{salt: payment.order}(payment, refund, paymentContract) returns (SweepPayment s) {
+        try new SweepPayment{salt: payment.order}(payment, refund, paymentContract) returns (SweepPayment s) {
             // do nothing;
         } catch (bytes memory reason) {
             emit SweepFailed(payment);

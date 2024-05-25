@@ -32,6 +32,7 @@ interface IPayments {
     error PaymentExpired();
     error InvalidPaymentAmount();
     error InvalidPaymentToken();
+    error WrongChain();
     error PaymentAlreadyMade();
     error PayeeRefusedPayment();
     // used to revert payments

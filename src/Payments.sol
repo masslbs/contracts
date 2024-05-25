@@ -28,6 +28,7 @@ contract Payments is IPayments {
         if (payment.currency != ETH) revert InvalidPaymentToken();
         if (block.timestamp > payment.ttl) revert PaymentExpired();
         if (msg.value != payment.amount) revert InvalidPaymentAmount();
+        if (payment.chainId != block.chainid) revert WrongChain();
         // this also prevents reentrancy so it must come before the transfer
         _usePaymentRequest(msg.sender, payment);
         if (payment.isPaymentEndpoint) {
@@ -56,6 +57,7 @@ contract Payments is IPayments {
     /// @inheritdoc IPayments
     function payTokenPreApproved(PaymentRequest calldata payment) public {
         if (block.timestamp > payment.ttl) revert PaymentExpired();
+        if (payment.chainId != block.chainid) revert WrongChain();
         // this also prevent reentrancy so it must come before the transfer
         _usePaymentRequest(msg.sender, payment);
         SafeTransferLib.safeTransferFrom(payment.currency, msg.sender, payment.payeeAddress, payment.amount);

@@ -74,7 +74,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 currency: currency,
                 amount: 100,
                 payeeAddress: alice,
-                chainId: 0,
+                chainId: block.chainid, 
                 isPaymentEndpoint: false,
                 shopId: 1,
                 shopSignature: new bytes(65)
@@ -114,7 +114,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 currency: address(0),
                 amount: 100,
                 payeeAddress: address(paymentEndpoint),
-                chainId: 0,
+                chainId: block.chainid,
                 isPaymentEndpoint: true,
                 shopId: 1,
                 shopSignature: new bytes(65)
@@ -132,8 +132,8 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 order: bytes32(0),
                 currency: address(testToken),
                 amount: 100,
-                payeeAddress: alice,
-                chainId: 0,
+                payeeAddress: alice, 
+                chainId: block.chainid,
                 isPaymentEndpoint: false,
                 shopId: 1,
                 shopSignature: new bytes(65)
@@ -165,7 +165,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
                 currency: address(testToken),
                 amount: 100,
                 payeeAddress: alice,
-                chainId: 0,
+                chainId: block.chainid, 
                 isPaymentEndpoint: false,
                 shopId: 1,
                 shopSignature: new bytes(65)
