@@ -26,7 +26,6 @@ struct PaymentRequest {
     bytes shopSignature;
 }
 
-
 /// @title The Payments Contract
 /// @notice The Payments Contract validates a PaymentIntent and forwards the payment to the payee.
 interface IPayments {

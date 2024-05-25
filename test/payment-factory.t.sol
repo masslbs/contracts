@@ -14,57 +14,114 @@ import "../src/PaymentFactory.sol";
 import "../src/IPayments.sol";
 import {Payments} from "../src/Payments.sol";
 
+import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
+
 contract PaymentFactoryTest is Test, DeployPermit2 {
     PaymentFactory private factory;
-    address generatedAddress;
-
-    address payable merchant = payable(address(21));
-    address payable refund = payable(address(22));
-    address currency = address(0);
-    uint256 amount = 5;
-    // just a random hash
-    bytes32 recieptHash = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
-
     Payments internal payments;
-    IPermit2 permit2;
+    IPermit2 internal permit2;
+    MockERC20 internal testToken;
+
+    address generatedAddress;
+    address payable merchant;
+    address payable refund;
+    // ether
+    address currency = address(0);
+    uint256 shopId;
+
 
     function setUp() public {
         permit2 = IPermit2(address(deployPermit2()));
         payments = new Payments(permit2);
         factory = new PaymentFactory(payments);
+        testToken = new MockERC20("mock", "MCK", 18);
+        merchant = payable(address(uint160(vm.unixTime())));
+        refund = payable(address(uint160(vm.unixTime() + 1)));
+        shopId = vm.unixTime();
+    }
+
+    function getPaymentRequest(bool useTestToken) private returns (PaymentRequest memory) {
+        PaymentRequest memory payment = PaymentRequest({
+            ttl: 10000,
+            order: bytes32(0),
+            currency: useTestToken ? address(testToken) : currency,
+            amount: 100,
+            payeeAddress: merchant,
+            chainId: block.chainid,
+            isPaymentEndpoint: false,
+            shopId: shopId,
+            shopSignature: new bytes(0)
+        });
+        return payment;
     }
 
     function test_ProcessPayment() public {
-        PaymentRequest memory payment = PaymentRequest({
-                ttl: 10000,
-                order: bytes32(0),
-                currency: currency,
-                amount: 100,
-                payeeAddress: merchant,
-                chainId: block.chainid,
-                isPaymentEndpoint: false,
-                shopId: 1,
-                shopSignature: new bytes(0)
-            }); 
+        PaymentRequest memory payment = getPaymentRequest(false); 
         generatedAddress = factory.getPaymentAddress(payment, refund);
         deal(generatedAddress, payment.amount);
         factory.processPayment(payment, refund);
-        assertEq(merchant.balance, payment.amount, "the payout contract should send the corret amount");
+        assertEq(merchant.balance, payment.amount, "the sweep contract should send the corret amount");
     }
 
-    // function test_UnderPayment() public {
-    //     deal(generatedAddress, amount - 1);
-    //     factory.processPayment(merchant, proof, amount, currency, recieptHash);
-    //     assertEq(proof.balance, amount - 1, "the payout contract should return the ether if not enought was payed");
-    // }
-    //
-    // function test_OverPayment() public {
-    //     deal(generatedAddress, amount + 1);
-    //     deal(proof, 0);
-    //     deal(merchant, 0);
-    //
-    //     factory.processPayment(merchant, proof, amount, currency, recieptHash);
-    //     assertEq(proof.balance, 1, "the payout contract should return the ether if not enought was payed");
-    //     assertEq(merchant.balance, amount, "the payout contract should send the corret amount");
-    // }
+    function test_UnderPayment() public {
+        PaymentRequest memory payment = getPaymentRequest(false); 
+        generatedAddress = factory.getPaymentAddress(payment, refund);
+        deal(generatedAddress, payment.amount - 1);
+        factory.processPayment(payment, refund);
+        assertEq(refund.balance, payment.amount - 1, "the sweep contract should return the ether if not enought was payed");
+    }
+
+    function test_OverPayment() public {
+        PaymentRequest memory payment = getPaymentRequest(false); 
+        generatedAddress = factory.getPaymentAddress(payment, refund);
+        deal(generatedAddress, payment.amount + 1);
+
+        factory.processPayment(payment, refund);
+        assertEq(refund.balance, 1, "the sweep contract should refund the overpayed ether");
+        assertEq(merchant.balance, payment.amount, "the sweep contract should send the corret amount");
+    }
+
+    function test_invalidPayment() public {
+        PaymentRequest memory payment = getPaymentRequest(false); 
+        payment.ttl = 0;
+        generatedAddress = factory.getPaymentAddress(payment, refund);
+        deal(generatedAddress, payment.amount);
+        factory.processPayment(payment, refund);
+        assertEq(refund.balance, payment.amount, "the sweep contract should refund the ether if the payment is invalid");
+    }
+
+
+    function test_payWithErc20() public {
+        PaymentRequest memory payment = getPaymentRequest(true); 
+        generatedAddress = factory.getPaymentAddress(payment, refund);
+        testToken.mint(generatedAddress, payment.amount);
+        factory.processPayment(payment, refund);
+        assertEq(testToken.balanceOf(merchant), payment.amount, "the sweep contract should pay the ERC20 token");
+    }
+
+    function test_UnderPaymentERC20() public {
+        PaymentRequest memory payment = getPaymentRequest(true); 
+        generatedAddress = factory.getPaymentAddress(payment, refund);
+        testToken.mint(generatedAddress, payment.amount - 1);
+        factory.processPayment(payment, refund);
+        assertEq(testToken.balanceOf(refund), payment.amount - 1, "the sweep contract should return the ERC20 if not enought was payed");
+    }
+
+    function test_OverPaymentERC20() public {
+        PaymentRequest memory payment = getPaymentRequest(true); 
+        generatedAddress = factory.getPaymentAddress(payment, refund);
+        testToken.mint(generatedAddress, payment.amount + 1);
+        factory.processPayment(payment, refund);
+        assertEq(testToken.balanceOf(refund), 1, "the sweep contract should return the overpayed ERC20");
+        assertEq(testToken.balanceOf(merchant), payment.amount, "the sweep contract should send the corret amount");
+    }
+
+    function test_InvalidPaymentERC20() public {
+        PaymentRequest memory payment = getPaymentRequest(true); 
+        payment.ttl = 0;
+        generatedAddress = factory.getPaymentAddress(payment, refund);
+        testToken.mint(generatedAddress, payment.amount);
+        factory.processPayment(payment, refund);
+        assertEq(testToken.balanceOf(refund), payment.amount, "the sweep contract should refund the ERC20 if the payment is invalid");
+    }
 }

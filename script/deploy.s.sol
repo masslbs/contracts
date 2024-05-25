@@ -25,7 +25,7 @@ contract Deploy is Script, DeployPermit2 {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        address permit2; 
+        address permit2;
         if (testERC20) {
             permit2 = address(deployPermit2());
         } else {

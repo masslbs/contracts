@@ -47,10 +47,7 @@ contract Payments is IPayments {
                 nonce: uint256(payment.order),
                 deadline: payment.ttl
             }),
-            ISignatureTransfer.SignatureTransferDetails({
-                requestedAmount: payment.amount,
-                to: payment.payeeAddress
-            }),
+            ISignatureTransfer.SignatureTransferDetails({requestedAmount: payment.amount, to: payment.payeeAddress}),
             msg.sender,
             permit2signature
         );
