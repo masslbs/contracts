@@ -5,14 +5,14 @@
 pragma solidity ^0.8.19;
 
 import "solady/src/tokens/ERC20.sol";
-import "./IPayments.sol";
+import "./Payments.sol";
 
 import "forge-std/console.sol";
 
 /// @title Sweeps ERC20's and Eth from the payment address to the merchants address
 /// @notice  ERC20 sweeps can fail depending on the ERC20 implementation
 contract SweepPayment {
-    constructor(PaymentRequest memory payment, address payable refund, IPayments paymentContract) payable {
+    constructor(PaymentRequest memory payment, address payable refund, Payments paymentContract) payable {
         if (payment.currency == address(0)) {
             // if we are transfering ether
             uint256 balance = address(this).balance;
@@ -20,7 +20,7 @@ contract SweepPayment {
                 refund.call{value: balance}("");
             } else {
                 if (balance > payment.amount) {
-                    // to much was sent so send the over payed amount back
+                    // overpayment
                     refund.call{value: balance - payment.amount}("");
                 }
                 // pay the mechant
@@ -40,7 +40,7 @@ contract SweepPayment {
                 erc20.transfer(refund, balance);
             } else {
                 if (balance > payment.amount) {
-                    // to much was sent so send the over payed amount back
+                    // overpayment
                     erc20.transfer(refund, balance - payment.amount);
                 }
                 erc20.approve(address(paymentContract), payment.amount);
@@ -61,18 +61,15 @@ contract SweepPayment {
 }
 
 /// @title Provides functions around payments addresses
-contract PaymentFactory {
-    IPayments paymentContract;
-
+contract PaymentsByAddress is Payments {
     event SweepFailed(PaymentRequest payment);
 
-    constructor(IPayments payments) {
-        paymentContract = payments;
+    constructor(IPermit2 permit2) Payments(permit2){
     }
 
     function getBytecode(PaymentRequest calldata payment, address refund) public view returns (bytes memory) {
         bytes memory bytecode = type(SweepPayment).creationCode;
-        return abi.encodePacked(bytecode, abi.encode(payment, refund, paymentContract));
+        return abi.encodePacked(bytecode, abi.encode(payment, refund, this));
     }
 
     /// @notice Calulates the payament address given the following parameters
@@ -93,7 +90,7 @@ contract PaymentFactory {
 
     /// @notice Given the parameters used to generate a payement address, this function will forward the payment to the merchant's address.
     function processPayment(PaymentRequest calldata payment, address payable refund) public {
-        try new SweepPayment{salt: payment.order}(payment, refund, paymentContract) returns (SweepPayment s) {
+        try new SweepPayment{salt: payment.order}(payment, refund, this) {
             // do nothing;
         } catch (bytes memory reason) {
             emit SweepFailed(payment);

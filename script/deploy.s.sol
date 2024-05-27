@@ -10,8 +10,7 @@ import "permit2/src/interfaces/IPermit2.sol";
 
 import "../src/StoreReg.sol";
 import "../src/RelayReg.sol";
-import "../src/Payments.sol";
-import "../src/PaymentFactory.sol";
+import "../src/PaymentsByAddress.sol";
 import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
 
 contract EuroDollar is MockERC20 {
@@ -25,21 +24,17 @@ contract Deploy is Script, DeployPermit2 {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        address permit2;
+        address permit2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
         if (testERC20) {
-            permit2 = address(deployPermit2());
-        } else {
-            permit2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
-        }
-
+            // should always get deployed to the above
+            address(deployPermit2());
+        } 
         // deploy relay registary
         RelayReg relayReg = new RelayReg{salt: salt}();
         // deploy store registary
         StoreReg store = new StoreReg{salt: salt}(relayReg);
         // create the paryments contract
-        Payments payments = new Payments{salt: salt}(IPermit2(permit2));
-        // create the payment factory
-        PaymentFactory paymentFactory = new PaymentFactory{salt: salt}(payments);
+        PaymentsByAddress payments = new PaymentsByAddress{salt: salt}(IPermit2(permit2));
 
         string memory addresses;
 
@@ -53,8 +48,7 @@ contract Deploy is Script, DeployPermit2 {
 
         vm.serializeAddress(addresses, "Payments", address(payments));
         vm.serializeAddress(addresses, "RelayReg", address(relayReg));
-        vm.serializeAddress(addresses, "StoreReg", address(store));
-        string memory out = vm.serializeAddress(addresses, "PaymentFactory", address(paymentFactory));
+        string memory out = vm.serializeAddress(addresses, "StoreReg", address(store));
 
         if (mut) vm.writeJson(out, "./deploymentAddresses.json");
         vm.stopBroadcast();

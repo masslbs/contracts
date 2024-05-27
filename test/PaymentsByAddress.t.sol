@@ -10,14 +10,13 @@ import "forge-std/Vm.sol";
 import {DeployPermit2} from "permit2/test/utils/DeployPermit2.sol";
 import "permit2/src/interfaces/IPermit2.sol";
 
-import "../src/PaymentFactory.sol";
-import "../src/IPayments.sol";
+import "../src/PaymentsByAddress.sol";
 import {Payments} from "../src/Payments.sol";
 
 import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
 
-contract PaymentFactoryTest is Test, DeployPermit2 {
-    PaymentFactory private factory;
+contract PaymentsWithAddressesTest is Test, DeployPermit2 {
+    PaymentsByAddress private factory;
     Payments internal payments;
     IPermit2 internal permit2;
     MockERC20 internal testToken;
@@ -31,8 +30,7 @@ contract PaymentFactoryTest is Test, DeployPermit2 {
 
     function setUp() public {
         permit2 = IPermit2(address(deployPermit2()));
-        payments = new Payments(permit2);
-        factory = new PaymentFactory(payments);
+        factory = new PaymentsByAddress(permit2);
         testToken = new MockERC20("mock", "MCK", 18);
         merchant = payable(address(uint160(vm.unixTime())));
         refund = payable(address(uint160(vm.unixTime() + 1)));

@@ -142,11 +142,11 @@
     "solady": {
       "flake": false,
       "locked": {
-        "lastModified": 1715853781,
-        "narHash": "sha256-DYvlADcfvBV0dUQggNLe3jTCXOp15FEfW79qthTvB0g=",
+        "lastModified": 1716653360,
+        "narHash": "sha256-737uC8mcKba2MhwylPd1yt/nsAL4SNuRabkJb9rMl3Q=",
         "owner": "Vectorized",
         "repo": "solady",
-        "rev": "5e7497c2573576157f9ca23460adbbf3081d0176",
+        "rev": "bfff552c0d282c15258cab9377a7d4c5247d0434",
         "type": "github"
       },
       "original": {
