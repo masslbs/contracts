@@ -109,6 +109,7 @@ contract Payments is IPayments {
     /// @param payment The payment
     function _usePaymentRequest(address from, PaymentRequest calldata payment) internal {
         uint256 paymentId = getPaymentId(payment);
+        emit PaymentMade(paymentId);
         bool flipped = paymentBitmap.toggle(uint256(uint160(from)) ^ paymentId);
         if (!flipped) revert PaymentAlreadyMade();
     }

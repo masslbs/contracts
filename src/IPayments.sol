@@ -29,6 +29,8 @@ struct PaymentRequest {
 /// @title The Payments Contract
 /// @notice The Payments Contract validates a PaymentIntent and forwards the payment to the payee.
 interface IPayments {
+    event PaymentMade(uint256 indexed paymentId);
+
     error PaymentExpired();
     error InvalidPaymentAmount();
     error InvalidPaymentToken();
