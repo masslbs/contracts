@@ -4,7 +4,7 @@
 {
   description = "Mass Market Contracts";
   inputs = {
-    nixpkgs.url = "nixos/nixpkgs/23.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
     foundry.url = "git+https://github.com/shazow/foundry.nix.git?ref=monthly";
     forge-std = {
