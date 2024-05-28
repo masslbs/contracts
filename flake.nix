@@ -150,8 +150,9 @@
              cp -f ${remappings} remappings.txt
           '';
         };
-        packages = {
-          default = pkgs.stdenv.mkDerivation {
+        packages = rec {
+          default = mass-contracts;
+          mass-contracts = pkgs.stdenv.mkDerivation {
             buildInputs =
               [
                 deploy_market_store
