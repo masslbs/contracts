@@ -26,13 +26,13 @@ jobs:
       - name: Run Tests
         run: nix develop -c forge test --no-auto-detect
       - name: build ABIs
-        run: nix build '.#market-build'
+        run: nix build .#
       - name: deploy market to anvil
         run: |
-          nix develop .#market-build --command deploy-market
+          nix develop .# --command deploy-market
       - name: check broadcasts
         run: |
-          export $(nix shell .#market-build --command update_env.sh | xargs)
+          export $(nix shell .# --command update_env.sh | xargs)
           test -n "$RELAY_REGISTRY_ADDRESS" || { echo "RELAY_REGISTRY_ADDRESS not set"; exit 1; }
           test -n "$STORE_REGISTRY_ADDRESS" || { echo "STORE_REGISTRY_ADDRESS not set"; exit 1; }
           test -n "$PAYMENT_FACTORY_ADDRESS" || { echo "PAYMENT_FACTORY_ADDRESS not set"; exit 1; }

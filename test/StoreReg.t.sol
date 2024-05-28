@@ -5,10 +5,10 @@
 pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
-import "forge-std/console.sol";
 import {Receiver} from "solady/src/accounts/Receiver.sol";
-import "../src/StoreReg.sol";
-import "../src/RelayReg.sol";
+import {StoreReg} from "../src/StoreReg.sol";
+import {RelayReg} from "../src/RelayReg.sol";
+import {AccessControl} from "../src/AccessControl.sol";
 
 contract StoreTest is Test {
     using stdStorage for StdStorage;
@@ -85,7 +85,7 @@ contract StoreTest is Test {
         // now remove relay and check it cant change rootHash
         vm.prank(owner);
         stores.removeRelay(storeId, 0);
-        vm.expectRevert(StoreReg.NotAuthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 2));
         vm.prank(relayAddr);
         stores.updateRootHash(storeId, testHashUpdate);
     }

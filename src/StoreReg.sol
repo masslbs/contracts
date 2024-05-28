@@ -7,31 +7,15 @@ pragma solidity ^0.8.19;
 import {ERC721} from "solady/src/tokens/ERC721.sol";
 import {LibBitmap} from "solady/src/utils/LibBitmap.sol";
 import {LibString} from "solady/src/utils/LibString.sol";
-import "./RelayReg.sol";
+import {RelayReg} from "./RelayReg.sol";
+import {AccessControl} from "./AccessControl.sol";
 
-/// @notice AccessLevel is a enum that represents the different access levels of a user
-/// @notice Zero no access
-/// @notice Clerk can read and write
-/// @notice Admin can read, write, and add other users
-/// @notice Owner only usable for hasAtLeastAccess checking
-enum AccessLevel {
-    Zero,
-    Clerk,
-    Admin,
-    Owner
-}
-
-contract StoreReg is ERC721 {
+contract StoreReg is AccessControl {
     using LibBitmap for LibBitmap.Bitmap;
 
     RelayReg public relayReg;
 
-    event UserAdded(uint256 indexed storeId, address user);
-    event UserRemoved(uint256 indexed storeId, address users);
-
     error NoVerifier();
-    error NotAuthorized();
-    error InvalidAccessLevel();
 
     /// @notice rootHashes is a mapping of store nfts to their state root hash
     mapping(uint256 storeid => bytes32) public rootHashes;
@@ -39,11 +23,19 @@ contract StoreReg is ERC721 {
     /// @notice relays is a mapping of store nfts to their relays
     mapping(uint256 storeid => uint256[]) public relays;
 
-    /// @notice storesToUsers is a mapping of store nfts to their users and their access levels
-    mapping(uint256 storeid => mapping(address storeuser => AccessLevel)) public storesToUsers;
-
     /// @notice invites is a mapping of store nfts to their one-time use registration invites
     LibBitmap.Bitmap private invites;
+
+    /// we could use enums here, but the are not exposed in the abi and change in order of functions would be brittle
+    uint8 public constant PERM_addPermission = 0;
+    uint8 public constant PERM_removePermission = 1;
+    uint8 public constant PERM_updateRootHash = 2;
+    uint8 public constant PERM_addRelay = 3;
+    uint8 public constant PERM_removeRelay = 4;
+    uint8 public constant PERM_replaceRelay = 5;
+    uint8 public constant PERM_registerUser = 6;
+    uint8 public constant PERM_removeUser = 7;
+    uint8 public constant PERM_publishInviteVerifier = 8;
 
     constructor(RelayReg r) ERC721() {
         relayReg = r;
@@ -76,14 +68,15 @@ contract StoreReg is ERC721 {
     /// @param storeId The store nft
     /// @param hash The new state root hash
     function updateRootHash(uint256 storeId, bytes32 hash) public {
-        if (!(_checkIsConfiguredRelay(storeId) || hasAtLeastAccess(storeId, msg.sender, AccessLevel.Clerk))) {
-            revert NotAuthorized();
+        if (!_checkIsConfiguredRelay(storeId) && !hasPermission(storeId, msg.sender, PERM_updateRootHash)) {
+            revert NotAuthorized(PERM_updateRootHash);
         }
         rootHashes[storeId] = hash;
     }
 
-    // relay config things
-    // ===================
+    /**
+     *  RELAY CONFIGURATION
+     */
 
     /// @notice getRelayCount returns the number of relays for a store
     /// @param storeId The store nft
@@ -103,7 +96,7 @@ contract StoreReg is ERC721 {
     /// @param storeId The store nft
     /// @param relayId The relay nft
     function addRelay(uint256 storeId, uint256 relayId) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
+        permissionGuard(storeId, PERM_addRelay);
         relays[storeId].push(relayId);
     }
 
@@ -112,7 +105,7 @@ contract StoreReg is ERC721 {
     /// @param idx The index of the relay to replace
     /// @param relayId The new relay nft
     function replaceRelay(uint256 storeId, uint8 idx, uint256 relayId) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
+        permissionGuard(storeId, PERM_replaceRelay);
         relays[storeId][idx] = relayId;
     }
 
@@ -120,7 +113,7 @@ contract StoreReg is ERC721 {
     /// @param storeId The store nft
     /// @param idx The index of the relay to remove
     function removeRelay(uint256 storeId, uint8 idx) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
+        permissionGuard(storeId, uint8(PERM_removeRelay));
         uint256 last = relays[storeId].length - 1;
         if (last != idx) {
             relays[storeId][idx] = relays[storeId][last];
@@ -128,7 +121,6 @@ contract StoreReg is ERC721 {
         relays[storeId].pop();
     }
 
-    // access control
     /// @dev checks if the sender is part of the configured relays
     /// @param storeId The store nft
     function _checkIsConfiguredRelay(uint256 storeId) internal view returns (bool) {
@@ -143,30 +135,16 @@ contract StoreReg is ERC721 {
         return false;
     }
 
-    /// @dev checks if the sender is the owner of the store
-    function _checkIsOwner(uint256 storeId) internal view returns (bool) {
-        address owner = ownerOf(storeId);
-        return msg.sender == owner;
-    }
-
-    function requireIsOwner(uint256 storeId) internal view {
-        if (!_checkIsOwner(storeId)) revert NotAuthorized();
-    }
-
-    function requireOnlyAdminOrHigher(uint256 storeId, address who) public view {
-        if (_checkIsOwner(storeId)) {
-            return;
-        }
-        AccessLevel acl = storesToUsers[storeId][who];
-        if (acl == AccessLevel.Zero || acl == AccessLevel.Clerk) revert NotAuthorized();
-    }
+    /**
+     *  INVITES
+     */
 
     /// @notice adds a new one-time use registration invite to the store
     /// @param storeId The store nft
     /// @param verifier The address of the invite verifier (public key)
     function publishInviteVerifier(uint256 storeId, address verifier) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
-        invites.set(_calulateInviteId(verifier, storeId));
+        permissionGuard(storeId, uint8(PERM_publishInviteVerifier));
+        invites.set(calculateIdx(storeId, verifier));
     }
 
     /// @dev utility function to get the message hash for the invite verfication
@@ -184,59 +162,49 @@ contract StoreReg is ERC721 {
     function redeemInvite(uint256 storeId, uint8 v, bytes32 r, bytes32 s, address user) public {
         // check signature
         address recovered = ecrecover(_getTokenMessageHash(user), v, r, s);
-        bool newIsSet = invites.toggle(_calulateInviteId(recovered, storeId));
+        bool newIsSet = invites.toggle(calculateIdx(storeId, recovered));
         if (newIsSet) revert NoVerifier();
         // register the new user
-        _addUser(storeId, user, AccessLevel.Clerk);
+        _addUser(storeId, user, (1 << PERM_updateRootHash));
     }
+
+    /**
+     *  USER CONTROL
+     */
 
     /// @dev manually add user, identified by their wallet addr, to the store
     /// @param storeId The store nft
-    /// @param addr The address of the user
-    /// @param acl The access level of the user. can only be clerk or admin.
-    function registerUser(uint256 storeId, address addr, AccessLevel acl) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
+    /// @param user The address of the user
+    /// @param perms The perimission to assign to the new users
+    function registerUser(uint256 storeId, address user, uint256 perms) public {
+        allPermissionsGuard(storeId, perms | 1 << PERM_registerUser);
         // save the user
-        _addUser(storeId, addr, acl);
+        _addUser(storeId, user, perms);
     }
 
-    /// @dev manually remove user, identified by their wallet addr, from the store
-    function removeUser(uint256 storeId, address who) public {
-        requireOnlyAdminOrHigher(storeId, msg.sender);
-        AccessLevel theirAcl = storesToUsers[storeId][who];
-        if (theirAcl == AccessLevel.Zero) {
-            // already removed
-            return;
-        }
-        delete storesToUsers[storeId][who];
+    /// @dev remove user. The address that is removing the user must have all or more permissions than the user being removed. Or be the owner of the store
+    /// @param storeId The store
+    /// @param user The address of the user
+    function removeUser(uint256 storeId, address user) public {
+        allPermissionsGuard(storeId, getAllPermissions(storeId, user) | 1 << PERM_removeUser);
+        _removeUser(storeId, user);
     }
 
-    /// @notice checks if a user has at least a certain access level
-    /// @param storeId The store nft
-    /// @param addr The address of the user
-    /// @param want The access level to check for
-    /// @return true if the user has at least the access level
-    function hasAtLeastAccess(uint256 storeId, address addr, AccessLevel want) public view returns (bool) {
-        AccessLevel has = storesToUsers[storeId][addr];
-        address owner = ownerOf(storeId);
-        if (want == AccessLevel.Clerk) {
-            return has != AccessLevel.Zero || owner == addr;
-        } else if (want == AccessLevel.Admin) {
-            return has == AccessLevel.Admin || owner == addr;
-        } else if (want == AccessLevel.Owner) {
-            return addr == owner;
-        }
-        revert InvalidAccessLevel();
+    // @dev adds a permision if the calling user has that permision and the permision to remove permisions
+    function addPermission(uint256 storeId, address user, uint8 perm) public {
+        allPermissionsGuard(storeId, 1 << perm | 1 << PERM_addPermission);
+        _addPermission(storeId, user, perm);
     }
 
-    function _addUser(uint256 storeId, address addr, AccessLevel acl) internal {
-        storesToUsers[storeId][addr] = acl;
-        emit UserAdded(storeId, addr);
+    // @dev removes a permision if the calling user has that permision and the permision to remove permisions
+    function removePermission(uint256 storeId, address user, uint8 perm) public {
+        allPermissionsGuard(storeId, 1 << perm | PERM_removePermission);
+        _removePermission(storeId, user, perm);
     }
 
-    /// @notice calculates the invite id
+    /// @notice calculates a unique index given an ID and an address
     /// @dev the storeID must be hashed before being XORed to prevent collisions since an attacker can choose the storeID.
-    function _calulateInviteId(address verifier, uint256 storeId) internal pure returns (uint256) {
-        return uint256(uint160(verifier)) ^ uint256(keccak256(abi.encode(storeId)));
+    function calculateIdx(uint256 id, address addr) internal pure returns (uint256) {
+        return uint256(uint160(addr)) ^ uint256(keccak256(abi.encode(id)));
     }
 }

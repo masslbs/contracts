@@ -6,8 +6,9 @@ pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
-import "forge-std/console.sol";
-import "../src/StoreReg.sol";
+import {StoreReg} from "../src/StoreReg.sol";
+import {RelayReg} from "../src/RelayReg.sol";
+import {AccessControl} from "../src/AccessControl.sol";
 
 contract StoreUsersTest is Test {
     StoreReg internal s;
@@ -16,57 +17,58 @@ contract StoreUsersTest is Test {
     address internal addrNewUser;
     uint256 pkNewUser;
     address internal addrSomeoneElse;
+    uint256 internal clerk;
+    uint256 internal admin;
 
     function setUp() public {
         addrOwner = msg.sender;
-        // console.log("setUp owner=%a", addrOwner);
         (addrNewUser, pkNewUser) = makeAddrAndKey("newUser");
         addrSomeoneElse = address(0x01a1257382B6b9a7BDFeF762379C085Ca50F1Ca9);
         s = new StoreReg(new RelayReg());
+        clerk = 4;
+        admin = 2047;
         storeId = 42;
         s.mint(storeId, addrOwner);
     }
 
     function testUsersRegisterOwner() public {
         vm.prank(addrOwner);
-        s.registerUser(storeId, addrNewUser, AccessLevel.Clerk);
+        s.registerUser(storeId, addrNewUser, clerk);
     }
 
     function testUsersRemove() public {
         vm.startPrank(addrOwner);
-        s.registerUser(storeId, addrNewUser, AccessLevel.Clerk);
+        s.registerUser(storeId, addrNewUser, clerk);
         s.removeUser(storeId, addrNewUser);
     }
 
     function testUsersRegisterNotAllowed() public {
         vm.prank(addrOwner);
-        s.registerUser(storeId, addrNewUser, AccessLevel.Clerk);
-        vm.expectRevert(StoreReg.NotAuthorized.selector);
+        s.registerUser(storeId, addrNewUser, clerk);
         vm.prank(addrNewUser);
-        s.registerUser(storeId, addrSomeoneElse, AccessLevel.Admin);
+        vm.expectRevert(abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 255));
+        s.registerUser(storeId, addrSomeoneElse, admin);
     }
 
     function testUsersRegisterByClerk() public {
         vm.prank(addrOwner);
-        s.registerUser(storeId, addrNewUser, AccessLevel.Clerk);
+        s.registerUser(storeId, addrNewUser, clerk);
         vm.startPrank(addrNewUser);
-        vm.expectRevert(StoreReg.NotAuthorized.selector);
-        s.registerUser(storeId, addrSomeoneElse, AccessLevel.Clerk);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), false);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Admin), false);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Owner), false);
+        vm.expectRevert(abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 255));
+        s.registerUser(storeId, addrSomeoneElse, clerk);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, clerk), false);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, admin), false);
     }
 
     function testUsersRegisterByAdmin() public {
         vm.prank(addrOwner);
-        s.registerUser(storeId, addrNewUser, AccessLevel.Admin);
+        s.registerUser(storeId, addrNewUser, admin);
         vm.startPrank(addrNewUser);
-        s.registerUser(storeId, addrSomeoneElse, AccessLevel.Clerk);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), true);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Admin), false);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Owner), false);
+        s.registerUser(storeId, addrSomeoneElse, clerk);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, clerk), true);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, admin), false);
         s.removeUser(storeId, addrSomeoneElse);
-        assertEq(s.hasAtLeastAccess(storeId, addrSomeoneElse, AccessLevel.Clerk), false);
+        assertEq(s.hasEnoughPermissions(storeId, addrSomeoneElse, clerk), false);
     }
 
     function testTokenRegistration() public {
@@ -79,7 +81,7 @@ contract StoreUsersTest is Test {
         vm.prank(addrNewUser);
         s.redeemInvite(storeId, sigv, sigr, sigs, addrNewUser);
         vm.prank(addrOwner);
-        assertEq(true, s.hasAtLeastAccess(storeId, addrNewUser, AccessLevel.Clerk));
+        assertEq(true, s.hasEnoughPermissions(storeId, addrNewUser, clerk));
         // try to use the token twice
         vm.prank(addrSomeoneElse);
         vm.expectRevert(StoreReg.NoVerifier.selector);
