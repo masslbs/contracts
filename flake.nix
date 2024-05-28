@@ -19,6 +19,10 @@
       url = "git+https://github.com/uniswap/permit2.git";
       flake = false;
     };
+    ds-test = {
+      url = "github:dapphub/ds-test";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {
@@ -28,6 +32,7 @@
     forge-std,
     permit2,
     solady,
+    ds-test,
     self,
     ...
   }:
@@ -116,7 +121,7 @@
 
         remappings = pkgs.writeText "remapping.txt" ''
           forge-std/=${forge-std}/src
-          ds-test/=${forge-std}/lib/ds-test/src
+          ds-test/=${ds-test}/src
           permit2/=${permit2}/
           solady=${solady}/
         '';

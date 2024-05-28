@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "ds-test": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1677883973,
+        "narHash": "sha256-wXtNq4ZUohndNGs9VttOI9m9VW5QlVKOPtR8+mv2fBM=",
+        "owner": "dapphub",
+        "repo": "ds-test",
+        "rev": "e282159d5170298eb2455a6c05280ab5a73a4ef0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dapphub",
+        "repo": "ds-test",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -131,6 +147,7 @@
     },
     "root": {
       "inputs": {
+        "ds-test": "ds-test",
         "flake-parts": "flake-parts",
         "forge-std": "forge-std",
         "foundry": "foundry",
