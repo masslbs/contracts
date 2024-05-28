@@ -148,6 +148,14 @@
             ${private_key}
              export PS1="[contracts] $PS1"
              cp -f ${remappings} remappings.txt
+             # check remappings
+             while read line; do
+               dir=$(echo $line | cut -d'=' -f2-)
+               test -d "$dir" || {
+                 echo "WARNING: remapping not found: $line"
+                 exit 1
+               }
+            done < remappings.txt
           '';
         };
         packages = {
