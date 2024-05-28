@@ -73,16 +73,16 @@
       "locked": {
         "lastModified": 1714727549,
         "narHash": "sha256-CWXRTxxcgMfQubJugpeg3yVWIfm70MYTtgaKWKgD60U=",
-        "ref": "monthly",
+        "owner": "shazow",
+        "repo": "foundry.nix",
         "rev": "47cf189ec395eda4b3e0623179d1075c8027ca97",
-        "revCount": 436,
-        "type": "git",
-        "url": "https://github.com/shazow/foundry.nix.git"
+        "type": "github"
       },
       "original": {
+        "owner": "shazow",
         "ref": "monthly",
-        "type": "git",
-        "url": "https://github.com/shazow/foundry.nix.git"
+        "repo": "foundry.nix",
+        "type": "github"
       }
     },
     "nixpkgs": {

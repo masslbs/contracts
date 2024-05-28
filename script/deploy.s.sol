@@ -28,7 +28,7 @@ contract Deploy is Script, DeployPermit2 {
         if (testERC20) {
             // should always get deployed to the above
             address(deployPermit2());
-        } 
+        }
         // deploy relay registary
         RelayReg relayReg = new RelayReg{salt: salt}();
         // deploy store registary

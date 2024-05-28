@@ -64,8 +64,7 @@ contract SweepPayment {
 contract PaymentsByAddress is Payments {
     event SweepFailed(PaymentRequest payment);
 
-    constructor(IPermit2 permit2) Payments(permit2){
-    }
+    constructor(IPermit2 permit2) Payments(permit2) {}
 
     function getBytecode(PaymentRequest calldata payment, address refund) public view returns (bytes memory) {
         bytes memory bytecode = type(SweepPayment).creationCode;

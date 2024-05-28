@@ -6,7 +6,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    foundry.url = "git+https://github.com/shazow/foundry.nix.git?ref=monthly";
+    foundry.url = "github:shazow/foundry.nix?ref=monthly";
     forge-std = {
       url = "github:foundry-rs/forge-std";
       flake = false;
@@ -194,7 +194,7 @@
               mkdir -p $out/{bin,abi};
               cp ./deploymentAddresses.json $out/deploymentAddresses.json
               # create ABI files for codegen
-              for artifact in {ERC20,RelayReg,StoreReg,Payments,PaymentsByAddress}; do
+              for artifact in {ERC20,RelayReg,StoreReg,PaymentsByAddress}; do
                   cd out/$artifact.sol/
                   jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
                   cd ../../
