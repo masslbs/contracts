@@ -8,7 +8,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     foundry.url = "git+https://github.com/shazow/foundry.nix.git?ref=monthly";
     forge-std = {
-      url = "git+https://github.com/foundry-rs/forge-std?submodules=1";
+      url = "github:foundry-rs/forge-std";
       flake = false;
     };
     solady = {
@@ -16,7 +16,7 @@
       flake = false;
     };
     permit2 = {
-      url = "git+https://github.com/uniswap/permit2.git";
+      url = "github:uniswap/permit2";
       flake = false;
     };
     ds-test = {

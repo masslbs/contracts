@@ -54,17 +54,15 @@
       "locked": {
         "lastModified": 1715903882,
         "narHash": "sha256-Uqr0ZwCnQL9ShWxIgG/ci/5ukGyuqt2n+C0GFKlJiho=",
-        "ref": "refs/heads/master",
+        "owner": "foundry-rs",
+        "repo": "forge-std",
         "rev": "52715a217dc51d0de15877878ab8213f6cbbbab5",
-        "revCount": 334,
-        "submodules": true,
-        "type": "git",
-        "url": "https://github.com/foundry-rs/forge-std"
+        "type": "github"
       },
       "original": {
-        "submodules": true,
-        "type": "git",
-        "url": "https://github.com/foundry-rs/forge-std"
+        "owner": "foundry-rs",
+        "repo": "forge-std",
+        "type": "github"
       }
     },
     "foundry": {
@@ -134,15 +132,15 @@
       "locked": {
         "lastModified": 1696001773,
         "narHash": "sha256-sevmJhYn5/odTvS9si+KFw/R234KNaNfrnECdkVcL9w=",
-        "ref": "refs/heads/main",
+        "owner": "uniswap",
+        "repo": "permit2",
         "rev": "cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
-        "revCount": 184,
-        "type": "git",
-        "url": "https://github.com/uniswap/permit2.git"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://github.com/uniswap/permit2.git"
+        "owner": "uniswap",
+        "repo": "permit2",
+        "type": "github"
       }
     },
     "root": {
