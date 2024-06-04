@@ -5,11 +5,11 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
-        "lastModified": 1715865404,
-        "narHash": "sha256-/GJvTdTpuDjNn84j82cU6bXztE0MSkdnTWClUCRub78=",
+        "lastModified": 1717285511,
+        "narHash": "sha256-iKzJcpdXih14qYVcZ9QC9XuZYnPc6T8YImb6dX166kw=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "8dc45382d5206bd292f9c2768b8058a8fd8311d9",
+        "rev": "2a55567fcf15b1b1c7ed712a2c6fadaec7412ea8",
         "type": "github"
       },
       "original": {
@@ -66,8 +66,8 @@
       },
       "original": {
         "owner": "shazow",
-        "ref": "monthly",
         "repo": "foundry.nix",
+        "rev": "47cf189ec395eda4b3e0623179d1075c8027ca97",
         "type": "github"
       }
     },
@@ -87,14 +87,14 @@
     },
     "nixpkgs-lib": {
       "locked": {
-        "lastModified": 1714640452,
-        "narHash": "sha256-QBx10+k6JWz6u7VsohfSw8g8hjdBZEf8CFzXH1/1Z94=",
+        "lastModified": 1717284937,
+        "narHash": "sha256-lIbdfCsf8LMFloheeE6N31+BMIeixqyQWbSr2vk79EQ=",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz"
+        "url": "https://github.com/NixOS/nixpkgs/archive/eb9ceca17df2ea50a250b6b27f7bf6ab0186f198.tar.gz"
       },
       "original": {
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz"
+        "url": "https://github.com/NixOS/nixpkgs/archive/eb9ceca17df2ea50a250b6b27f7bf6ab0186f198.tar.gz"
       }
     },
     "nixpkgs_2": {
@@ -118,15 +118,15 @@
       "locked": {
         "lastModified": 1696001773,
         "narHash": "sha256-sevmJhYn5/odTvS9si+KFw/R234KNaNfrnECdkVcL9w=",
-        "ref": "refs/heads/main",
+        "owner": "uniswap",
+        "repo": "permit2",
         "rev": "cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
-        "revCount": 184,
-        "type": "git",
-        "url": "https://github.com/uniswap/permit2.git"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://github.com/uniswap/permit2.git"
+        "owner": "uniswap",
+        "repo": "permit2",
+        "type": "github"
       }
     },
     "root": {
@@ -142,11 +142,11 @@
     "solady": {
       "flake": false,
       "locked": {
-        "lastModified": 1716653360,
-        "narHash": "sha256-737uC8mcKba2MhwylPd1yt/nsAL4SNuRabkJb9rMl3Q=",
+        "lastModified": 1717493279,
+        "narHash": "sha256-mFKKe6CrYOT69H7LypN/MrMfQLuA9rv3sNSMABQx0us=",
         "owner": "Vectorized",
         "repo": "solady",
-        "rev": "bfff552c0d282c15258cab9377a7d4c5247d0434",
+        "rev": "54eb8737224ba015e5591c4c8e97c78cdf8f0e0f",
         "type": "github"
       },
       "original": {

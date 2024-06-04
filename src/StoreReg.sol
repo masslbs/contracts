@@ -16,10 +16,12 @@ contract StoreReg is AccessControl {
     RelayReg public relayReg;
 
     error NoVerifier();
+    error InvalidNonce(uint64 cur, uint64 _nonce);
 
-    /// @notice rootHashes is a mapping of store nfts to their state root hash
+    /// @notice rootHashes is a mapping of stores to their state root hash
     mapping(uint256 storeid => bytes32) public rootHashes;
-
+    /// @notice sequenceNonce is a mapping of stores to the nonce of the last event used in the root hash
+    mapping(uint256 storeid => uint64) public nonce;
     /// @notice relays is a mapping of store nfts to their relays
     mapping(uint256 storeid => uint256[]) public relays;
 
@@ -67,11 +69,16 @@ contract StoreReg is AccessControl {
     /// @notice updateRootHash updates the state root of the store
     /// @param storeId The store nft
     /// @param hash The new state root hash
-    function updateRootHash(uint256 storeId, bytes32 hash) public {
+    function updateRootHash(uint256 storeId, bytes32 hash, uint64 _nonce) public {
         if (!_checkIsConfiguredRelay(storeId) && !hasPermission(storeId, msg.sender, PERM_updateRootHash)) {
             revert NotAuthorized(PERM_updateRootHash);
         }
         rootHashes[storeId] = hash;
+        uint64 curNonce = nonce[storeId];
+        if (curNonce >= _nonce) {
+            revert InvalidNonce(curNonce, _nonce);
+        }
+        nonce[storeId] = _nonce;
     }
 
     /**

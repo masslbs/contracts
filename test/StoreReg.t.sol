@@ -52,7 +52,7 @@ contract StoreTest is Test {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
         stores.mint(storeId, owner);
-        stores.updateRootHash(storeId, testHashUpdate);
+        stores.updateRootHash(storeId, testHashUpdate, 1);
         assertEq(testHashUpdate, stores.rootHashes(storeId));
     }
 
@@ -61,7 +61,7 @@ contract StoreTest is Test {
         address owner = address(3);
         stores.mint(storeId, owner);
         vm.prank(owner);
-        stores.updateRootHash(storeId, testHashUpdate);
+        stores.updateRootHash(storeId, testHashUpdate, 1);
         assertEq(testHashUpdate, stores.rootHashes(storeId));
     }
 
@@ -80,14 +80,14 @@ contract StoreTest is Test {
         uint256 count = stores.getRelayCount(storeId);
         assertEq(count, wantCount);
         vm.prank(relayAddr);
-        stores.updateRootHash(storeId, testHashUpdate);
+        stores.updateRootHash(storeId, testHashUpdate, 1);
         assertEq(testHashUpdate, stores.rootHashes(storeId));
         // now remove relay and check it cant change rootHash
         vm.prank(owner);
         stores.removeRelay(storeId, 0);
         vm.expectRevert(abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 2));
         vm.prank(relayAddr);
-        stores.updateRootHash(storeId, testHashUpdate);
+        stores.updateRootHash(storeId, testHashUpdate, 1);
     }
 
     function testSafeContractReceiver() public {
