@@ -18,12 +18,12 @@ interface DepositEvent {
 }
 
 contract TestPaymentEndpoint is IPaymentEndpoint, DepositEvent {
-    function pay(PaymentIntent calldata payment) external payable {
-        emit Deposit(address(uint160(bytes20(payment.payee.payload))), msg.value);
+    function pay(PaymentRequest calldata payment) external payable {
+        emit Deposit(address(uint160(bytes20(payment.payeeAddress))), msg.value);
     }
 }
 
-contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
+contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
     Payments internal payments;
     IPermit2 permit2;
     IPaymentEndpoint paymentEndpoint;
@@ -66,80 +66,92 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
         return bytes.concat(r, s, bytes1(v));
     }
 
-    function makeTestPayment100Native(uint256 amount, uint256 time, address currency) public {
-        payments.payNative{value: amount}(
-            PaymentIntent({
-                ttl: time,
-                receipt: bytes32(0),
-                currency: currency,
-                amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
-                shopId: 1,
-                shopSignature: new bytes(65),
-                permit2signature: new bytes(0)
-            })
-        );
+    function makePaymentRequest100Native(uint256 time, address currency) public returns (PaymentRequest memory) {
+        return PaymentRequest({
+            ttl: time,
+            order: bytes32(0),
+            currency: currency,
+            amount: 100,
+            payeeAddress: alice,
+            chainId: block.chainid,
+            isPaymentEndpoint: false,
+            shopId: 1,
+            shopSignature: new bytes(65)
+        });
     }
 
     function testPayNative() public {
-        makeTestPayment100Native(100, block.timestamp + 100, address(0));
+        vm.expectEmit();
+        PaymentRequest memory pr = makePaymentRequest100Native(block.timestamp + 100, address(0));
+        emit PaymentMade(payments.getPaymentId(pr));
+        payments.payNative{value: 100}(pr);
         assertEq(alice.balance, 100);
     }
 
     function test_DoublePay() public {
-        makeTestPayment100Native(100, block.timestamp + 100, address(0));
-        vm.expectRevert(IPayments.PaymentAlreadyMade.selector);
-        makeTestPayment100Native(100, block.timestamp + 100, address(0));
+        vm.expectEmit();
+        PaymentRequest memory pr = makePaymentRequest100Native(block.timestamp + 100, address(0));
+        emit PaymentMade(payments.getPaymentId(pr));
+        payments.payNative{value: 100}(pr);
+        vm.expectRevert(IPaymentSignals.PaymentAlreadyMade.selector);
+        payments.payNative{value: 100}(pr);
     }
 
     function test_PayWrongAmount() public {
-        vm.expectRevert(IPayments.InvalidPaymentAmount.selector);
-        makeTestPayment100Native(99, block.timestamp + 100, address(0));
+        vm.expectRevert(IPaymentSignals.InvalidPaymentAmount.selector);
+        PaymentRequest memory pr = makePaymentRequest100Native(block.timestamp + 100, address(0));
+        payments.payNative{value: 9}(pr);
     }
+    //
 
     function test_PayWrongCurrency() public {
-        vm.expectRevert(IPayments.InvalidPaymentToken.selector);
-        makeTestPayment100Native(99, block.timestamp + 100, address(1));
+        vm.expectRevert(IPaymentSignals.InvalidPaymentToken.selector);
+        PaymentRequest memory pr = makePaymentRequest100Native(block.timestamp + 100, address(1));
+        payments.payNative{value: 100}(pr);
     }
 
     function test_PayEndpoint() public {
-        vm.expectEmit();
-        emit Deposit(msg.sender, 100);
 
-        payments.payNative{value: 100}(
-            PaymentIntent({
-                ttl: 100,
-                receipt: bytes32(0),
-                currency: address(0),
-                amount: 100,
-                payee: PaymentEndpointDetails({
-                    payeeAddress: address(paymentEndpoint),
-                    payload: abi.encodePacked(msg.sender),
-                    canRevert: false
-                }),
-                shopId: 1,
-                shopSignature: new bytes(65),
-                permit2signature: new bytes(0)
-            })
-        );
+        PaymentRequest memory pr = PaymentRequest({
+            ttl: 100,
+            order: bytes32(0),
+            currency: address(0),
+            amount: 100,
+            payeeAddress: address(paymentEndpoint),
+            chainId: block.chainid,
+            isPaymentEndpoint: true,
+            shopId: 1,
+            shopSignature: new bytes(65)
+        });
+        vm.expectEmit();
+        emit PaymentMade(payments.getPaymentId(pr));
+        vm.expectEmit();
+        emit Deposit(address(paymentEndpoint), 100);
+
+        payments.payNative{value: 100}(pr);
         assertEq(address(paymentEndpoint).balance, 100);
     }
 
     function test_payTokenPreApproved() public {
         testToken.mint(address(this), 100);
         testToken.approve(address(payments), 100);
-        payments.payTokenPreApproved(
-            PaymentIntent({
-                ttl: 100,
-                receipt: bytes32(0),
-                currency: address(testToken),
-                amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
-                shopId: 1,
-                shopSignature: new bytes(65),
-                permit2signature: new bytes(0)
-            })
-        );
+
+        PaymentRequest memory pr = PaymentRequest({
+            ttl: 100,
+            order: bytes32(0),
+            currency: address(testToken),
+            amount: 100,
+            payeeAddress: alice,
+            chainId: block.chainid,
+            isPaymentEndpoint: false,
+            shopId: 1,
+            shopSignature: new bytes(65)
+        });
+
+        vm.expectEmit();
+        emit PaymentMade(payments.getPaymentId(pr));
+        payments.payTokenPreApproved(pr);
+    
         assertEq(testToken.balanceOf(address(alice)), 100);
     }
 
@@ -158,18 +170,25 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2 {
 
         bytes memory sig = getPermitTransferSignature(permit, fromPrivateKey, address(payments), DOMAIN_SEPARATOR);
 
+        PaymentRequest memory pr = PaymentRequest({
+            ttl: 100,
+            order: bytes32(0),
+            currency: address(testToken),
+            amount: 100,
+            payeeAddress: alice,
+            chainId: block.chainid,
+            isPaymentEndpoint: false,
+            shopId: 1,
+            shopSignature: new bytes(65)
+        });
+
+        vm.expectEmit();
+        emit PaymentMade(payments.getPaymentId(pr));
+
         vm.prank(from);
         payments.payToken(
-            PaymentIntent({
-                ttl: 100,
-                receipt: bytes32(0),
-                currency: address(testToken),
-                amount: 100,
-                payee: PaymentEndpointDetails({payeeAddress: alice, payload: new bytes(0), canRevert: false}),
-                shopId: 1,
-                shopSignature: new bytes(65),
-                permit2signature: sig
-            })
+            pr,
+            sig
         );
         assertEq(testToken.balanceOf(address(alice)), 100);
     }
