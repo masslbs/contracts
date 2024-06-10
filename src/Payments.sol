@@ -52,6 +52,9 @@ contract Payments is IPayments {
             msg.sender,
             permit2signature
         );
+        if (payment.isPaymentEndpoint) {
+            IPaymentEndpoint(payment.payeeAddress).pay(payment);
+        }
     }
 
     /// @inheritdoc IPaymentFunctions

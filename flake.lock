@@ -52,11 +52,11 @@
     "forge-std": {
       "flake": false,
       "locked": {
-        "lastModified": 1715903882,
-        "narHash": "sha256-Uqr0ZwCnQL9ShWxIgG/ci/5ukGyuqt2n+C0GFKlJiho=",
+        "lastModified": 1717836446,
+        "narHash": "sha256-hBByo2OoIYh3nUkCBDJRPFKvaMkjAO+Wkq6belAW0T0=",
         "owner": "foundry-rs",
         "repo": "forge-std",
-        "rev": "52715a217dc51d0de15877878ab8213f6cbbbab5",
+        "rev": "6e05729b76f1ae0d437e74951aef1ca987788ab3",
         "type": "github"
       },
       "original": {
@@ -71,17 +71,16 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1714727549,
-        "narHash": "sha256-CWXRTxxcgMfQubJugpeg3yVWIfm70MYTtgaKWKgD60U=",
+        "lastModified": 1718010606,
+        "narHash": "sha256-DKMbFQBbkTghIGHO6pL/nRs2/QHttm4AVG+gL9bFbOc=",
         "owner": "shazow",
         "repo": "foundry.nix",
-        "rev": "47cf189ec395eda4b3e0623179d1075c8027ca97",
+        "rev": "1d68c63c217de6fee495275f17d6dc9e220d2499",
         "type": "github"
       },
       "original": {
         "owner": "shazow",
         "repo": "foundry.nix",
-        "rev": "47cf189ec395eda4b3e0623179d1075c8027ca97",
         "type": "github"
       }
     },
@@ -113,11 +112,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1716633019,
-        "narHash": "sha256-xim1b5/HZYbWaZKyI7cn9TJCM6ewNVZnesRr00mXeS4=",
+        "lastModified": 1717880976,
+        "narHash": "sha256-BRvSCsKtDUr83NEtbGfHLUOdDK0Cgbezj2PtcHnz+sQ=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "9d29cd266cebf80234c98dd0b87256b6be0af44e",
+        "rev": "4913a7c3d8b8d00cb9476a6bd730ff57777f740c",
         "type": "github"
       },
       "original": {
@@ -157,11 +156,11 @@
     "solady": {
       "flake": false,
       "locked": {
-        "lastModified": 1717493279,
-        "narHash": "sha256-mFKKe6CrYOT69H7LypN/MrMfQLuA9rv3sNSMABQx0us=",
+        "lastModified": 1717740645,
+        "narHash": "sha256-EcHZb25oUArIKg2k8IxmzmGbeYqfJPjZgJ51qthAqyg=",
         "owner": "Vectorized",
         "repo": "solady",
-        "rev": "54eb8737224ba015e5591c4c8e97c78cdf8f0e0f",
+        "rev": "29d61c504425519c6deddc3e12c2e039ad43e8e3",
         "type": "github"
       },
       "original": {

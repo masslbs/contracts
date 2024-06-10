@@ -6,7 +6,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    foundry.url = "github:shazow/foundry.nix/47cf189ec395eda4b3e0623179d1075c8027ca97";
+    foundry.url = "github:shazow/foundry.nix";
     forge-std = {
       url = "github:foundry-rs/forge-std";
       flake = false;
@@ -106,7 +106,7 @@
         deploy_market_local = mk_deploy_market "." false;
         deploy_market_store = mk_deploy_market self true;
         deploy_market_sepolia = pkgs.writeShellScriptBin "deploy-sepolia" ''
-          ${pkgs.foundry-bin}/bin/forge script --verifier sourcify ./script/deploy.s.sol:Deploy --rpc-url https://rpc.sepolia.org/ --broadcast --vvvv --no-auto-detect
+          ${pkgs.foundry-bin}/bin/forge script --verifier sourcify ./script/deploy.s.sol:Deploy --rpc-url https://rpc.sepolia.org/ --broadcast
         '';
 
         run_and_deploy_local = mk_run_and_deploy deploy_market_local;
@@ -151,6 +151,7 @@
 
           shellHook = ''
             ${private_key}
+             export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
              export PS1="[contracts] $PS1"
              cp -f ${remappings} remappings.txt
              # check remappings
@@ -180,15 +181,16 @@
 
             buildPhase = ''
               cp ${remappings} remappings.txt
-              forge compile --no-auto-detect
+              export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
+              forge compile
               # forge script will fail trying to load SSL_CERT_FILE
               unset SSL_CERT_FILE
               export PRIVATE_KEY=0x1
-              forge script ./script/deploy.s.sol:Deploy -s "runTestDeploy()" --no-auto-detect
+              forge script ./script/deploy.s.sol:Deploy -s "runTestDeploy()"
             '';
 
             checkPhase = ''
-              forge test --no-auto-detect
+              forge test
             '';
 
             installPhase = ''
