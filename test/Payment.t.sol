@@ -19,7 +19,7 @@ interface DepositEvent {
 
 contract TestPaymentEndpoint is IPaymentEndpoint, DepositEvent {
     function pay(PaymentRequest calldata payment) external payable {
-        emit Deposit(address(uint160(bytes20(payment.payeeAddress))), msg.value);
+        emit Deposit(address(uint160(bytes20(payment.payeeAddress))), payment.amount);
     }
 }
 
@@ -111,7 +111,6 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
     }
 
     function test_PayEndpoint() public {
-
         PaymentRequest memory pr = PaymentRequest({
             ttl: 100,
             order: bytes32(0),
@@ -151,7 +150,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
         vm.expectEmit();
         emit PaymentMade(payments.getPaymentId(pr));
         payments.payTokenPreApproved(pr);
-    
+
         assertEq(testToken.balanceOf(address(alice)), 100);
     }
 
@@ -186,10 +185,46 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
         emit PaymentMade(payments.getPaymentId(pr));
 
         vm.prank(from);
-        payments.payToken(
-            pr,
-            sig
-        );
+        payments.payToken(pr, sig);
         assertEq(testToken.balanceOf(address(alice)), 100);
+    }
+
+
+    function test_payTokenEndpoint() public {
+        uint256 fromPrivateKey = 0x12341236;
+        address from = vm.addr(fromPrivateKey);
+        testToken.mint(from, 100);
+        vm.prank(from);
+        testToken.approve(address(permit2), 100);
+
+        ISignatureTransfer.PermitTransferFrom memory permit = ISignatureTransfer.PermitTransferFrom({
+            permitted: ISignatureTransfer.TokenPermissions({token: address(testToken), amount: 100}),
+            nonce: 0,
+            deadline: 100
+        });
+
+        bytes memory sig = getPermitTransferSignature(permit, fromPrivateKey, address(payments), DOMAIN_SEPARATOR);
+
+        PaymentRequest memory pr = PaymentRequest({
+            ttl: 100,
+            order: bytes32(0),
+            currency: address(testToken),
+            amount: 100,
+            payeeAddress: address(paymentEndpoint),
+            chainId: block.chainid,
+            isPaymentEndpoint: true,
+            shopId: 1,
+            shopSignature: new bytes(65)
+        });
+
+        vm.expectEmit();
+        emit PaymentMade(payments.getPaymentId(pr));
+
+        vm.expectEmit();
+        emit Deposit(address(paymentEndpoint), 100);
+
+        vm.prank(from);
+        payments.payToken(pr, sig);
+        assertEq(testToken.balanceOf(address(paymentEndpoint)), 100);
     }
 }
