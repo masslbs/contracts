@@ -104,13 +104,13 @@
         '';
 
         deploy_market_local = mk_deploy_market "." false;
-        deploy_market_store = mk_deploy_market self true;
+        deploy_market_shop = mk_deploy_market self true;
         deploy_market_sepolia = pkgs.writeShellScriptBin "deploy-sepolia" ''
           ${pkgs.foundry-bin}/bin/forge script --verifier sourcify ./script/deploy.s.sol:Deploy --rpc-url https://rpc.sepolia.org/ --broadcast
         '';
 
         run_and_deploy_local = mk_run_and_deploy deploy_market_local;
-        run_and_deploy_store = mk_run_and_deploy deploy_market_store;
+        run_and_deploy_shop = mk_run_and_deploy deploy_market_shop;
 
         buildInputs = with pkgs; [
           jq
@@ -169,8 +169,8 @@
           mass-contracts = pkgs.stdenv.mkDerivation {
             buildInputs =
               [
-                deploy_market_store
-                run_and_deploy_store
+                deploy_market_shop
+                run_and_deploy_shop
               ]
               ++ buildInputs;
             name = "mass-contracts";
@@ -203,8 +203,8 @@
                   cd ../../
               done
               jq .abi out/deploy.s.sol/EuroDollar.json > $out/abi/Eddies.json
-              ln -s ${deploy_market_store}/bin/deploy-market $out/bin/deploy-market
-              ln -s ${run_and_deploy_store}/bin/run-and-deploy $out/bin/run-and-deploy
+              ln -s ${deploy_market_shop}/bin/deploy-market $out/bin/deploy-market
+              ln -s ${run_and_deploy_shop}/bin/run-and-deploy $out/bin/run-and-deploy
               ln -s ${update_env}/bin/update_env.sh $out/bin/update_env.sh
             '';
           };
