@@ -93,8 +93,8 @@
           get_addr RelayReg
           echo "RELAY_REGISTRY_ADDRESS=$RelayReg"
 
-          get_addr StoreReg
-          echo "STORE_REGISTRY_ADDRESS=$StoreReg"
+          get_addr ShopReg
+          echo "SHOP_REGISTRY_ADDRESS=$ShopReg"
 
           get_addr PaymentFactory
           echo "PAYMENT_FACTORY_ADDRESS=$PaymentFactory"
@@ -197,7 +197,7 @@
               mkdir -p $out/{bin,abi};
               cp ./deploymentAddresses.json $out/deploymentAddresses.json
               # create ABI files for codegen
-              for artifact in {ERC20,RelayReg,StoreReg,Payments,PaymentsByAddress}; do
+              for artifact in {ERC20,RelayReg,ShopReg,Payments,PaymentsByAddress}; do
                   cd out/$artifact.sol/
                   jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
                   cd ../../
