@@ -8,7 +8,7 @@ import "forge-std/Script.sol";
 import {DeployPermit2} from "permit2/test/utils/DeployPermit2.sol";
 import "permit2/src/interfaces/IPermit2.sol";
 
-import "../src/StoreReg.sol";
+import "../src/ShopReg.sol";
 import "../src/RelayReg.sol";
 import "../src/PaymentsByAddress.sol";
 import {MockERC20} from "solady/test/utils/mocks/MockERC20.sol";
@@ -31,8 +31,8 @@ contract Deploy is Script, DeployPermit2 {
         }
         // deploy relay registary
         RelayReg relayReg = new RelayReg{salt: salt}();
-        // deploy store registary
-        StoreReg store = new StoreReg{salt: salt}(relayReg);
+        // deploy shop registary
+        ShopReg shop = new ShopReg{salt: salt}(relayReg);
         // create the paryments contract
         PaymentsByAddress payments = new PaymentsByAddress{salt: salt}(IPermit2(permit2));
 
@@ -41,14 +41,14 @@ contract Deploy is Script, DeployPermit2 {
         if (testERC20) {
             EuroDollar eddies = new EuroDollar{salt: salt}("Eddies", "EDD", 2);
             vm.serializeAddress(addresses, "Eddies", address(eddies));
-            // create a test store
+            // create a test shop
             address testAddress = vm.addr(deployerPrivateKey);
-            store.mint(1, testAddress);
+            shop.mint(1, testAddress);
         }
 
         vm.serializeAddress(addresses, "Payments", address(payments));
         vm.serializeAddress(addresses, "RelayReg", address(relayReg));
-        string memory out = vm.serializeAddress(addresses, "StoreReg", address(store));
+        string memory out = vm.serializeAddress(addresses, "ShopReg", address(shop));
 
         if (mut) vm.writeJson(out, "./deploymentAddresses.json");
         vm.stopBroadcast();
@@ -65,7 +65,7 @@ contract Deploy is Script, DeployPermit2 {
     }
 
     // we want to deploy the test contract and cannot record the address
-    // since we are running from nix store, ect
+    // since we are running from nix shop, ect
     function runTestDeployImmut() external {
         deployContracts(true, false);
     }

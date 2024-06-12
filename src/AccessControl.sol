@@ -10,10 +10,10 @@ abstract contract AccessControl is ERC721 {
 
     error NotAuthorized(uint8 permision);
 
-    event UserAdded(uint256 indexed storeId, address user, uint256 permissions);
-    event UserRemoved(uint256 indexed storeId, address users);
-    event PermissionAdded(uint256 indexed storeId, address user, uint8 permission);
-    event PermissionRemoved(uint256 indexed storeId, address user, uint8 permission);
+    event UserAdded(uint256 indexed shopId, address user, uint256 permissions);
+    event UserRemoved(uint256 indexed shopId, address users);
+    event PermissionAdded(uint256 indexed shopId, address user, uint8 permission);
+    event PermissionRemoved(uint256 indexed shopId, address user, uint8 permission);
 
     function _addUser(uint256 id, address user, uint256 perms) internal {
         emit UserAdded(id, user, perms);
