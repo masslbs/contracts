@@ -65,6 +65,15 @@ contract ShopTest is Test {
         assertEq(testHashUpdate, shops.rootHashes(shopId));
     }
 
+    function test_setTokenURI() public {
+        address owner = address(3);
+        string memory uri = "test";
+        shops.mint(shopId, owner);
+        vm.prank(owner);
+        shops.setTokenURI(shopId, uri);
+        assertEq(uri, shops.tokenURI(shopId));
+    }
+
     function test_accesControl_fromRelay() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
