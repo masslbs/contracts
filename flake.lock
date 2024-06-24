@@ -52,11 +52,11 @@
     "forge-std": {
       "flake": false,
       "locked": {
-        "lastModified": 1717836446,
-        "narHash": "sha256-hBByo2OoIYh3nUkCBDJRPFKvaMkjAO+Wkq6belAW0T0=",
+        "lastModified": 1718736657,
+        "narHash": "sha256-zJXLacy/7X8xbi+HtxNQExGCQudcA897Oi7pmOO9hWc=",
         "owner": "foundry-rs",
         "repo": "forge-std",
-        "rev": "6e05729b76f1ae0d437e74951aef1ca987788ab3",
+        "rev": "19891e6a0b5474b9ea6827ddb90bb9388f7acfc0",
         "type": "github"
       },
       "original": {
@@ -113,11 +113,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1718060059,
-        "narHash": "sha256-9XKFni8VMXo81RTq9XygCyaO3I/7UKpwIlM/yn0MdcM=",
+        "lastModified": 1719122173,
+        "narHash": "sha256-aEMsNUtqSPwn6l+LIZ/rX++nCgun3E9M3uSZs6Rwb7w=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "a3c8d64ba846725f040582b2d3b875466d2115bd",
+        "rev": "906320ae02f769d13a646eb3605a9821df0d6ea2",
         "type": "github"
       },
       "original": {
@@ -157,11 +157,11 @@
     "solady": {
       "flake": false,
       "locked": {
-        "lastModified": 1718241347,
-        "narHash": "sha256-W+wC1kDI9VeLkpn2JnE4N3DpB8RMsQxdE16aWvf0z/A=",
+        "lastModified": 1719146915,
+        "narHash": "sha256-9DtlLexTfCFEL7+gTrPXVjCx4Vp/OlivCT2W00WknOY=",
         "owner": "Vectorized",
         "repo": "solady",
-        "rev": "678c9163550810b08f0ffb09624c9f7532392303",
+        "rev": "f1ad0c2ec388e9754221d95bb9d25de2f7f30264",
         "type": "github"
       },
       "original": {

@@ -1,4 +1,4 @@
-forge-std/=/nix/store/2ybl91igsbqwsmylss5sc126y5ar854b-source/src
+forge-std/=/nix/store/vxq7280ryh71x3gvi4h0cpnwnjyv5nzi-source/src
 ds-test/=/nix/store/kzbay453qngnh77mckqkmpca0vyrrp6f-source/src
 permit2/=/nix/store/bm81cc6z6k8m09jknp8g3iq411jpjgbr-source/
-solady=/nix/store/wch5g3d4bbwvycvjnrhk1zfz41kqnag6-source/
+solady=/nix/store/xrwgl8aqx3938c79z5a9jka9zlb5m9px-source/
