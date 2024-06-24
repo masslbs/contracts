@@ -25,6 +25,8 @@ contract ShopReg is AccessControl {
     /// @notice relays is a mapping of shop nfts to their relays
     mapping(uint256 shopid => uint256[]) public relays;
 
+    mapping(uint256 => string) public shopURIs;
+
     /// @notice invites is a mapping of shop nfts to their one-time use registration invites
     LibBitmap.Bitmap private invites;
 
@@ -55,7 +57,14 @@ contract ShopReg is AccessControl {
     /// @param id The shop nft
     /// @return url to the metadata
     function tokenURI(uint256 id) public view virtual override returns (string memory) {
-        return relayReg.relayURIs(relays[id][0]);
+        return shopURIs[id];
+    }
+
+    /// @notice Sets the metadata URI for a given shop with the provided URI
+    /// @param shopId shop token id, newTokenURI uri to metadata
+    function setTokenURI(uint256 shopId, string memory newTokenURI) public {
+        require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
+        shopURIs[shopId] = newTokenURI;
     }
 
     /// @notice mint registeres a new shop and creates a NFT for it
