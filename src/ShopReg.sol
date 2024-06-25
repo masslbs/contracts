@@ -62,7 +62,7 @@ contract ShopReg is AccessControl {
 
     /// @notice Sets the metadata URI for a given shop with the provided URI
     /// @param shopId shop token id, newTokenURI uri to metadata
-    function setTokenURI(uint256 shopId, string memory newTokenURI) public {
+    function setShopsURI(uint256 shopId, string memory newTokenURI) public {
         require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
         shopURIs[shopId] = newTokenURI;
     }

@@ -65,12 +65,12 @@ contract ShopTest is Test {
         assertEq(testHashUpdate, shops.rootHashes(shopId));
     }
 
-    function test_setTokenURI() public {
+    function test_setShopsURI() public {
         address owner = address(3);
         string memory uri = "test";
         shops.mint(shopId, owner);
         vm.prank(owner);
-        shops.setTokenURI(shopId, uri);
+        shops.setShopsURI(shopId, uri);
         assertEq(uri, shops.tokenURI(shopId));
     }
 
