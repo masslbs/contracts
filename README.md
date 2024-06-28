@@ -25,6 +25,10 @@ To create and delopy the contract to a local testnet first
 - start anvil and deploy the contract locally run `run-and-deploy`
 - to redeploy the contract run `deploy-market`
 
+# UTILITIES
+
+* `find_error.py <abi.json> <0x12345678>` helps to identifiy custom contract errors
+
 # TESTING
 
 `forge test `

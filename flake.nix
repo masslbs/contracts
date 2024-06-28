@@ -125,6 +125,27 @@
           permit2/=${permit2}/
           solady=${solady}/
         '';
+
+        # find_error.py
+        # =============
+
+        # web3 needs parsimonious v0.9.0
+        # https://github.com/ethereum/web3.py/issues/3110#issuecomment-1737826910
+        pinnedPython = pkgs.python3.override {
+          packageOverrides = (self: super: {
+            parsimonious = super.parsimonious.overridePythonAttrs (old: rec {
+              pname = "parsimonious";
+              version = "0.9.0";
+              src = pkgs.python3.pkgs.fetchPypi {
+                inherit pname version;
+                sha256 = "sha256-sq0a5jovZb149eCorFEKmPNgekPx2yqNRmNqXZ5KMME=";
+              };
+              doCheck = false;
+            });
+          });
+          self = pkgs.python3;
+        };
+        mass-python = pinnedPython.withPackages (ps: with ps; [ setuptools web3 ]);
       in {
         # Per-system attributes can be defined here. The self' and inputs'
         # module parameters provide easy access to attributes of the same
@@ -146,6 +167,7 @@
               deploy_market_local
               run_and_deploy_local
               deploy_market_sepolia
+              mass-python
             ]
             ++ buildInputs;
 
@@ -153,6 +175,9 @@
             ${private_key}
              export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
              export PS1="[contracts] $PS1"
+             # remove solidity cache (it not always notices branch changes)
+             test -d cache && rm -r cache
+             # check contents
              cp -f ${remappings} remappings.txt
              # check remappings
              while read line; do
