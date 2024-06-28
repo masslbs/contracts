@@ -5,15 +5,15 @@
 pragma solidity ^0.8.19;
 
 /// @notice a struct to hold the payment details
+/// @member chainId The network the payment is supposed to be made on
 /// @member ttl The deadline for the payment (block.timestamp)
-/// @member receipt The hash of the order details
-/// @member amount The amount of tokens to be transferred
+/// @member order The hash of the order details
 /// @member currency The address of the ERC20 token to be transferred
-/// @member shopId The id of thes shop
-/// @member payload Resvered for future use; the relay can use this to send data to the payee
-/// @member payee The address that will receive the payment
-/// @member signature The signature of a merchant's relay or signer
-/// @member permit2signature The signature of a permit2 from the customer
+/// @member amount The amount of tokens to be transferred
+/// @member payeeAddress The address that will receive the payment
+/// @member isPaymentAddress Wether the payment should be forwarded with another contract call. See IPaymentEndpoint.
+/// @member shopId The token id of the shop
+/// @member shopSignature The signature of a merchant's relay or signer
 struct PaymentRequest {
     uint256 chainId;
     uint256 ttl;
