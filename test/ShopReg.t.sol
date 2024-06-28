@@ -37,8 +37,7 @@ contract ShopTest is Test {
 
     function testBalanceIncremented() public {
         shops.mint(shopId, address(1));
-        uint256 slotBalance =
-            stdstore.target(address(shops)).sig(shops.balanceOf.selector).with_key(address(1)).find();
+        uint256 slotBalance = stdstore.target(address(shops)).sig(shops.balanceOf.selector).with_key(address(1)).find();
 
         uint256 balanceFirstMint = uint256(vm.load(address(shops), bytes32(slotBalance)));
         assertEq(balanceFirstMint, 1);

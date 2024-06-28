@@ -153,6 +153,9 @@
             ${private_key}
              export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
              export PS1="[contracts] $PS1"
+             # remove solidity cache (it not always notices branch changes)
+             test -d cache && rm -r cache
+             # check contents
              cp -f ${remappings} remappings.txt
              # check remappings
              while read line; do

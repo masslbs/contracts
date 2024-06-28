@@ -189,7 +189,6 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
         assertEq(testToken.balanceOf(address(alice)), 100);
     }
 
-
     function test_payTokenEndpoint() public {
         uint256 fromPrivateKey = 0x12341236;
         address from = vm.addr(fromPrivateKey);
