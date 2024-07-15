@@ -6,7 +6,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs.follows = "nixpkgs";
     foundry.url = "github:shazow/foundry.nix/monthly";
     foundry.inputs.nixpkgs.follows = "nixpkgs";
     forge-std = {
