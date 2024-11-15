@@ -20,11 +20,12 @@ contract EuroDollar is MockERC20 {
 contract Deploy is Script, DeployPermit2 {
     bytes32 salt = bytes32(uint256(1));
 
+    address permit2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+
     function deployContracts(bool testERC20, bool mut) internal {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-
-        address permit2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+    
         if (testERC20) {
             // should always get deployed to the above
             address(deployPermit2());
@@ -33,8 +34,8 @@ contract Deploy is Script, DeployPermit2 {
         RelayReg relayReg = new RelayReg{salt: salt}();
         // deploy shop registary
         ShopReg shop = new ShopReg{salt: salt}(relayReg);
-        // create the paryments contract
-        PaymentsByAddress payments = new PaymentsByAddress{salt: salt}(IPermit2(permit2));
+
+        deployPayments();
 
         string memory addresses;
 
@@ -46,7 +47,6 @@ contract Deploy is Script, DeployPermit2 {
             shop.mint(1, testAddress);
         }
 
-        vm.serializeAddress(addresses, "Payments", address(payments));
         vm.serializeAddress(addresses, "RelayReg", address(relayReg));
         string memory out = vm.serializeAddress(addresses, "ShopReg", address(shop));
 
@@ -54,9 +54,24 @@ contract Deploy is Script, DeployPermit2 {
         vm.stopBroadcast();
     }
 
+    function deployPayments() internal returns (string memory) {
+        string memory addresses;
+        // create the paryments contract
+        PaymentsByAddress payments = new PaymentsByAddress{salt: salt}(IPermit2(permit2));
+        return vm.serializeAddress(addresses, "Payments", address(payments));
+    }
+
     // we don't want to deploy the test contract but do want to recoded the addresses
     function runDeploy() external {
         deployContracts(false, true);
+    }
+
+   function runDeployOnlyPayments() external {
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
+        string memory out = deployPayments();
+        vm.writeJson(out, "./deploymentAddresses-payments.json");
+        vm.stopBroadcast();
     }
 
     // we want to deploy the test contract and record the addresses
