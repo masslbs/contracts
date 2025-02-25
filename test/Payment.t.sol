@@ -154,6 +154,23 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
         assertEq(testToken.balanceOf(address(alice)), 100);
     }
 
+    function test_payTokenPreApproved_invalidERC20() public {
+        PaymentRequest memory pr = PaymentRequest({
+            ttl: 100,
+            order: bytes32(0),
+            currency: address(0),
+            amount: 100,
+            payeeAddress: alice,
+            chainId: block.chainid,
+            isPaymentEndpoint: false,
+            shopId: 1,
+            shopSignature: new bytes(65)
+        });
+
+        vm.expectRevert();
+        payments.payTokenPreApproved(pr);
+    }
+
     function test_payToken() public {
         uint256 fromPrivateKey = 0x12341234;
         address from = vm.addr(fromPrivateKey);
