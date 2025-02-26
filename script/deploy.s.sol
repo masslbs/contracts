@@ -80,7 +80,7 @@ contract Deploy is Script, DeployPermit2 {
     }
 
     // we want to deploy the test contract and cannot record the address
-    // since we are running from nix shop, ect
+    // since we are running from nix shop, etc
     function runTestDeployImmut() external {
         deployContracts(true, false);
     }

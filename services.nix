@@ -1,7 +1,11 @@
-{ config, lib, pkgs, ... }:
-let
-cfg = config.services;
-mk_deploy_market =  (pkgs.writeShellScriptBin "deploy-market" ''
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.services;
+  deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
     tmp=$(mktemp -d)
     export FOUNDRY_BROADCAST=$tmp/broadcast
     export FOUNDRY_CACHE_PATH=$tmp/cache
@@ -13,32 +17,31 @@ mk_deploy_market =  (pkgs.writeShellScriptBin "deploy-market" ''
     pushd ./
     ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast
     popd
-'');
-in
-{
-    options = {
-        services.anvil = {
-            enable = lib.mkEnableOption "Deploy contracts";
-        };
-        services.deploy = {
-            enable = lib.mkEnableOption "Deploy contracts";
-            privateKey = lib.mkOption {
-                type = lib.types.str;
-                default = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-                description = "The private key to be used";
-            };
-        };
+  '';
+in {
+  options = {
+    services.anvil = {
+      enable = lib.mkEnableOption "Deploy contracts";
     };
-    config = {
-        settings.processes = {
-            deploy = {
-                command = mk_deploy_market; # | (grep -m 1 "Listening on ";
-                depends_on."anvil".condition = "process_log_ready";
-            };
-            anvil = {
-                command = "${pkgs.foundry-bin}/bin/anvil";
-                ready_log_line = "Listening on";
-            };
-        };
+    services.deploy = {
+      enable = lib.mkEnableOption "Deploy contracts";
+      privateKey = lib.mkOption {
+        type = lib.types.str;
+        default = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+        description = "The private key to be used";
+      };
     };
+  };
+  config = {
+    settings.processes = {
+      deploy = {
+        command = deploy_market;
+        depends_on."anvil".condition = "process_log_ready";
+      };
+      anvil = {
+        command = "${pkgs.foundry-bin}/bin/anvil";
+        ready_log_line = "Listening on";
+      };
+    };
+  };
 }

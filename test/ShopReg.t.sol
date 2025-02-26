@@ -47,7 +47,7 @@ contract ShopTest is Test {
         assertEq(balanceSecondMint, 2);
     }
 
-    function testFail_accesControl() public {
+    function testFail_accessControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
         shops.mint(shopId, owner);
@@ -55,7 +55,7 @@ contract ShopTest is Test {
         assertEq(testHashUpdate, shops.rootHashes(shopId));
     }
 
-    function test_accesControl() public {
+    function test_accessControl() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
         shops.mint(shopId, owner);
@@ -73,7 +73,7 @@ contract ShopTest is Test {
         assertEq(uri, shops.tokenURI(shopId));
     }
 
-    function test_accesControl_fromRelay() public {
+    function test_accessControl_fromRelay() public {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
         shops.mint(shopId, owner);
