@@ -12,19 +12,24 @@
     export FOUNDRY_OUT=$tmp
     export PRIVATE_KEY=${cfg.deploy.privateKey}
     set -e
-    export FOUNDRY_ROOT=./
+    export FOUNDRY_ROOT=${cfg.deploy.path}
     export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
-    pushd ./
+    pushd $FOUNDRY_ROOT
     ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast
     popd
   '';
 in {
   options = {
     services.anvil = {
-      enable = lib.mkEnableOption "Deploy contracts";
+      enable = lib.mkEnableOption "Start anvil";
     };
     services.deploy = {
       enable = lib.mkEnableOption "Deploy contracts";
+      path = lib.mkOption {
+        type = lib.types.str;
+        default = "${./.}";
+        description = "the path to the root directory of the contracts";
+      };
       privateKey = lib.mkOption {
         type = lib.types.str;
         default = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";

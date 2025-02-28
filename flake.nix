@@ -9,6 +9,7 @@
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
     };
+    flake-root.url = "github:srid/flake-root";
     process-compose-flake = {
       url = "github:Platonic-Systems/process-compose-flake";
     };
@@ -52,6 +53,8 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = import systems;
       imports = [
+        inputs.flake-parts.flakeModules.flakeModules
+        inputs.flake-root.flakeModule
         inputs.pre-commit-hooks.flakeModule
         inputs.process-compose-flake.flakeModule
       ];
@@ -63,6 +66,8 @@
         pkgs,
         system,
         config,
+        self',
+        lib,
         ...
       }: let
         buildInputs = with pkgs; [
@@ -85,7 +90,7 @@
             foundry.overlay
           ];
         };
-        process-compose.local-testnet = {
+        process-compose = let
           imports = [
             inputs.services-flake.processComposeModules.default
             inputs.self.processComposeModules.default
@@ -93,6 +98,21 @@
           services = {
             anvil.enable = true;
             deploy.enable = true;
+          };
+        in {
+          local-testnet-dev = {
+            inherit imports;
+            services =
+              services
+              // {
+                deploy = {
+                  enable = true;
+                  path = "''$(${lib.getExe config.flake-root.package})";
+                };
+              };
+          };
+          local-testnet = {
+            inherit imports services;
           };
         };
 
@@ -112,6 +132,7 @@
           buildInputs =
             buildInputs
             ++ [
+              self'.packages.local-testnet-dev
               pkgs.typos-lsp # code spell checker
               pkgs.nixd
             ]
