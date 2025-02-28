@@ -4,7 +4,7 @@
 {
   description = "Mass Market Contracts";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     systems.url = "github:nix-systems/default";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -53,7 +53,6 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = import systems;
       imports = [
-        inputs.flake-parts.flakeModules.flakeModules
         inputs.flake-root.flakeModule
         inputs.pre-commit-hooks.flakeModule
         inputs.process-compose-flake.flakeModule
@@ -156,6 +155,9 @@
             done < remappings.txt
           '';
         };
+        checks = {
+          contracts = self'.packages.default;
+        };
         packages = rec {
           default = mass-contracts;
           mass-contracts = pkgs.stdenv.mkDerivation {
@@ -165,6 +167,7 @@
             src = ./.;
             dontPatch = true;
             dontConfigure = true;
+            doCheck = true;
 
             buildPhase = ''
               cp ${remappings} remappings.txt
