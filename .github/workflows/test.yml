@@ -9,14 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    services:
-      anvil:
-        image: ghcr.io/foundry-rs/foundry:latest
-        ports:
-          - 8545:8545
-        options: --entrypoint anvil
-        env:
-          ANVIL_IP_ADDR: 0.0.0.0
     steps:
       - uses: actions/checkout@v4
       - name: Install Nix
@@ -24,6 +16,6 @@ jobs:
       - uses: DeterminateSystems/flakehub-cache-action@main
       - uses: DeterminateSystems/flake-checker-action@main
       - name: Run Checks
-        run: nix flake check .
+        run: nix flake check . -L
       - name: Run Tests
-        run: nix build .#mass-contracts  --log-lines 0 --print-build-logs
+        run: nix build .#mass-contracts -L

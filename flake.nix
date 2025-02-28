@@ -155,9 +155,6 @@
             done < remappings.txt
           '';
         };
-        checks = {
-          contracts = self'.packages.default;
-        };
         packages = rec {
           default = mass-contracts;
           mass-contracts = pkgs.stdenv.mkDerivation {
