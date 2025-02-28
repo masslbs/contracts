@@ -8,7 +8,7 @@ import {ERC721} from "solady/src/tokens/ERC721.sol";
 abstract contract AccessControl is ERC721 {
     mapping(uint256 id => mapping(address user => uint256)) permissionsStore;
 
-    error NotAuthorized(uint8 permision);
+    error NotAuthorized(uint8 permission);
 
     event UserAdded(uint256 indexed shopId, address user, uint256 permissions);
     event UserRemoved(uint256 indexed shopId, address users);
@@ -36,7 +36,7 @@ abstract contract AccessControl is ERC721 {
     /// @param id the id of the ERC721
     /// @param perms the permissions to check as a bitmap of permissions
     function allPermissionsGuard(uint256 id, uint256 perms) public view {
-        // we don't know which permision was missing so we use 0xff to signal that
+        // we don't know which permission was missing so we use 0xff to signal that
         if (!hasEnoughPermissions(id, msg.sender, perms)) revert NotAuthorized(0xff);
     }
 
@@ -71,7 +71,7 @@ abstract contract AccessControl is ERC721 {
     /// @param perms the permissions to check
     function hasEnoughPermissions(uint256 id, address user, uint256 perms) public view returns (bool) {
         uint256 userPerms = permissionsStore[id][user];
-        // converse nonimplication implemeted as XOR(OR(Q, P), P)
+        // converse nonimplication implemented as XOR(OR(Q, P), P)
         return ((userPerms | perms) ^ userPerms) == 0 || ownerOf(id) == user;
     }
 

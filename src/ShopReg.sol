@@ -67,7 +67,7 @@ contract ShopReg is AccessControl {
         shopURIs[shopId] = newTokenURI;
     }
 
-    /// @notice mint registeres a new shop and creates a NFT for it
+    /// @notice mint registers a new shop and creates a NFT for it
     /// @param shopId The shop nft. Needs to be unique or it will revert
     /// @param owner The owner of the shop
     function mint(uint256 shopId, address owner) public {
@@ -163,7 +163,7 @@ contract ShopReg is AccessControl {
         invites.set(calculateIdx(shopId, verifier));
     }
 
-    /// @dev utility function to get the message hash for the invite verfication
+    /// @dev utility function to get the message hash for the invite verification
     function _getTokenMessageHash(address user) public pure returns (bytes32) {
         string memory hexAdd = LibString.toHexString(uint256(uint160(user)), 20);
         return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", hexAdd));
@@ -206,13 +206,13 @@ contract ShopReg is AccessControl {
         _removeUser(shopId, user);
     }
 
-    // @dev adds a permision if the calling user has that permision and the permision to remove permisions
+    // @dev adds a permission if the calling user has that permission and the permission to remove permissions
     function addPermission(uint256 shopId, address user, uint8 perm) public {
         allPermissionsGuard(shopId, 1 << perm | 1 << PERM_addPermission);
         _addPermission(shopId, user, perm);
     }
 
-    // @dev removes a permision if the calling user has that permision and the permision to remove permisions
+    // @dev removes a permission if the calling user has that permission and the permission to remove permissions
     function removePermission(uint256 shopId, address user, uint8 perm) public {
         allPermissionsGuard(shopId, 1 << perm | PERM_removePermission);
         _removePermission(shopId, user, perm);

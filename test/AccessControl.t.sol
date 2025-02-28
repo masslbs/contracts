@@ -61,13 +61,13 @@ contract AccessControlTest is Test {
         ac.mint(shop_id, address(this));
     }
 
-    function test_ownerShouldAlwayHavePermission() public {
+    function test_ownerShouldAlwaysHavePermission() public {
         assertTrue(ac.hasEnoughPermissions(shop_id, address(this), 0));
         assertTrue(ac.hasPermission(shop_id, address(this), 1));
         assertTrue(ac.hasPermission(shop_id, address(this), 0xff));
     }
 
-    function test_ownerShouldAlwayHaveEnufPermissions() public {
+    function test_ownerShouldAlwaysHaveEnoughPermissions() public {
         assertTrue(ac.hasEnoughPermissions(shop_id, address(this), 0));
         assertTrue(ac.hasEnoughPermissions(shop_id, address(this), 1));
         assertTrue(ac.hasEnoughPermissions(shop_id, address(this), ALL_PERMS));
@@ -79,7 +79,7 @@ contract AccessControlTest is Test {
         }
     }
 
-    function test_shouldNotHaveEnufPerms() public {
+    function test_shouldNotHaveEnoughPerms() public {
         assertTrue(ac.hasEnoughPermissions(shop_id, user, 0));
         assertFalse(ac.hasEnoughPermissions(shop_id, user, 1));
         assertFalse(ac.hasEnoughPermissions(shop_id, user, ALL_PERMS));
@@ -105,21 +105,21 @@ contract AccessControlTest is Test {
         }
     }
 
-    function test_shouldHaveEnufPerms() public {
+    function test_shouldHaveEnoughPerms() public {
         ac.addUser(shop_id, user, ALL_PERMS);
         assertTrue(ac.hasEnoughPermissions(shop_id, user, 0));
         assertTrue(ac.hasEnoughPermissions(shop_id, user, 1));
         assertTrue(ac.hasEnoughPermissions(shop_id, user, ALL_PERMS));
     }
 
-    function test_addingPermisionShouldEmit() public {
+    function test_addingPermissionShouldEmit() public {
         uint8 perm = 1;
         vm.expectEmit();
         emit PermissionAdded(shop_id, user, perm);
         ac.addPermission(shop_id, user, perm);
     }
 
-    function test_addedPermissionSHouldExist() public {
+    function test_addedPermissionShouldExist() public {
         uint8 perm = 1;
         ac.addPermission(shop_id, user, perm);
         assertTrue(ac.hasPermission(shop_id, user, perm));

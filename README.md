@@ -4,38 +4,25 @@ SPDX-FileCopyrightText: 2024 Mass Labs
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-# DMP SMART CONTRACTS
-
-The smart contracts that implement the Decentralized Market Protocol.
-
 # OVERVIEW
 
-This repo contains shop registry and the payments factory.
+The smart contracts that implement the Mass Market Protocol. This repo contains shop registry and the payments factory.
 
 # DEVELOP
 
-[nix](nixos.wiki) is used for dependancy managment.
+[nix](nixos.wiki) is used for dependency management.
 
 Run `nix develop` to enter the devShell.
 
-## Delpoy to local test nest
+## Deploy to local test nest
 
 To create and delopy the contract to a local testnet first
 
-- start anvil and deploy the contract locally run `run-and-deploy`
-- to redeploy the contract run `deploy-market`
-
-# UTILITIES
-
-* `find_error.py <abi.json> <0x12345678>` helps to identifiy custom contract errors
+- start anvil and deploy the contract locally run `nix .#local-testnet`
 
 # TESTING
 
 `forge test `
-
-# DEPLOYMENTS
-
-[deploymentAddresses.json](./deploymentAddresses.json)
 
 # LICENSE
 
