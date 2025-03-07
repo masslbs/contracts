@@ -11,7 +11,7 @@ pragma solidity ^0.8.19;
 /// @member currency The address of the ERC20 token to be transferred
 /// @member amount The amount of tokens to be transferred
 /// @member payeeAddress The address that will receive the payment
-/// @member isPaymentAddress Wether the payment should be forwarded with another contract call. See IPaymentEndpoint.
+/// @member isPaymentAddress Whether the payment should be forwarded with another contract call. See IPaymentEndpoint.
 /// @member shopId The token id of the shop
 /// @member shopSignature The signature of a merchant's relay or signer
 struct PaymentRequest {

@@ -57,7 +57,7 @@ contract PaymentsWithAddressesTest is Test, DeployPermit2 {
         generatedAddress = factory.getPaymentAddress(payment, refund);
         deal(generatedAddress, payment.amount);
         factory.processPayment(payment, refund);
-        assertEq(merchant.balance, payment.amount, "the sweep contract should send the corret amount");
+        assertEq(merchant.balance, payment.amount, "the sweep contract should send the correct amount");
     }
 
     function test_UnderPayment() public {
@@ -66,7 +66,7 @@ contract PaymentsWithAddressesTest is Test, DeployPermit2 {
         deal(generatedAddress, payment.amount - 1);
         factory.processPayment(payment, refund);
         assertEq(
-            refund.balance, payment.amount - 1, "the sweep contract should return the ether if not enought was payed"
+            refund.balance, payment.amount - 1, "the sweep contract should return the ether if not enough was paid"
         );
     }
 
@@ -77,7 +77,7 @@ contract PaymentsWithAddressesTest is Test, DeployPermit2 {
 
         factory.processPayment(payment, refund);
         assertEq(refund.balance, 1, "the sweep contract should refund the overpayed ether");
-        assertEq(merchant.balance, payment.amount, "the sweep contract should send the corret amount");
+        assertEq(merchant.balance, payment.amount, "the sweep contract should send the correct amount");
     }
 
     function test_invalidPayment() public {
@@ -105,7 +105,7 @@ contract PaymentsWithAddressesTest is Test, DeployPermit2 {
         assertEq(
             testToken.balanceOf(refund),
             payment.amount - 1,
-            "the sweep contract should return the ERC20 if not enought was payed"
+            "the sweep contract should return the ERC20 if not enough was paid"
         );
     }
 
@@ -115,7 +115,7 @@ contract PaymentsWithAddressesTest is Test, DeployPermit2 {
         testToken.mint(generatedAddress, payment.amount + 1);
         factory.processPayment(payment, refund);
         assertEq(testToken.balanceOf(refund), 1, "the sweep contract should return the overpayed ERC20");
-        assertEq(testToken.balanceOf(merchant), payment.amount, "the sweep contract should send the corret amount");
+        assertEq(testToken.balanceOf(merchant), payment.amount, "the sweep contract should send the correct amount");
     }
 
     function test_InvalidPaymentERC20() public {

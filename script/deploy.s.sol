@@ -25,7 +25,7 @@ contract Deploy is Script, DeployPermit2 {
     function deployContracts(bool testERC20, bool mut) internal {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-    
+
         if (testERC20) {
             // should always get deployed to the above
             address(deployPermit2());
@@ -66,7 +66,7 @@ contract Deploy is Script, DeployPermit2 {
         deployContracts(false, true);
     }
 
-   function runDeployOnlyPayments() external {
+    function runDeployOnlyPayments() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
         string memory out = deployPayments();
@@ -80,7 +80,7 @@ contract Deploy is Script, DeployPermit2 {
     }
 
     // we want to deploy the test contract and cannot record the address
-    // since we are running from nix shop, ect
+    // since we are running from nix shop, etc
     function runTestDeployImmut() external {
         deployContracts(true, false);
     }

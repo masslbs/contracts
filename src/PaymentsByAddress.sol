@@ -14,7 +14,7 @@ import "forge-std/console.sol";
 contract SweepPayment {
     constructor(PaymentRequest memory payment, address payable refund, Payments paymentContract) payable {
         if (payment.currency == address(0)) {
-            // if we are transfering ether
+            // if we are transferring ether
             uint256 balance = address(this).balance;
             if (balance < payment.amount) {
                 refund.call{value: balance}("");
@@ -33,7 +33,7 @@ contract SweepPayment {
             }
         } else {
             ERC20 erc20 = ERC20(payment.currency);
-            // if we are transfering an erc20
+            // if we are transferring an erc20
             uint256 balance = erc20.balanceOf(address(this));
             // not enough was sent so return what we have
             if (balance < payment.amount) {
@@ -71,7 +71,7 @@ contract PaymentsByAddress is Payments {
         return abi.encodePacked(bytecode, abi.encode(payment, refund, this));
     }
 
-    /// @notice Calulates the payament address given the following parameters
+    /// @notice Calculates the payament address given the following parameters
     /// @return The payment address
     function getPaymentAddress(PaymentRequest calldata payment, address refund) public view returns (address) {
         bytes32 hash = keccak256(
@@ -87,7 +87,7 @@ contract PaymentsByAddress is Payments {
         return address(uint160(uint256(hash)));
     }
 
-    /// @notice Given the parameters used to generate a payement address, this function will forward the payment to the merchant's address.
+    /// @notice Given the parameters used to generate a payment address, this function will forward the payment to the merchant's address.
     function processPayment(PaymentRequest calldata payment, address payable refund) public {
         try new SweepPayment{salt: payment.order}(payment, refund, this) {
             // do nothing;
