@@ -134,6 +134,7 @@
               self'.packages.local-testnet-dev
               pkgs.typos-lsp # code spell checker
               pkgs.nixd
+              pkgs.deno
             ]
             ++ config.pre-commit.settings.enabledPackages;
 
