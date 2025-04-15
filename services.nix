@@ -42,10 +42,12 @@ in {
       deploy = {
         command = deploy_market;
         depends_on."anvil".condition = "process_log_ready";
+        log_location = "logs/deploy.log";
       };
       anvil = {
         command = "${pkgs.foundry-bin}/bin/anvil";
         ready_log_line = "Listening on";
+        log_location = "logs/anvil.log";
       };
     };
   };

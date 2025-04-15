@@ -61,6 +61,7 @@
       flake = {
         processComposeModules.default = ./services.nix;
       };
+
       perSystem = {
         pkgs,
         system,
@@ -90,6 +91,12 @@
           ];
         };
         process-compose = let
+          cli = {
+            options = {
+              no-server = false;
+              port = 8321;
+            };
+          };
           imports = [
             inputs.services-flake.processComposeModules.default
             inputs.self.processComposeModules.default
@@ -100,7 +107,7 @@
           };
         in {
           local-testnet-dev = {
-            inherit imports;
+            inherit imports cli;
             services =
               services
               // {
@@ -111,7 +118,7 @@
               };
           };
           local-testnet = {
-            inherit imports services;
+            inherit imports services cli;
           };
         };
 
