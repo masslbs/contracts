@@ -176,7 +176,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
         address from = vm.addr(fromPrivateKey);
         testToken.mint(from, 100);
         vm.prank(from);
-        testToken.approve(address(permit2), 100);
+        // testToken.approve(address(permit2), 100);
 
         ISignatureTransfer.PermitTransferFrom memory permit = ISignatureTransfer.PermitTransferFrom({
             permitted: ISignatureTransfer.TokenPermissions({token: address(testToken), amount: 100}),
@@ -211,7 +211,7 @@ contract PaymentsTest is Test, DepositEvent, DeployPermit2, IPaymentSignals {
         address from = vm.addr(fromPrivateKey);
         testToken.mint(from, 100);
         vm.prank(from);
-        testToken.approve(address(permit2), 100);
+        // testToken.approve(address(permit2), 100);
 
         ISignatureTransfer.PermitTransferFrom memory permit = ISignatureTransfer.PermitTransferFrom({
             permitted: ISignatureTransfer.TokenPermissions({token: address(testToken), amount: 100}),
