@@ -10,9 +10,9 @@
     export FOUNDRY_BROADCAST=$tmp/broadcast
     export FOUNDRY_CACHE_PATH=$tmp/cache
     export FOUNDRY_OUT=$tmp
-    export PRIVATE_KEY=${cfg.deploy.privateKey}
+    export PRIVATE_KEY=${cfg.deploy-contracts.privateKey}
     set -e
-    export FOUNDRY_ROOT=${cfg.deploy.path}
+    export FOUNDRY_ROOT=${cfg.deploy-contracts.path}
     export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
     pushd $FOUNDRY_ROOT
     ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast
@@ -23,7 +23,7 @@ in {
     services.anvil = {
       enable = lib.mkEnableOption "Start anvil";
     };
-    services.deploy = {
+    services.deploy-contracts = {
       enable = lib.mkEnableOption "Deploy contracts";
       path = lib.mkOption {
         type = lib.types.str;
@@ -39,7 +39,7 @@ in {
   };
   config = {
     settings.processes = {
-      deploy = {
+      deploy-contracts = {
         command = deploy_market;
         depends_on."anvil".condition = "process_log_ready";
         log_location = "logs/deploy.log";
