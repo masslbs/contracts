@@ -14,7 +14,7 @@ contract RelayReg is ERC721 {
     mapping(uint256 => string) public relayURIs;
 
     function name() public pure override returns (string memory) {
-        return "RelayRegestry";
+        return "RelayRegistry";
     }
 
     function symbol() public pure override returns (string memory) {

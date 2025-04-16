@@ -103,7 +103,7 @@
           ];
           services = {
             anvil.enable = true;
-            deploy.enable = true;
+            deploy-contracts.enable = true;
           };
         in {
           local-testnet-dev = {
@@ -111,7 +111,7 @@
             services =
               services
               // {
-                deploy = {
+                deploy-contracts = {
                   enable = true;
                   path = "''$(${lib.getExe config.flake-root.package})";
                 };
