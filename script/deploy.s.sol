@@ -23,8 +23,7 @@ contract Deploy is Script, DeployPermit2 {
     address permit2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
 
     function deployContracts(bool testERC20, bool mut) internal {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
+        vm.startBroadcast();
 
         if (testERC20) {
             // should always get deployed to the above
@@ -43,7 +42,7 @@ contract Deploy is Script, DeployPermit2 {
             EuroDollar eddies = new EuroDollar{salt: salt}("Eddies", "EDD", 2);
             vm.serializeAddress(addresses, "Eddies", address(eddies));
             // create a test shop
-            address testAddress = vm.addr(deployerPrivateKey);
+            address testAddress = tx.origin;
             shop.mint(1, testAddress);
         }
 
@@ -64,14 +63,6 @@ contract Deploy is Script, DeployPermit2 {
     // we don't want to deploy the test contract but do want to recoded the addresses
     function runDeploy() external {
         deployContracts(false, true);
-    }
-
-    function runDeployOnlyPayments() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-        string memory out = deployPayments();
-        vm.writeJson(out, "./deploymentAddresses-payments.json");
-        vm.stopBroadcast();
     }
 
     // we want to deploy the test contract and record the addresses
