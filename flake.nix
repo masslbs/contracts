@@ -4,7 +4,7 @@
 {
   description = "Mass Market Contracts";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
     systems.url = "github:nix-systems/default";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -16,10 +16,6 @@
     services-flake.url = "github:juspay/services-flake";
     pre-commit-hooks = {
       url = "github:cachix/git-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    foundry = {
-      url = "github:shazow/foundry.nix/monthly";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     forge-std = {
@@ -42,7 +38,6 @@
 
   outputs = inputs @ {
     flake-parts,
-    foundry,
     forge-std,
     permit2,
     solady,
@@ -74,7 +69,7 @@
           jq
           solc
           reuse
-          foundry-bin
+          foundry
         ];
 
         remappings = pkgs.writeText "remapping.txt" ''
@@ -86,9 +81,6 @@
       in {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
-          overlays = [
-            foundry.overlay
-          ];
         };
         process-compose = let
           cli = {
