@@ -10,12 +10,11 @@
     export FOUNDRY_BROADCAST=$tmp/broadcast
     export FOUNDRY_CACHE_PATH=$tmp/cache
     export FOUNDRY_OUT=$tmp
-    export PRIVATE_KEY=${cfg.deploy-contracts.privateKey}
     set -e
     export FOUNDRY_ROOT=${cfg.deploy-contracts.path}
     export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
     pushd $FOUNDRY_ROOT
-    ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast
+    ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast --private-key ${cfg.deploy-contracts.privateKey}
     popd
   '';
 in {

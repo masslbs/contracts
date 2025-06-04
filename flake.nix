@@ -179,7 +179,6 @@
               forge compile
               # forge script will fail trying to load SSL_CERT_FILE
               unset SSL_CERT_FILE
-              export PRIVATE_KEY=0x1
               forge script ./script/deploy.s.sol:Deploy -s "runTestDeploy()"
             '';
 
