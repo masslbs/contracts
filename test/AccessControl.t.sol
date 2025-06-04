@@ -6,22 +6,15 @@ pragma solidity ^0.8.21;
 
 import "forge-std/Test.sol";
 import {AccessControl} from "../src/AccessControl.sol";
+import {ERC721} from "openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract MockAccessControlNFT is AccessControl {
     uint8 internal permissionForTestFunction = 66;
 
-    constructor() {}
+    constructor() ERC721("RelayRegestry", "RR") {}
 
     function mint(uint256 _id, address _addr) public {
         _mint(_addr, _id);
-    }
-
-    function name() public pure override returns (string memory) {
-        return "RelayRegestry";
-    }
-
-    function symbol() public pure override returns (string memory) {
-        return "RR";
     }
 
     function tokenURI(uint256 id) public view override returns (string memory) {
@@ -53,8 +46,16 @@ contract AccessControlTest is Test {
 
     event UserAdded(uint256 indexed shopId, address user, uint256 permissions);
     event UserRemoved(uint256 indexed shopId, address users);
-    event PermissionAdded(uint256 indexed shopId, address user, uint8 permission);
-    event PermissionRemoved(uint256 indexed shopId, address user, uint8 permission);
+    event PermissionAdded(
+        uint256 indexed shopId,
+        address user,
+        uint8 permission
+    );
+    event PermissionRemoved(
+        uint256 indexed shopId,
+        address user,
+        uint8 permission
+    );
 
     function setUp() public {
         ac = new MockAccessControlNFT();

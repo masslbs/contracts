@@ -132,6 +132,22 @@
         "type": "github"
       }
     },
+    "openzeppelin": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1749027070,
+        "narHash": "sha256-aaR7ub9+bwIytBb3rK3nIosGvTLR/H4A2rBIuTHjdqY=",
+        "owner": "OpenZeppelin",
+        "repo": "openzeppelin-contracts",
+        "rev": "b3d6f71d0ca111973ea705b42d6bfc0f1c115d3f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "OpenZeppelin",
+        "repo": "openzeppelin-contracts",
+        "type": "github"
+      }
+    },
     "permit2": {
       "flake": false,
       "locked": {
@@ -192,6 +208,7 @@
         "flake-root": "flake-root",
         "forge-std": "forge-std",
         "nixpkgs": "nixpkgs",
+        "openzeppelin": "openzeppelin",
         "permit2": "permit2",
         "pre-commit-hooks": "pre-commit-hooks",
         "process-compose-flake": "process-compose-flake",

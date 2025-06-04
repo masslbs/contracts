@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.19;
 
-import {ERC721} from "solady/src/tokens/ERC721.sol";
+import {ERC721} from "openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721Enumerable} from "openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import {ERC721URIStorage} from "openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 abstract contract AccessControl is ERC721 {
     mapping(uint256 id => mapping(address user => uint256)) permissionsStore;
@@ -12,8 +14,16 @@ abstract contract AccessControl is ERC721 {
 
     event UserAdded(uint256 indexed shopId, address user, uint256 permissions);
     event UserRemoved(uint256 indexed shopId, address users);
-    event PermissionAdded(uint256 indexed shopId, address user, uint8 permission);
-    event PermissionRemoved(uint256 indexed shopId, address user, uint8 permission);
+    event PermissionAdded(
+        uint256 indexed shopId,
+        address user,
+        uint8 permission
+    );
+    event PermissionRemoved(
+        uint256 indexed shopId,
+        address user,
+        uint8 permission
+    );
 
     function _addUser(uint256 id, address user, uint256 perms) internal {
         emit UserAdded(id, user, perms);
@@ -37,7 +47,8 @@ abstract contract AccessControl is ERC721 {
     /// @param perms the permissions to check as a bitmap of permissions
     function allPermissionsGuard(uint256 id, uint256 perms) public view {
         // we don't know which permission was missing so we use 0xff to signal that
-        if (!hasEnoughPermissions(id, msg.sender, perms)) revert NotAuthorized(0xff);
+        if (!hasEnoughPermissions(id, msg.sender, perms))
+            revert NotAuthorized(0xff);
     }
 
     /// @notice gives a permission to a user
@@ -56,20 +67,33 @@ abstract contract AccessControl is ERC721 {
     }
 
     /// @notice returns a user's perimsion bitmap
-    function getAllPermissions(uint256 id, address user) public view returns (uint256) {
+    function getAllPermissions(
+        uint256 id,
+        address user
+    ) public view returns (uint256) {
         return permissionsStore[id][user];
     }
 
     /// @notice checks if a user has a permission
-    function hasPermission(uint256 id, address user, uint8 perm) public view returns (bool) {
-        return permissionsStore[id][user] & (1 << perm) != 0 || ownerOf(id) == user;
+    function hasPermission(
+        uint256 id,
+        address user,
+        uint8 perm
+    ) public view returns (bool) {
+        return
+            permissionsStore[id][user] & (1 << perm) != 0 ||
+            ownerOf(id) == user;
     }
 
     /// @notice checks if a user has the same or more permissions as perms. Where perms is a bitmap of permissions (1 << perm2 | 1 << perm2 ...)
     /// @param id the id of the ERC721
     /// @param user the address of the user
     /// @param perms the permissions to check
-    function hasEnoughPermissions(uint256 id, address user, uint256 perms) public view returns (bool) {
+    function hasEnoughPermissions(
+        uint256 id,
+        address user,
+        uint256 perms
+    ) public view returns (bool) {
         uint256 userPerms = permissionsStore[id][user];
         // converse nonimplication implemented as XOR(OR(Q, P), P)
         return ((userPerms | perms) ^ userPerms) == 0 || ownerOf(id) == user;
