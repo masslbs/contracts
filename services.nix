@@ -14,7 +14,7 @@
     export FOUNDRY_ROOT=${cfg.deploy-contracts.path}
     export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
     pushd $FOUNDRY_ROOT
-    ${pkgs.foundry-bin}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast --private-key ${cfg.deploy-contracts.privateKey}
+    ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast --private-key ${cfg.deploy-contracts.privateKey}
     popd
   '';
 in {
@@ -44,7 +44,7 @@ in {
         log_location = "logs/deploy.log";
       };
       anvil = {
-        command = "${pkgs.foundry-bin}/bin/anvil";
+        command = "${pkgs.foundry}/bin/anvil";
         ready_log_line = "Listening on";
         log_location = "logs/anvil.log";
       };
