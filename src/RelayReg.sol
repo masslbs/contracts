@@ -4,22 +4,14 @@
 
 pragma solidity ^0.8.19;
 
-import {ERC721} from "solady/src/tokens/ERC721.sol";
+import {ERC721} from "openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract RelayReg is ERC721 {
     uint256 private _relayIds;
 
-    constructor() ERC721() {}
+    constructor() ERC721("RelayRegistry", "RR") {}
 
     mapping(uint256 => string) public relayURIs;
-
-    function name() public pure override returns (string memory) {
-        return "RelayRegistry";
-    }
-
-    function symbol() public pure override returns (string memory) {
-        return "RR";
-    }
 
     function mint(uint256 newRelayId, address relay, string memory uri) public {
         _mint(relay, newRelayId);
@@ -31,7 +23,9 @@ contract RelayReg is ERC721 {
         relayURIs[relayId] = uri;
     }
 
-    function tokenURI(uint256 id) public view virtual override returns (string memory) {
+    function tokenURI(
+        uint256 id
+    ) public view virtual override returns (string memory) {
         return relayURIs[id];
     }
 }

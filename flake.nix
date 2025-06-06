@@ -26,6 +26,10 @@
       url = "github:Vectorized/solady";
       flake = false;
     };
+    openzeppelin = {
+      url = "github:OpenZeppelin/openzeppelin-contracts";
+      flake = false;
+    };
     permit2 = {
       url = "github:uniswap/permit2";
       flake = false;
@@ -40,6 +44,7 @@
     flake-parts,
     forge-std,
     permit2,
+    openzeppelin,
     solady,
     ds-test,
     systems,
@@ -74,6 +79,7 @@
 
         remappings = pkgs.writeText "remapping.txt" ''
           forge-std/=${forge-std}/src
+          openzeppelin/=${openzeppelin}
           ds-test/=${ds-test}/src
           permit2/=${permit2}/
           solady=${solady}/

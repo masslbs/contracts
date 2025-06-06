@@ -4,13 +4,15 @@
 
 pragma solidity ^0.8.19;
 
-import {ERC721} from "solady/src/tokens/ERC721.sol";
+import {ERC721} from "openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721Enumerable} from "openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import {ERC721URIStorage} from "openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {LibBitmap} from "solady/src/utils/LibBitmap.sol";
 import {LibString} from "solady/src/utils/LibString.sol";
 import {RelayReg} from "./RelayReg.sol";
 import {AccessControl} from "./AccessControl.sol";
 
-contract ShopReg is AccessControl {
+contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
     using LibBitmap for LibBitmap.Bitmap;
 
     RelayReg public relayReg;
@@ -41,30 +43,48 @@ contract ShopReg is AccessControl {
     uint8 public constant PERM_removeUser = 7;
     uint8 public constant PERM_publishInviteVerifier = 8;
 
-    constructor(RelayReg r) ERC721() {
+    constructor(RelayReg r) ERC721("ShopRegistry", "SR") {
         relayReg = r;
     }
 
-    function name() public pure override returns (string memory) {
-        return "ShopRegistry";
+    // The following functions are overrides required by Solidity.
+    function _update(
+        address to,
+        uint256 tokenId,
+        address auth
+    ) internal override(ERC721, ERC721Enumerable) returns (address) {
+        return super._update(to, tokenId, auth);
     }
 
-    function symbol() public pure override returns (string memory) {
-        return "SR";
+    function _increaseBalance(
+        address account,
+        uint128 value
+    ) internal override(ERC721, ERC721Enumerable) {
+        super._increaseBalance(account, value);
     }
 
-    /// @notice Returns the metadata URI for a given shop
-    /// @param id The shop nft
-    /// @return url to the metadata
-    function tokenURI(uint256 id) public view virtual override returns (string memory) {
-        return shopURIs[id];
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        override(ERC721, ERC721Enumerable, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     /// @notice Sets the metadata URI for a given shop with the provided URI
     /// @param shopId shop token id, newTokenURI uri to metadata
     function setTokenURI(uint256 shopId, string memory newTokenURI) public {
         require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
-        shopURIs[shopId] = newTokenURI;
+        _setTokenURI(shopId, newTokenURI);
     }
 
     /// @notice mint registers a new shop and creates a NFT for it
@@ -78,8 +98,15 @@ contract ShopReg is AccessControl {
     /// @notice updateRootHash updates the state root of the shop
     /// @param shopId The shop nft
     /// @param hash The new state root hash
-    function updateRootHash(uint256 shopId, bytes32 hash, uint64 _nonce) public {
-        if (!_checkIsConfiguredRelay(shopId) && !hasPermission(shopId, msg.sender, PERM_updateRootHash)) {
+    function updateRootHash(
+        uint256 shopId,
+        bytes32 hash,
+        uint64 _nonce
+    ) public {
+        if (
+            !_checkIsConfiguredRelay(shopId) &&
+            !hasPermission(shopId, msg.sender, PERM_updateRootHash)
+        ) {
             revert NotAuthorized(PERM_updateRootHash);
         }
         rootHashes[shopId] = hash;
@@ -104,7 +131,9 @@ contract ShopReg is AccessControl {
     /// @notice getAllRelays returns all relays for a shop
     /// @param shopId The shop nft
     /// @return An array of relay nfts
-    function getAllRelays(uint256 shopId) public view returns (uint256[] memory) {
+    function getAllRelays(
+        uint256 shopId
+    ) public view returns (uint256[] memory) {
         return relays[shopId];
     }
 
@@ -139,7 +168,9 @@ contract ShopReg is AccessControl {
 
     /// @dev checks if the sender is part of the configured relays
     /// @param shopId The shop nft
-    function _checkIsConfiguredRelay(uint256 shopId) internal view returns (bool) {
+    function _checkIsConfiguredRelay(
+        uint256 shopId
+    ) internal view returns (bool) {
         uint256[] storage allRelays = relays[shopId];
         for (uint256 index = 0; index < allRelays.length; index++) {
             uint256 relayId = allRelays[index];
@@ -165,8 +196,17 @@ contract ShopReg is AccessControl {
 
     /// @dev utility function to get the message hash for the invite verification
     function _getTokenMessageHash(address user) public pure returns (bytes32) {
-        string memory hexAdd = LibString.toHexString(uint256(uint160(user)), 20);
-        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n52enrolling:", hexAdd));
+        string memory hexAdd = LibString.toHexString(
+            uint256(uint160(user)),
+            20
+        );
+        return
+            keccak256(
+                abi.encodePacked(
+                    "\x19Ethereum Signed Message:\n52enrolling:",
+                    hexAdd
+                )
+            );
     }
 
     /// @notice redeem one of the invites. (v,r,s) are the signature
@@ -175,7 +215,13 @@ contract ShopReg is AccessControl {
     /// @param r The r value of the signature
     /// @param s The s value of the signature
     /// @param user The address of the user to register. Will become a Clerk.
-    function redeemInvite(uint256 shopId, uint8 v, bytes32 r, bytes32 s, address user) public {
+    function redeemInvite(
+        uint256 shopId,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        address user
+    ) public {
         // check signature
         address recovered = ecrecover(_getTokenMessageHash(user), v, r, s);
         bool newIsSet = invites.toggle(calculateIdx(shopId, recovered));
@@ -193,7 +239,7 @@ contract ShopReg is AccessControl {
     /// @param user The address of the user
     /// @param perms The perimission to assign to the new users
     function registerUser(uint256 shopId, address user, uint256 perms) public {
-        allPermissionsGuard(shopId, perms | 1 << PERM_registerUser);
+        allPermissionsGuard(shopId, perms | (1 << PERM_registerUser));
         // save the user
         _addUser(shopId, user, perms);
     }
@@ -202,25 +248,31 @@ contract ShopReg is AccessControl {
     /// @param shopId The shop
     /// @param user The address of the user
     function removeUser(uint256 shopId, address user) public {
-        allPermissionsGuard(shopId, getAllPermissions(shopId, user) | 1 << PERM_removeUser);
+        allPermissionsGuard(
+            shopId,
+            getAllPermissions(shopId, user) | (1 << PERM_removeUser)
+        );
         _removeUser(shopId, user);
     }
 
     // @dev adds a permission if the calling user has that permission and the permission to remove permissions
     function addPermission(uint256 shopId, address user, uint8 perm) public {
-        allPermissionsGuard(shopId, 1 << perm | 1 << PERM_addPermission);
+        allPermissionsGuard(shopId, (1 << perm) | (1 << PERM_addPermission));
         _addPermission(shopId, user, perm);
     }
 
     // @dev removes a permission if the calling user has that permission and the permission to remove permissions
     function removePermission(uint256 shopId, address user, uint8 perm) public {
-        allPermissionsGuard(shopId, 1 << perm | PERM_removePermission);
+        allPermissionsGuard(shopId, (1 << perm) | PERM_removePermission);
         _removePermission(shopId, user, perm);
     }
 
     /// @notice calculates a unique index given an ID and an address
     /// @dev the shopID must be hashed before being XORed to prevent collisions since an attacker can choose the shopID.
-    function calculateIdx(uint256 id, address addr) internal pure returns (uint256) {
+    function calculateIdx(
+        uint256 id,
+        address addr
+    ) internal pure returns (uint256) {
         return uint256(uint160(addr)) ^ uint256(keccak256(abi.encode(id)));
     }
 }
