@@ -14,7 +14,7 @@
     export FOUNDRY_ROOT=${cfg.deploy-contracts.path}
     export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
     pushd $FOUNDRY_ROOT
-    ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast --private-key ${cfg.deploy-contracts.privateKey}
+    ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true false --fork-url http://localhost:8545 --broadcast --private-key ${cfg.deploy-contracts.privateKey}
     popd
   '';
 in {
@@ -37,17 +37,23 @@ in {
     };
   };
   config = {
-    settings.processes = {
-      deploy-contracts = {
-        command = deploy_market;
-        depends_on."anvil".condition = "process_log_ready";
-        log_location = "logs/deploy.log";
-      };
-      anvil = {
-        command = "${pkgs.foundry}/bin/anvil";
-        ready_log_line = "Listening on";
-        log_location = "logs/anvil.log";
-      };
-    };
+    settings.processes = lib.mkMerge [
+      (lib.mkIf cfg.deploy-contracts.enable {
+        deploy-contracts = {
+          command = deploy_market;
+          depends_on = lib.mkIf cfg.anvil.enable {
+            "anvil".condition = "process_log_ready";
+          };
+          log_location = "logs/deploy.log";
+        };
+      })
+      (lib.mkIf cfg.anvil.enable {
+        anvil = {
+          command = "${pkgs.foundry}/bin/anvil";
+          ready_log_line = "Listening on";
+          log_location = "logs/anvil.log";
+        };
+      })
+    ];
   };
 }

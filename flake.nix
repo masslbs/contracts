@@ -5,14 +5,13 @@
   description = "Mass Market Contracts";
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
-    systems.url = "github:nix-systems/default";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
     };
-    flake-root.url = "github:srid/flake-root";
     process-compose-flake = {
       url = "github:Platonic-Systems/process-compose-flake";
     };
+    flake-root.url = "github:srid/flake-root";
     services-flake.url = "github:juspay/services-flake";
     pre-commit-hooks = {
       url = "github:cachix/git-hooks.nix";
@@ -30,10 +29,6 @@
       url = "github:OpenZeppelin/openzeppelin-contracts";
       flake = false;
     };
-    permit2 = {
-      url = "github:uniswap/permit2";
-      flake = false;
-    };
     ds-test = {
       url = "github:dapphub/ds-test";
       flake = false;
@@ -42,8 +37,8 @@
 
   outputs = inputs @ {
     flake-parts,
+    flake-root,
     forge-std,
-    permit2,
     openzeppelin,
     solady,
     ds-test,
@@ -53,9 +48,9 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = import systems;
       imports = [
-        inputs.flake-root.flakeModule
         inputs.pre-commit-hooks.flakeModule
         inputs.process-compose-flake.flakeModule
+        inputs.flake-root.flakeModule
       ];
 
       flake = {
@@ -64,10 +59,7 @@
 
       perSystem = {
         pkgs,
-        system,
         config,
-        self',
-        lib,
         ...
       }: let
         buildInputs = with pkgs; [
@@ -81,13 +73,9 @@
           forge-std/=${forge-std}/src
           openzeppelin/=${openzeppelin}
           ds-test/=${ds-test}/src
-          permit2/=${permit2}/
           solady=${solady}/
         '';
       in {
-        _module.args.pkgs = import inputs.nixpkgs {
-          inherit system;
-        };
         process-compose = let
           cli = {
             options = {
@@ -104,17 +92,6 @@
             deploy-contracts.enable = true;
           };
         in {
-          local-testnet-dev = {
-            inherit imports cli;
-            services =
-              services
-              // {
-                deploy-contracts = {
-                  enable = true;
-                  path = "''$(${lib.getExe config.flake-root.package})";
-                };
-              };
-          };
           local-testnet = {
             inherit imports services cli;
           };
@@ -132,11 +109,11 @@
         };
 
         devShells.default = pkgs.mkShell {
+          inputsFrom = [config.flake-root.devShell]; # Provides $FLAKE_ROOT in dev shell
           # local devshell scripts need to come first.
           buildInputs =
             buildInputs
             ++ [
-              self'.packages.local-testnet-dev
               pkgs.typos-lsp # code spell checker
               pkgs.nixd
             ]
@@ -147,17 +124,9 @@
             export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
             export PS1="[contracts] $PS1"
             # remove solidity cache (it not always notices branch changes)
-            test -d cache && rm -r cache
+            test -d $FLAKE_ROOT/cache && rm -r $FLAKE_ROOT/cache
             # check contents
-            cp -f ${remappings} remappings.txt
-            # check remappings
-            while read line; do
-            dir=$(echo $line | cut -d'=' -f2-)
-            test -d "$dir" || {
-            echo "WARNING: remapping not found: $line"
-            exit 1
-            }
-            done < remappings.txt
+            cp -f ${remappings} $FLAKE_ROOT/remappings.txt
           '';
         };
         packages = rec {
@@ -187,8 +156,8 @@
               export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
               forge compile
               # forge script will fail trying to load SSL_CERT_FILE
-              unset SSL_CERT_FILE
-              forge script ./script/deploy.s.sol:Deploy -s "runTestDeploy()"
+              # unset SSL_CERT_FILE
+              forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true true
             '';
 
             checkPhase = ''
@@ -199,7 +168,7 @@
               mkdir -p $out/{bin,abi};
               cp ./deploymentAddresses.json $out/deploymentAddresses.json
               # create ABI files for codegen
-              for artifact in {ERC20,RelayReg,ShopReg,Payments,PaymentsByAddress}; do
+              for artifact in {ERC20,RelayReg,ShopReg,OrderPayments}; do
               cd out/$artifact.sol/
               jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
               cd ../../
