@@ -11,3 +11,5 @@ out
 node_modules
 result
 deploymentAddresses.json
+.pre-commit-config.yaml
+logs/
