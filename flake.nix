@@ -162,6 +162,17 @@
         };
         packages = rec {
           default = mass-contracts;
+
+          source-with-deps = pkgs.stdenv.mkDerivation {
+            name = "source-with-deps";
+            src = ./.;
+            buildPhase = ''
+              cp -r $src $out
+              chmod -R +w $out
+              cp ${remappings} $out/remappings.txt
+            '';
+          };
+
           mass-contracts = pkgs.stdenv.mkDerivation {
             inherit buildInputs;
             name = "mass-contracts";

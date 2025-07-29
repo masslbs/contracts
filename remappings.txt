@@ -1,5 +1,0 @@
-forge-std/=/nix/store/h205l4k3bblp6s6bw99z6l6ijz3ssfcf-source/src
-openzeppelin/=/nix/store/a6i38pyzxil3h5rj9jy3kb103xq7i3ji-source
-ds-test/=/nix/store/kzbay453qngnh77mckqkmpca0vyrrp6f-source/src
-permit2/=/nix/store/bm81cc6z6k8m09jknp8g3iq411jpjgbr-source/
-solady=/nix/store/yldr7l4wpn2iimb80ri9672qrsnh53lz-source/
