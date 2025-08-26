@@ -13,3 +13,4 @@ result
 deploymentAddresses.json
 .pre-commit-config.yaml
 logs/
+remappings.txt

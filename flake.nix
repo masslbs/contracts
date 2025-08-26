@@ -54,7 +54,7 @@
       ];
 
       flake = {
-        processComposeModules.default = ./services.nix;
+        processComposeModules.default = (import ./services.nix) {inherit inputs;};
       };
 
       perSystem = {
@@ -68,13 +68,7 @@
           reuse
           foundry
         ];
-
-        remappings = pkgs.writeText "remapping.txt" ''
-          forge-std/=${forge-std}/src
-          openzeppelin/=${openzeppelin}
-          ds-test/=${ds-test}/src
-          solady=${solady}/
-        '';
+        remappings = pkgs.writeText "remapping.txt" config.process-compose.local-testnet.services.deploy-contracts.remappings;
       in {
         process-compose = let
           cli = {

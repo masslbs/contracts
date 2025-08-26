@@ -1,17 +1,22 @@
-{
+{inputs}: {
   config,
   lib,
   pkgs,
   ...
 }: let
   cfg = config.services;
+  remappings = pkgs.writeTextDir "remappings.txt" cfg.deploy-contracts.remappings;
+  src = pkgs.symlinkJoin {
+    name = "deploy-contracts-src";
+    paths = [remappings cfg.deploy-contracts.path];
+  };
   deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
     tmp=$(mktemp -d)
     export FOUNDRY_BROADCAST=$tmp/broadcast
     export FOUNDRY_CACHE_PATH=$tmp/cache
     export FOUNDRY_OUT=$tmp
     set -e
-    export FOUNDRY_ROOT=${cfg.deploy-contracts.path}
+    export FOUNDRY_ROOT=${src}
     export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
     pushd $FOUNDRY_ROOT
     ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true false --fork-url http://localhost:8545 --broadcast --private-key ${cfg.deploy-contracts.privateKey}
@@ -24,6 +29,16 @@ in {
     };
     services.deploy-contracts = {
       enable = lib.mkEnableOption "Deploy contracts";
+      remappings = lib.mkOption {
+        type = lib.types.str;
+        default = ''
+          forge-std/=${inputs.forge-std}/src
+          openzeppelin/=${inputs.openzeppelin}
+          ds-test/=${inputs.ds-test}/src
+          solady=${inputs.solady}/
+        '';
+        description = "The remapping to be used";
+      };
       path = lib.mkOption {
         type = lib.types.str;
         default = "${./.}";
