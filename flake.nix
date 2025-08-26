@@ -166,7 +166,9 @@
               # create ABI files for codegen
               for artifact in {ERC20,RelayReg,ShopReg,OrderPayments}; do
               cd out/$artifact.sol/
-              jq .abi $(ls -1 . | head -n 1) > $out/abi/$artifact.json
+              for contract in *.json; do
+                jq .abi $contract > $out/abi/$contract
+              done
               cd ../../
               done
               jq .abi out/deploy.s.sol/EuroDollar.json > $out/abi/Eddies.json
