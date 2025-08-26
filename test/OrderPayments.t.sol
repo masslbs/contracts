@@ -199,7 +199,7 @@ contract OrderPaymentTest is Test {
         assertEq(mockToken.balanceOf(merchant), merchantBalanceBefore);
     }
 
-    function test_sweepERC20_WithETHAddress() public {
+    function test_sweep_WithETHAddress() public {
         uint256 amount = 2 ether;
 
         // Fund the contract with ETH
@@ -211,7 +211,7 @@ contract OrderPaymentTest is Test {
         ERC20 ethToken = ERC20(ETH);
 
         // This should call sweepEth internally
-        orderPayment.sweepERC20(ethToken);
+        orderPayment.sweep(ethToken);
 
         uint256 merchantBalanceAfter = merchant.balance;
 

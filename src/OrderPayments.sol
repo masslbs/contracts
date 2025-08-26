@@ -26,23 +26,26 @@ contract OrderPayment {
         receivingAddress = _receivingAddress;
     }
 
-    function sweepEth() public {
-        // if we are transferring eth
-        uint256 balance = address(this).balance;
-        receivingAddress.transfer(balance);
-    }
-    function sweepERC20(ERC20 token) public {
+    function sweep(ERC20 token) public {
         if (address(token) == ETH) {
             sweepEth();
         } else {
-            // if we are transferring an erc20
-            uint256 balance = token.balanceOf(address(this));
-            token.transfer(receivingAddress, balance);
+            sweepERC20(token);
         }
+    }
+
+    function sweepEth() public {
+        uint256 balance = address(this).balance;
+        receivingAddress.transfer(balance);
+    }
+
+    function sweepERC20(ERC20 token) public {
+        uint256 balance = token.balanceOf(address(this));
+        token.transfer(receivingAddress, balance);
     }
 }
 
-/// @title Creates OrderPayment instances.
+/// @title Creates an OrderPayment instances.
 contract OrderPaymentsFactory {
     function getSalt(
         OrderPaymentBinding calldata binding
