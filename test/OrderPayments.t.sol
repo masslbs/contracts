@@ -28,7 +28,7 @@ contract OrderPaymentsFactoryTest is Test {
             chainId: 1,
             shopId: 123,
             orderId: 456,
-            paymentAddress: merchant
+            receivingAddress: merchant
         });
     }
 
@@ -43,7 +43,7 @@ contract OrderPaymentsFactoryTest is Test {
             chainId: 1,
             shopId: 123,
             orderId: 457, // different order ID
-            paymentAddress: merchant
+            receivingAddress: merchant
         });
 
         bytes32 salt1 = factory.getSalt(binding);
@@ -91,7 +91,7 @@ contract OrderPaymentsFactoryTest is Test {
             chainId: 1,
             shopId: 123,
             orderId: 457,
-            paymentAddress: merchant
+            receivingAddress: merchant
         });
 
         address addr1 = factory.getOrderPaymentAddress(binding);
@@ -308,7 +308,7 @@ contract OrderPaymentsIntegrationTest is Test {
             chainId: 1,
             shopId: 123,
             orderId: 456,
-            paymentAddress: merchant
+            receivingAddress: merchant
         });
 
         // Get predicted address
@@ -350,14 +350,14 @@ contract OrderPaymentsIntegrationTest is Test {
             chainId: 1,
             shopId: 123,
             orderId: 456,
-            paymentAddress: merchant
+            receivingAddress: merchant
         });
 
         OrderPaymentBinding memory binding2 = OrderPaymentBinding({
             chainId: 1,
             shopId: 123,
             orderId: 457,
-            paymentAddress: merchant
+            receivingAddress: merchant
         });
 
         // Get predicted addresses

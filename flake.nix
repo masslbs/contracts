@@ -4,19 +4,21 @@
 {
   description = "Mass Market Contracts";
   inputs = {
-    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
     };
+    pre-commit-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # services definitions
     process-compose-flake = {
       url = "github:Platonic-Systems/process-compose-flake";
     };
     flake-root.url = "github:srid/flake-root";
     services-flake.url = "github:juspay/services-flake";
-    pre-commit-hooks = {
-      url = "github:cachix/git-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # solidity dependencies
     forge-std = {
       url = "github:foundry-rs/forge-std";
       flake = false;

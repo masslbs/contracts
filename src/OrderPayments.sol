@@ -13,22 +13,23 @@ struct OrderPaymentBinding {
     uint256 chainId;
     uint256 shopId;
     uint256 orderId;
-    address payable paymentAddress;
+    /// Merchant (or escrow) account receiving the payment
+    address payable receivingAddress;
 }
 
-/// @title A contract for an order with functions that sweeps ERC20's and Eth from the payment address to the merchants address
+/// @title A contract for an order with functions that sweeps ERC20's and Eth from the payment address to the receiving address
 /// @notice  ERC20 sweeps can fail depending on the ERC20 implementation
 contract OrderPayment {
-    address payable paymentAddress;
+    address payable receivingAddress;
 
-    constructor(address payable _paymentAddress) {
-        paymentAddress = _paymentAddress;
+    constructor(address payable _receivingAddress) {
+        receivingAddress = _receivingAddress;
     }
 
     function sweepEth() public {
         // if we are transferring eth
         uint256 balance = address(this).balance;
-        paymentAddress.transfer(balance);
+        receivingAddress.transfer(balance);
     }
     function sweepERC20(ERC20 token) public {
         if (address(token) == ETH) {
@@ -36,7 +37,7 @@ contract OrderPayment {
         } else {
             // if we are transferring an erc20
             uint256 balance = token.balanceOf(address(this));
-            token.transfer(paymentAddress, balance);
+            token.transfer(receivingAddress, balance);
         }
     }
 }
@@ -50,10 +51,10 @@ contract OrderPaymentsFactory {
     }
 
     function getBytecodeHash(
-        address paymentAddress
+        address receivingAddress
     ) public pure returns (bytes32) {
         bytes memory bytecode = type(OrderPayment).creationCode;
-        return keccak256(abi.encodePacked(bytecode, abi.encode(paymentAddress)));
+        return keccak256(abi.encodePacked(bytecode, abi.encode(receivingAddress)));
     }
 
     function getOrderPaymentAddress(
@@ -64,7 +65,7 @@ contract OrderPaymentsFactory {
                 bytes1(0xff),
                 address(this),
                 getSalt(binding), // salt
-                bytes32(getBytecodeHash(binding.paymentAddress))
+                bytes32(getBytecodeHash(binding.receivingAddress))
             )
         );
 
@@ -74,6 +75,6 @@ contract OrderPaymentsFactory {
     function deployOrderPayment (
         OrderPaymentBinding calldata binding
     ) public {
-        new OrderPayment{salt: getSalt(binding)}(binding.paymentAddress);
+        new OrderPayment{salt: getSalt(binding)}(binding.receivingAddress);
     }
 }
