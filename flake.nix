@@ -23,10 +23,6 @@
       url = "github:foundry-rs/forge-std";
       flake = false;
     };
-    solady = {
-      url = "github:Vectorized/solady";
-      flake = false;
-    };
     openzeppelin = {
       url = "github:OpenZeppelin/openzeppelin-contracts";
       flake = false;
@@ -42,7 +38,6 @@
     flake-root,
     forge-std,
     openzeppelin,
-    solady,
     ds-test,
     systems,
     ...

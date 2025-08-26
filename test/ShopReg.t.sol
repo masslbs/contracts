@@ -5,10 +5,8 @@
 pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
-import {Receiver} from "solady/src/accounts/Receiver.sol";
 import {ShopReg} from "../src/ShopReg.sol";
 import {RelayReg} from "../src/RelayReg.sol";
-import {AccessControl} from "../src/AccessControl.sol";
 
 contract ShopTest is Test {
     using stdStorage for StdStorage;
@@ -52,7 +50,7 @@ contract ShopTest is Test {
         bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
         address owner = address(3);
         shops.mint(shopId, owner);
-        vm.expectRevert();
+        vm.expectRevert("NOT_AUTHORIZED");
         shops.updateRootHash(shopId, testHashUpdate, 1);
     }
 
@@ -82,8 +80,6 @@ contract ShopTest is Test {
         uint256 relayId = 23;
         relays.mint(relayId, relayAddr, "https://smthing.somewhere");
         vm.prank(owner);
-        uint256[] memory newRelays = new uint256[](1);
-        newRelays[0] = relayId;
         shops.addRelay(shopId, relayId);
         uint256 wantCount = 1;
         uint256 count = shops.getRelayCount(shopId);
@@ -94,20 +90,101 @@ contract ShopTest is Test {
         // now remove relay and check it cant change rootHash
         vm.prank(owner);
         shops.removeRelay(shopId, 0);
-        vm.expectRevert(abi.encodeWithSelector(AccessControl.NotAuthorized.selector, 2));
+        vm.expectRevert("NOT_AUTHORIZED");
         vm.prank(relayAddr);
-        shops.updateRootHash(shopId, testHashUpdate, 1);
+        shops.updateRootHash(shopId, testHashUpdate, 2);
     }
 
-    function testSafeContractReceiver() public {
-        Receiver receiver = new MockReceiver();
-        shops.mint(shopId, address(receiver));
-        uint256 slotBalance =
-            stdstore.target(address(shops)).sig(shops.balanceOf.selector).with_key(address(receiver)).find();
+    function test_nonceValidation() public {
+        bytes32 testHashUpdate = 0x5049705e4c047d2cfeb1050cffe847c85a8dbd96e7f129a3a1007920d9c61d9a;
+        address owner = address(3);
+        shops.mint(shopId, owner);
 
-        uint256 balance = uint256(vm.load(address(shops), bytes32(slotBalance)));
-        assertEq(balance, 1);
+        vm.prank(owner);
+        shops.updateRootHash(shopId, testHashUpdate, 1);
+        assertEq(shops.nonce(shopId), 1);
+
+        // Should fail with same nonce
+        vm.expectRevert(abi.encodeWithSelector(ShopReg.InvalidNonce.selector, 1, 1));
+        vm.prank(owner);
+        shops.updateRootHash(shopId, testHashUpdate, 1);
+
+        // Should fail with lower nonce
+        vm.expectRevert(abi.encodeWithSelector(ShopReg.InvalidNonce.selector, 1, 0));
+        vm.prank(owner);
+        shops.updateRootHash(shopId, testHashUpdate, 0);
+
+        // Should succeed with higher nonce
+        vm.prank(owner);
+        shops.updateRootHash(shopId, testHashUpdate, 2);
+        assertEq(shops.nonce(shopId), 2);
+    }
+
+    function test_relayManagement() public {
+        address owner = address(3);
+        shops.mint(shopId, owner);
+
+        uint256 relayId1 = 1;
+        uint256 relayId2 = 2;
+        uint256 relayId3 = 3;
+
+        // Add relays
+        vm.startPrank(owner);
+        shops.addRelay(shopId, relayId1);
+        shops.addRelay(shopId, relayId2);
+        shops.addRelay(shopId, relayId3);
+        vm.stopPrank();
+
+        assertEq(shops.getRelayCount(shopId), 3);
+
+        uint256[] memory allRelays = shops.getAllRelays(shopId);
+        assertEq(allRelays.length, 3);
+        assertEq(allRelays[0], relayId1);
+        assertEq(allRelays[1], relayId2);
+        assertEq(allRelays[2], relayId3);
+
+        // Replace relay
+        uint256 newRelayId = 4;
+        vm.prank(owner);
+        shops.replaceRelay(shopId, 1, newRelayId);
+
+        allRelays = shops.getAllRelays(shopId);
+        assertEq(allRelays[1], newRelayId);
+
+        // Remove relay (should move last to removed position)
+        vm.prank(owner);
+        shops.removeRelay(shopId, 1);
+
+        assertEq(shops.getRelayCount(shopId), 2);
+        allRelays = shops.getAllRelays(shopId);
+        assertEq(allRelays[0], relayId1);
+        assertEq(allRelays[1], relayId3); // relayId3 moved to position 1
+    }
+
+    function test_unauthorizedRelayManagement() public {
+        address owner = address(3);
+        address notOwner = address(4);
+        shops.mint(shopId, owner);
+
+        uint256 relayId = 1;
+
+        // Should fail for non-owner
+        vm.expectRevert("NOT_AUTHORIZED");
+        vm.prank(notOwner);
+        shops.addRelay(shopId, relayId);
+
+        // Add relay as owner first
+        vm.prank(owner);
+        shops.addRelay(shopId, relayId);
+
+        // Should fail for non-owner to replace
+        vm.expectRevert("NOT_AUTHORIZED");
+        vm.prank(notOwner);
+        shops.replaceRelay(shopId, 0, 2);
+
+        // Should fail for non-owner to remove
+        vm.expectRevert("NOT_AUTHORIZED");
+        vm.prank(notOwner);
+        shops.removeRelay(shopId, 0);
     }
 }
-
-contract MockReceiver is Receiver {}

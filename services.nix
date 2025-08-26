@@ -35,7 +35,6 @@ in {
           forge-std/=${inputs.forge-std}/src
           openzeppelin/=${inputs.openzeppelin}
           ds-test/=${inputs.ds-test}/src
-          solady=${inputs.solady}/
         '';
         description = "The remapping to be used";
       };

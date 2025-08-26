@@ -197,7 +197,6 @@
         "pre-commit-hooks": "pre-commit-hooks",
         "process-compose-flake": "process-compose-flake",
         "services-flake": "services-flake",
-        "solady": "solady",
         "systems": "systems"
       }
     },
@@ -213,22 +212,6 @@
       "original": {
         "owner": "juspay",
         "repo": "services-flake",
-        "type": "github"
-      }
-    },
-    "solady": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1756115684,
-        "narHash": "sha256-ycYSZnpJBJiJTGpJCnt1R/vKP7pTQY6dd8e35HIP0Co=",
-        "owner": "Vectorized",
-        "repo": "solady",
-        "rev": "acd959aa4bd04720d640bf4e6a5c71037510cc4b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Vectorized",
-        "repo": "solady",
         "type": "github"
       }
     },
