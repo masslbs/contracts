@@ -159,7 +159,7 @@
               mkdir -p $out/{bin,abi};
               cp ./deploymentAddresses.json $out/deploymentAddresses.json
               # create ABI files for codegen
-              for artifact in {ERC20,RelayReg,ShopReg,OrderPayments}; do
+              for artifact in {ERC20,ShopReg,OrderPayments}; do
               cd out/$artifact.sol/
               for contract in *.json; do
                 jq .abi $contract > $out/abi/$contract

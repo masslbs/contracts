@@ -7,7 +7,6 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 
 import "../src/ShopReg.sol";
-import "../src/RelayReg.sol";
 import "../src/OrderPayments.sol";
 import "openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -25,10 +24,8 @@ contract Deploy is Script {
     function deployContracts(bool testERC20, bool mut) external {
         vm.startBroadcast();
 
-        // deploy relay registary
-        RelayReg relayReg = new RelayReg{salt: salt}();
         // deploy shop registary
-        ShopReg shop = new ShopReg{salt: salt}(relayReg);
+        ShopReg shop = new ShopReg{salt: salt}();
 
         deployPayments();
 
@@ -39,10 +36,10 @@ contract Deploy is Script {
             vm.serializeAddress(addresses, "Eddies", address(eddies));
             // create a test shop
             address testAddress = tx.origin;
-            shop.mint(1, testAddress);
+            bytes32 testSchema = 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef;
+            shop.mint(1, testSchema, testAddress);
         }
 
-        vm.serializeAddress(addresses, "RelayReg", address(relayReg));
         string memory out = vm.serializeAddress(addresses, "ShopReg", address(shop));
 
         if (mut) vm.writeJson(out, "./deploymentAddresses.json");

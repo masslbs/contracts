@@ -7,11 +7,9 @@ pragma solidity ^0.8.19;
 import {ERC721} from "openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721Enumerable} from "openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {ERC721URIStorage} from "openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import {RelayReg} from "./RelayReg.sol";
 
+/// used as salt for creating an OrderPayment Contract
 contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
-    RelayReg public relayReg;
-
     error InvalidNonce(uint64 cur, uint64 _nonce);
 
     /// @notice rootHashes is a mapping of shops to their state root hash
@@ -20,9 +18,9 @@ contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
     mapping(uint256 shopid => uint64) public nonce;
     /// @notice relays is a mapping of shop nfts to their relays
     mapping(uint256 shopid => uint256[]) public relays;
+    mapping(uint256 shopid => bytes32) public schema;
 
-    constructor(RelayReg r) ERC721("ShopRegistry", "SR") {
-        relayReg = r;
+    constructor() ERC721("ShopRegistry", "SR") {
     }
 
     // The following functions are overrides required by Solidity.
@@ -67,10 +65,12 @@ contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
 
     /// @notice mint registers a new shop and creates a NFT for it
     /// @param shopId The shop nft. Needs to be unique or it will revert
+    /// @param _schema The schema of the shop
     /// @param owner The owner of the shop
-    function mint(uint256 shopId, address owner) public {
+    function mint(uint256 shopId, bytes32 _schema, address owner) public {
         // safe mint checks if id is taken
         _safeMint(owner, shopId);
+        schema[shopId] = _schema;
     }
 
     /// @notice updateRootHash updates the state root of the shop
@@ -147,7 +147,7 @@ contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
         uint256[] storage allRelays = relays[shopId];
         for (uint256 index = 0; index < allRelays.length; index++) {
             uint256 relayId = allRelays[index];
-            address relayAddr = relayReg.ownerOf(relayId);
+            address relayAddr = this.ownerOf(relayId);
             if (relayAddr == msg.sender) {
                 return true;
             }
