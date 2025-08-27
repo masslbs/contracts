@@ -26,22 +26,29 @@ contract OrderPayment {
         receivingAddress = _receivingAddress;
     }
 
-    function sweep(ERC20 token) public {
+    /// @param hookCallData an optional call data that is passed to the receiving address after the sweep
+    /// the hook call data can be anything and it is up to the receiving contract to validate it
+    function sweep(ERC20 token, bytes calldata hookCallData) public {
         if (address(token) == ETH) {
-            sweepEth();
+            sweepEth(hookCallData);
         } else {
-            sweepERC20(token);
+            sweepERC20(token, hookCallData);
         }
     }
 
-    function sweepEth() public {
+    function sweepEth(bytes calldata hookCallData) public {
         uint256 balance = address(this).balance;
-        receivingAddress.transfer(balance);
+        (bool sent, bytes memory data) = receivingAddress.call{value: balance}(hookCallData);
+        require(sent, "Failed to send Ether");
     }
 
-    function sweepERC20(ERC20 token) public {
+    function sweepERC20(ERC20 token, bytes calldata hookCallData) public {
         uint256 balance = token.balanceOf(address(this));
         token.transfer(receivingAddress, balance);
+        if (hookCallData.length > 0) {
+            (bool sent, bytes memory data) = receivingAddress.call(hookCallData);
+            require(sent, "Failed to call hook");
+        }
     }
 }
 

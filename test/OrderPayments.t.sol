@@ -74,7 +74,7 @@ contract OrderPaymentsFactoryTest is Test {
         OrderPayment orderPayment = OrderPayment(predictedAddress);
         // Contract should exist and be callable
         vm.expectCall(predictedAddress, abi.encodeWithSelector(OrderPayment.sweepEth.selector));
-        orderPayment.sweepEth();
+        orderPayment.sweepEth("");
     }
 
     function test_deployOrderPayment_CannotDeployTwice() public {
@@ -142,7 +142,7 @@ contract OrderPaymentTest is Test {
         assertEq(contractBalanceBefore, amount);
 
         // Sweep ETH
-        orderPayment.sweepEth();
+        orderPayment.sweepEth("");
 
         uint256 merchantBalanceAfter = merchant.balance;
         uint256 contractBalanceAfter = address(orderPayment).balance;
@@ -158,7 +158,7 @@ contract OrderPaymentTest is Test {
         assertEq(address(orderPayment).balance, 0);
 
         // Sweep should not revert but also not change balances
-        orderPayment.sweepEth();
+        orderPayment.sweepEth("");
 
         assertEq(address(orderPayment).balance, 0);
         assertEq(merchant.balance, merchantBalanceBefore);
@@ -177,7 +177,7 @@ contract OrderPaymentTest is Test {
         assertEq(contractBalanceBefore, amount);
 
         // Sweep ERC20
-        orderPayment.sweepERC20(mockToken);
+        orderPayment.sweepERC20(mockToken, "");
 
         uint256 merchantBalanceAfter = mockToken.balanceOf(merchant);
         uint256 contractBalanceAfter = mockToken.balanceOf(address(orderPayment));
@@ -193,7 +193,7 @@ contract OrderPaymentTest is Test {
         assertEq(mockToken.balanceOf(address(orderPayment)), 0);
 
         // Sweep should not revert but also not change balances
-        orderPayment.sweepERC20(mockToken);
+        orderPayment.sweepERC20(mockToken, "");
 
         assertEq(mockToken.balanceOf(address(orderPayment)), 0);
         assertEq(mockToken.balanceOf(merchant), merchantBalanceBefore);
@@ -211,7 +211,7 @@ contract OrderPaymentTest is Test {
         ERC20 ethToken = ERC20(ETH);
 
         // This should call sweepEth internally
-        orderPayment.sweep(ethToken);
+        orderPayment.sweep(ethToken, "");
 
         uint256 merchantBalanceAfter = merchant.balance;
 
@@ -229,7 +229,7 @@ contract OrderPaymentTest is Test {
         // Random address calls sweep
         address randomUser = makeAddr("random");
         vm.prank(randomUser);
-        orderPayment.sweepERC20(mockToken);
+        orderPayment.sweepERC20(mockToken, "");
 
         // Tokens should still go to merchant
         assertEq(mockToken.balanceOf(merchant), amount);
@@ -245,7 +245,7 @@ contract OrderPaymentTest is Test {
         // Random address calls sweep
         address randomUser = makeAddr("random");
         vm.prank(randomUser);
-        orderPayment.sweepEth();
+        orderPayment.sweepEth("");
 
         // ETH should still go to merchant
         assertEq(merchant.balance, amount);
@@ -261,7 +261,7 @@ contract OrderPaymentTest is Test {
 
         uint256 merchantBalanceBefore = merchant.balance;
 
-        orderPayment.sweepEth();
+        orderPayment.sweepEth("");
 
         assertEq(address(orderPayment).balance, 0);
         assertEq(merchant.balance, merchantBalanceBefore + amount);
@@ -278,7 +278,7 @@ contract OrderPaymentTest is Test {
 
         uint256 merchantBalanceBefore = mockToken.balanceOf(merchant);
 
-        orderPayment.sweepERC20(mockToken);
+        orderPayment.sweepERC20(mockToken, "");
 
         assertEq(mockToken.balanceOf(address(orderPayment)), 0);
         assertEq(mockToken.balanceOf(merchant), merchantBalanceBefore + amount);
@@ -334,8 +334,8 @@ contract OrderPaymentsIntegrationTest is Test {
         uint256 merchantEthBefore = merchant.balance;
         uint256 merchantTokensBefore = mockToken.balanceOf(merchant);
 
-        orderPayment.sweepEth();
-        orderPayment.sweepERC20(mockToken);
+        orderPayment.sweepEth("");
+        orderPayment.sweepERC20(mockToken, "");
 
         // Verify funds were swept to merchant
         assertEq(merchant.balance, merchantEthBefore + 1 ether);
@@ -383,10 +383,10 @@ contract OrderPaymentsIntegrationTest is Test {
         uint256 merchantEthBefore = merchant.balance;
         uint256 merchantTokensBefore = mockToken.balanceOf(merchant);
 
-        OrderPayment(addr1).sweepEth();
-        OrderPayment(addr1).sweepERC20(mockToken);
-        OrderPayment(addr2).sweepEth();
-        OrderPayment(addr2).sweepERC20(mockToken);
+        OrderPayment(addr1).sweepEth("");
+        OrderPayment(addr1).sweepERC20(mockToken, "");
+        OrderPayment(addr2).sweepEth("");
+        OrderPayment(addr2).sweepERC20(mockToken, "");
 
         // Verify total funds were swept
         assertEq(merchant.balance, merchantEthBefore + 3 ether);
