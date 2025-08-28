@@ -62,6 +62,7 @@
       perSystem = {
         pkgs,
         config,
+        self',
         ...
       }: let
         buildInputs = with pkgs; [
@@ -70,7 +71,16 @@
           reuse
           foundry
         ];
-        remappings = pkgs.writeText "remapping.txt" config.process-compose.local-testnet.services.deploy-contracts.remappings;
+        remappings = pkgs.writeTextDir "remappings.txt" ''
+          forge-std/=${inputs.forge-std}/src
+          openzeppelin/=${inputs.openzeppelin}
+          ds-test/=${inputs.ds-test}/src
+          solady=${inputs.solady}/
+        '';
+        src = pkgs.symlinkJoin {
+          name = "deploy-contracts-src";
+          paths = [remappings ./.];
+        };
       in {
         process-compose = let
           cli = {
@@ -112,6 +122,7 @@
             ++ [
               pkgs.typos-lsp # code spell checker
               pkgs.nixd
+              self'.packages.deploy-market
             ]
             ++ config.pre-commit.settings.enabledPackages;
 
@@ -122,20 +133,26 @@
             # remove solidity cache (it not always notices branch changes)
             test -d $FLAKE_ROOT/cache && rm -r $FLAKE_ROOT/cache
             # check contents
-            cp -f ${remappings} $FLAKE_ROOT/remappings.txt
+            cp -f ${remappings}/remappings.txt $FLAKE_ROOT/remappings.txt
           '';
         };
         packages = rec {
           default = mass-contracts;
+          deploy-market = pkgs.writeShellScriptBin "deploy-market" ''
+            tmp=$(mktemp -d)
+            export FOUNDRY_BROADCAST=$tmp/broadcast
+            export FOUNDRY_CACHE_PATH=$tmp/cache
+            export FOUNDRY_OUT=$tmp
+            export FOUNDRY_ROOT=${src}
+            export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
+            pushd $FOUNDRY_ROOT
+            ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true false --broadcast --private-key $PRIVATE_KEY
+            popd
+          '';
 
           source-with-deps = pkgs.stdenv.mkDerivation {
             name = "source-with-deps";
-            src = ./.;
-            buildPhase = ''
-              cp -r $src $out
-              chmod -R +w $out
-              cp ${remappings} $out/remappings.txt
-            '';
+            inherit src;
           };
 
           mass-contracts = pkgs.stdenv.mkDerivation {
@@ -148,11 +165,9 @@
             doCheck = true;
 
             buildPhase = ''
-              cp ${remappings} remappings.txt
+              cp ${remappings}/remappings.txt remappings.txt
               export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
               forge compile
-              # forge script will fail trying to load SSL_CERT_FILE
-              # unset SSL_CERT_FILE
               forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true true
             '';
 
