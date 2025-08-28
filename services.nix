@@ -1,22 +1,10 @@
-{
+{inputs}: {
   config,
   lib,
   pkgs,
   ...
 }: let
   cfg = config.services;
-  deploy_market = pkgs.writeShellScriptBin "deploy-market" ''
-    tmp=$(mktemp -d)
-    export FOUNDRY_BROADCAST=$tmp/broadcast
-    export FOUNDRY_CACHE_PATH=$tmp/cache
-    export FOUNDRY_OUT=$tmp
-    set -e
-    export FOUNDRY_ROOT=${cfg.deploy-contracts.path}
-    export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
-    pushd $FOUNDRY_ROOT
-    ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "runTestDeployImmut()" --fork-url http://localhost:8545 --broadcast --private-key ${cfg.deploy-contracts.privateKey}
-    popd
-  '';
 in {
   options = {
     services.anvil = {
@@ -24,10 +12,10 @@ in {
     };
     services.deploy-contracts = {
       enable = lib.mkEnableOption "Deploy contracts";
-      path = lib.mkOption {
+      rpcUrl = lib.mkOption {
         type = lib.types.str;
-        default = "${./.}";
-        description = "the path to the root directory of the contracts";
+        default = "http://localhost:8545";
+        description = "The Ethereum RPC URL to be used";
       };
       privateKey = lib.mkOption {
         type = lib.types.str;
@@ -37,17 +25,27 @@ in {
     };
   };
   config = {
-    settings.processes = {
-      deploy-contracts = {
-        command = deploy_market;
-        depends_on."anvil".condition = "process_log_ready";
-        log_location = "logs/deploy.log";
-      };
-      anvil = {
-        command = "${pkgs.foundry}/bin/anvil";
-        ready_log_line = "Listening on";
-        log_location = "logs/anvil.log";
-      };
-    };
+    settings.processes = lib.mkMerge [
+      (lib.mkIf cfg.deploy-contracts.enable {
+        deploy-contracts = {
+          environment = {
+            PRIVATE_KEY = cfg.deploy-contracts.privateKey;
+            FOUNDRY_ETH_RPC_URL = cfg.deploy-contracts.rpcUrl;
+          };
+          command = inputs.self.packages.${pkgs.system}.deploy-market;
+          depends_on = lib.mkIf cfg.anvil.enable {
+            "anvil".condition = "process_log_ready";
+          };
+          log_location = "$FLAKE_ROOT/logs/deploy.log";
+        };
+      })
+      (lib.mkIf cfg.anvil.enable {
+        anvil = {
+          command = "${pkgs.foundry}/bin/anvil";
+          ready_log_line = "Listening on";
+          log_location = "$FLAKE_ROOT/logs/anvil.log";
+        };
+      })
+    ];
   };
 }
