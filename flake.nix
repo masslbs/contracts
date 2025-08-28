@@ -71,15 +71,16 @@
           reuse
           foundry
         ];
-        remappings = pkgs.writeTextDir "remappings.txt" ''
-          forge-std/=${inputs.forge-std}/src
-          openzeppelin/=${inputs.openzeppelin}
-          ds-test/=${inputs.ds-test}/src
-          solady=${inputs.solady}/
+        libs = pkgs.runCommand "contracts-libs" {} ''
+          mkdir -p $out/libs
+          ln -s ${forge-std} $out/libs/forge-std
+          ln -s ${openzeppelin} $out/libs/openzeppelin
+          ln -s ${ds-test} $out/libs/ds-test
+          ln -s ${solady} $out/libs/solady
         '';
         src = pkgs.symlinkJoin {
           name = "deploy-contracts-src";
-          paths = [remappings ./.];
+          paths = [./. libs];
         };
       in {
         process-compose = let
@@ -129,11 +130,11 @@
           shellHook = ''
             ${config.pre-commit.settings.installationScript}
             export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
-            export PS1="[contracts] $PS1"
             # remove solidity cache (it not always notices branch changes)
             test -d $FLAKE_ROOT/cache && rm -r $FLAKE_ROOT/cache
             # check contents
-            cp -f ${remappings}/remappings.txt $FLAKE_ROOT/remappings.txt
+            rm $FLAKE_ROOT/libs
+            ln -s ${libs}/libs $FLAKE_ROOT/libs
           '';
         };
         packages = rec {
@@ -143,10 +144,10 @@
             export FOUNDRY_BROADCAST=$tmp/broadcast
             export FOUNDRY_CACHE_PATH=$tmp/cache
             export FOUNDRY_OUT=$tmp
-            export FOUNDRY_ROOT=${src}
             export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
+            export FOUNDRY_ROOT=${src}
             pushd $FOUNDRY_ROOT
-            ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true false --broadcast --private-key $PRIVATE_KEY
+            ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true false --broadcast --private-key $PRIVATE_KEY "$@"
             popd
           '';
 
@@ -156,18 +157,15 @@
           };
 
           mass-contracts = pkgs.stdenv.mkDerivation {
-            inherit buildInputs;
+            inherit buildInputs src;
             name = "mass-contracts";
 
-            src = ./.;
             dontPatch = true;
             dontConfigure = true;
             doCheck = true;
 
             buildPhase = ''
-              cp ${remappings}/remappings.txt remappings.txt
               export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
-              forge compile
               forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true true
             '';
 

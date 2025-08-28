@@ -5,11 +5,14 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
+import {console} from "forge-std/console.sol";
 
 import "../src/ShopReg.sol";
 import "../src/RelayReg.sol";
 import "../src/OrderPayments.sol";
 import "openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+
 
 contract EuroDollar is ERC20 {
     constructor() ERC20("Eddies", "EDD") {}
@@ -44,6 +47,7 @@ contract Deploy is Script {
 
         vm.serializeAddress(addresses, "RelayReg", address(relayReg));
         string memory out = vm.serializeAddress(addresses, "ShopReg", address(shop));
+        console.log("ShopReg Address: %s", out);
 
         if (mut) vm.writeJson(out, "./deploymentAddresses.json");
         vm.stopBroadcast();
@@ -52,7 +56,7 @@ contract Deploy is Script {
     function deployPayments() internal returns (string memory) {
         string memory addresses;
         // create the payments contract
-        OrderPaymentsFactory payments = new OrderPaymentsFactory();
+        OrderPaymentsFactory payments = new OrderPaymentsFactory{salt: salt}();
         return vm.serializeAddress(addresses, "OrderPaymentsFactory", address(payments));
     }
 }
