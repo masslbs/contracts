@@ -36,14 +36,14 @@ in {
           depends_on = lib.mkIf cfg.anvil.enable {
             "anvil".condition = "process_log_ready";
           };
-          log_location = "logs/deploy.log";
+          log_location = "$FLAKE_ROOT/logs/deploy.log";
         };
       })
       (lib.mkIf cfg.anvil.enable {
         anvil = {
           command = "${pkgs.foundry}/bin/anvil";
           ready_log_line = "Listening on";
-          log_location = "logs/anvil.log";
+          log_location = "$FLAKE_ROOT/logs/anvil.log";
         };
       })
     ];
