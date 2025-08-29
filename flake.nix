@@ -57,6 +57,7 @@
       perSystem = {
         pkgs,
         config,
+        self',
         ...
       }: let
         buildInputs = with pkgs; [
@@ -65,7 +66,16 @@
           reuse
           foundry
         ];
-        remappings = pkgs.writeText "remapping.txt" config.process-compose.local-testnet.services.deploy-contracts.remappings;
+        libs = pkgs.runCommand "contracts-libs" {} ''
+          mkdir -p $out/libs
+          ln -s ${forge-std} $out/libs/forge-std
+          ln -s ${openzeppelin} $out/libs/openzeppelin
+          ln -s ${ds-test} $out/libs/ds-test
+        '';
+        src = pkgs.symlinkJoin {
+          name = "deploy-contracts-src";
+          paths = [./. libs];
+        };
       in {
         process-compose = let
           cli = {
@@ -107,47 +117,49 @@
             ++ [
               pkgs.typos-lsp # code spell checker
               pkgs.nixd
+              self'.packages.deploy-market
             ]
             ++ config.pre-commit.settings.enabledPackages;
 
           shellHook = ''
             ${config.pre-commit.settings.installationScript}
             export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
-            export PS1="[contracts] $PS1"
             # remove solidity cache (it not always notices branch changes)
             test -d $FLAKE_ROOT/cache && rm -r $FLAKE_ROOT/cache
             # check contents
-            cp -f ${remappings} $FLAKE_ROOT/remappings.txt
+            rm $FLAKE_ROOT/libs
+            ln -s ${libs}/libs $FLAKE_ROOT/libs
           '';
         };
         packages = rec {
           default = mass-contracts;
+          deploy-market = pkgs.writeShellScriptBin "deploy-market" ''
+            tmp=$(mktemp -d)
+            export FOUNDRY_BROADCAST=$tmp/broadcast
+            export FOUNDRY_CACHE_PATH=$tmp/cache
+            export FOUNDRY_OUT=$tmp
+            export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
+            export FOUNDRY_ROOT=${src}
+            pushd $FOUNDRY_ROOT
+            ${pkgs.foundry}/bin/forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true false --broadcast --private-key $PRIVATE_KEY "$@"
+            popd
+          '';
 
           source-with-deps = pkgs.stdenv.mkDerivation {
             name = "source-with-deps";
-            src = ./.;
-            buildPhase = ''
-              cp -r $src $out
-              chmod -R +w $out
-              cp ${remappings} $out/remappings.txt
-            '';
+            inherit src;
           };
 
           mass-contracts = pkgs.stdenv.mkDerivation {
-            inherit buildInputs;
+            inherit buildInputs src;
             name = "mass-contracts";
 
-            src = ./.;
             dontPatch = true;
             dontConfigure = true;
             doCheck = true;
 
             buildPhase = ''
-              cp ${remappings} remappings.txt
               export FOUNDRY_SOLC_VERSION=${pkgs.solc}/bin/solc
-              forge compile
-              # forge script will fail trying to load SSL_CERT_FILE
-              # unset SSL_CERT_FILE
               forge script ./script/deploy.s.sol:Deploy -s "deployContracts(bool, bool)" true true
             '';
 
