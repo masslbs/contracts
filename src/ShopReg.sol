@@ -7,17 +7,9 @@ pragma solidity ^0.8.19;
 import {ERC721} from "openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721Enumerable} from "openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {ERC721URIStorage} from "openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import {LibBitmap} from "solady/src/utils/LibBitmap.sol";
-import {LibString} from "solady/src/utils/LibString.sol";
-import {RelayReg} from "./RelayReg.sol";
-import {AccessControl} from "./AccessControl.sol";
 
-contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
-    using LibBitmap for LibBitmap.Bitmap;
-
-    RelayReg public relayReg;
-
-    error NoVerifier();
+/// used as salt for creating an OrderPayment Contract
+contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
     error InvalidNonce(uint64 cur, uint64 _nonce);
 
     /// @notice rootHashes is a mapping of shops to their state root hash
@@ -26,25 +18,12 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
     mapping(uint256 shopid => uint64) public nonce;
     /// @notice relays is a mapping of shop nfts to their relays
     mapping(uint256 shopid => uint256[]) public relays;
+    mapping(uint256 shopid => bytes32) public schema;
+    /// @notice endPoints are for relays to store their endpoints as URLs
+    /// any shop can also run their own relay(s) and this endPoints field to br
+    mapping(uint256 shopid => string[]) public endPoints;
 
-    mapping(uint256 => string) public shopURIs;
-
-    /// @notice invites is a mapping of shop nfts to their one-time use registration invites
-    LibBitmap.Bitmap private invites;
-
-    /// we could use enums here, but the are not exposed in the abi and change in order of functions would be brittle
-    uint8 public constant PERM_addPermission = 0;
-    uint8 public constant PERM_removePermission = 1;
-    uint8 public constant PERM_updateRootHash = 2;
-    uint8 public constant PERM_addRelay = 3;
-    uint8 public constant PERM_removeRelay = 4;
-    uint8 public constant PERM_replaceRelay = 5;
-    uint8 public constant PERM_registerUser = 6;
-    uint8 public constant PERM_removeUser = 7;
-    uint8 public constant PERM_publishInviteVerifier = 8;
-
-    constructor(RelayReg r) ERC721("ShopRegistry", "SR") {
-        relayReg = r;
+    constructor() ERC721("ShopRegistry", "SR") {
     }
 
     // The following functions are overrides required by Solidity.
@@ -63,6 +42,7 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
         super._increaseBalance(account, value);
     }
 
+    /// forge-lint: disable-next-line(mixed-case-function)
     function tokenURI(
         uint256 tokenId
     ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
@@ -74,7 +54,7 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
     )
         public
         view
-        override(ERC721, ERC721Enumerable, ERC721URIStorage)
+        override(ERC721Enumerable, ERC721URIStorage)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -82,17 +62,20 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
 
     /// @notice Sets the metadata URI for a given shop with the provided URI
     /// @param shopId shop token id, newTokenURI uri to metadata
-    function setTokenURI(uint256 shopId, string memory newTokenURI) public {
+    /// forge-lint: disable-next-line(mixed-case-function)
+    function setTokenURI(uint256 shopId, string calldata newTokenUri) public {
         require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
-        _setTokenURI(shopId, newTokenURI);
+        _setTokenURI(shopId, newTokenUri);
     }
 
     /// @notice mint registers a new shop and creates a NFT for it
     /// @param shopId The shop nft. Needs to be unique or it will revert
+    /// @param _schema The schema of the shop
     /// @param owner The owner of the shop
-    function mint(uint256 shopId, address owner) public {
+    function mint(uint256 shopId, bytes32 _schema, address owner) public {
         // safe mint checks if id is taken
         _safeMint(owner, shopId);
+        schema[shopId] = _schema;
     }
 
     /// @notice updateRootHash updates the state root of the shop
@@ -103,12 +86,7 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
         bytes32 hash,
         uint64 _nonce
     ) public {
-        if (
-            !_checkIsConfiguredRelay(shopId) &&
-            !hasPermission(shopId, msg.sender, PERM_updateRootHash)
-        ) {
-            revert NotAuthorized(PERM_updateRootHash);
-        }
+        require(ownerOf(shopId) == msg.sender || _checkIsConfiguredRelay(shopId), "NOT_AUTHORIZED");
         rootHashes[shopId] = hash;
         uint64 curNonce = nonce[shopId];
         if (curNonce >= _nonce) {
@@ -141,7 +119,7 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
     /// @param shopId The shop nft
     /// @param relayId The relay nft
     function addRelay(uint256 shopId, uint256 relayId) public {
-        permissionGuard(shopId, PERM_addRelay);
+        require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
         relays[shopId].push(relayId);
     }
 
@@ -150,7 +128,7 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
     /// @param idx The index of the relay to replace
     /// @param relayId The new relay nft
     function replaceRelay(uint256 shopId, uint8 idx, uint256 relayId) public {
-        permissionGuard(shopId, PERM_replaceRelay);
+        require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
         relays[shopId][idx] = relayId;
     }
 
@@ -158,12 +136,43 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
     /// @param shopId The shop nft
     /// @param idx The index of the relay to remove
     function removeRelay(uint256 shopId, uint8 idx) public {
-        permissionGuard(shopId, uint8(PERM_removeRelay));
+        require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
         uint256 last = relays[shopId].length - 1;
         if (last != idx) {
             relays[shopId][idx] = relays[shopId][last];
         }
         relays[shopId].pop();
+    }
+
+    function setRelayEndpoints(uint256 shopId, string[] calldata endpoints) public {
+        require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
+        endPoints[shopId] = endpoints;
+    }
+
+    /// @notice getRelayEndPoints returns the endpoints of all relays in the shop
+    /// @param shopId The shop nft
+    function getRelayEndPoints(uint256 shopId) public view returns (string[] memory) {
+        uint256[] storage allRelays = relays[shopId];
+        uint256 totalEndpoints = endPoints[shopId].length;
+        for (uint256 i = 0; i < allRelays.length; i++) {
+            totalEndpoints += endPoints[allRelays[i]].length;
+        }
+        string[] memory relayEndPoints = new string[](totalEndpoints);
+        string[] storage currentEndpoints = endPoints[shopId];
+        uint256 index = 0;
+
+        for (uint256 j = 0; j < currentEndpoints.length; j++) {
+            relayEndPoints[index] = currentEndpoints[j];
+            index++;
+        }
+        for (uint256 i = 0; i < allRelays.length; i++) {
+            currentEndpoints = endPoints[allRelays[i]];
+            for (uint256 j = 0; j < currentEndpoints.length; j++) {
+                relayEndPoints[index] = currentEndpoints[j];
+                index++;
+            }
+        }
+        return relayEndPoints;
     }
 
     /// @dev checks if the sender is part of the configured relays
@@ -174,105 +183,11 @@ contract ShopReg is AccessControl, ERC721Enumerable, ERC721URIStorage {
         uint256[] storage allRelays = relays[shopId];
         for (uint256 index = 0; index < allRelays.length; index++) {
             uint256 relayId = allRelays[index];
-            address relayAddr = relayReg.ownerOf(relayId);
+            address relayAddr = this.ownerOf(relayId);
             if (relayAddr == msg.sender) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     *  INVITES
-     */
-
-    /// @notice adds a new one-time use registration invite to the shop
-    /// @param shopId The shop nft
-    /// @param verifier The address of the invite verifier (public key)
-    function publishInviteVerifier(uint256 shopId, address verifier) public {
-        permissionGuard(shopId, uint8(PERM_publishInviteVerifier));
-        invites.set(calculateIdx(shopId, verifier));
-    }
-
-    /// @dev utility function to get the message hash for the invite verification
-    function _getTokenMessageHash(address user) public pure returns (bytes32) {
-        string memory hexAdd = LibString.toHexString(
-            uint256(uint160(user)),
-            20
-        );
-        return
-            keccak256(
-                abi.encodePacked(
-                    "\x19Ethereum Signed Message:\n52enrolling:",
-                    hexAdd
-                )
-            );
-    }
-
-    /// @notice redeem one of the invites. (v,r,s) are the signature
-    /// @param shopId The shop nft
-    /// @param v The recovery id
-    /// @param r The r value of the signature
-    /// @param s The s value of the signature
-    /// @param user The address of the user to register. Will become a Clerk.
-    function redeemInvite(
-        uint256 shopId,
-        uint8 v,
-        bytes32 r,
-        bytes32 s,
-        address user
-    ) public {
-        // check signature
-        address recovered = ecrecover(_getTokenMessageHash(user), v, r, s);
-        bool newIsSet = invites.toggle(calculateIdx(shopId, recovered));
-        if (newIsSet) revert NoVerifier();
-        // register the new user
-        _addUser(shopId, user, (1 << PERM_updateRootHash));
-    }
-
-    /**
-     *  USER CONTROL
-     */
-
-    /// @dev manually add user, identified by their wallet addr, to the shop
-    /// @param shopId The shop nft
-    /// @param user The address of the user
-    /// @param perms The perimission to assign to the new users
-    function registerUser(uint256 shopId, address user, uint256 perms) public {
-        allPermissionsGuard(shopId, perms | (1 << PERM_registerUser));
-        // save the user
-        _addUser(shopId, user, perms);
-    }
-
-    /// @dev remove user. The address that is removing the user must have all or more permissions than the user being removed. Or be the owner of the shop
-    /// @param shopId The shop
-    /// @param user The address of the user
-    function removeUser(uint256 shopId, address user) public {
-        allPermissionsGuard(
-            shopId,
-            getAllPermissions(shopId, user) | (1 << PERM_removeUser)
-        );
-        _removeUser(shopId, user);
-    }
-
-    // @dev adds a permission if the calling user has that permission and the permission to remove permissions
-    function addPermission(uint256 shopId, address user, uint8 perm) public {
-        allPermissionsGuard(shopId, (1 << perm) | (1 << PERM_addPermission));
-        _addPermission(shopId, user, perm);
-    }
-
-    // @dev removes a permission if the calling user has that permission and the permission to remove permissions
-    function removePermission(uint256 shopId, address user, uint8 perm) public {
-        allPermissionsGuard(shopId, (1 << perm) | PERM_removePermission);
-        _removePermission(shopId, user, perm);
-    }
-
-    /// @notice calculates a unique index given an ID and an address
-    /// @dev the shopID must be hashed before being XORed to prevent collisions since an attacker can choose the shopID.
-    function calculateIdx(
-        uint256 id,
-        address addr
-    ) internal pure returns (uint256) {
-        return uint256(uint160(addr)) ^ uint256(keccak256(abi.encode(id)));
     }
 }

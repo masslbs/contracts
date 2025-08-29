@@ -3,11 +3,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 [profile.default]
-src = 'src'
-out = 'out'
-script = 'script'
-libs = ['lib']
-fs_permissions = [{access = "write", path = "./"}]
+fs_permissions = [{ access = "write", path = "./" }]
+always_use_create_2_factory = true
+via_ir = true
+remappings = [
+    "forge-std/=./libs/forge-std/src",
+    "openzeppelin/=./libs/openzeppelin/",
+    "ds-test/=./libs/ds-test/src",
+    "solady/=./libs/solady/src",
+]
 
 [rpc_endpoints]
 sepolia = "${SEPOLIA_RPC_URL}"
