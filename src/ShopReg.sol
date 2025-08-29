@@ -42,6 +42,7 @@ contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
         super._increaseBalance(account, value);
     }
 
+    /// forge-lint: disable-next-line(mixed-case-function)
     function tokenURI(
         uint256 tokenId
     ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
@@ -61,9 +62,10 @@ contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
 
     /// @notice Sets the metadata URI for a given shop with the provided URI
     /// @param shopId shop token id, newTokenURI uri to metadata
-    function setTokenURI(uint256 shopId, string memory newTokenURI) public {
+    /// forge-lint: disable-next-line(mixed-case-function)
+    function setTokenURI(uint256 shopId, string calldata newTokenUri) public {
         require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
-        _setTokenURI(shopId, newTokenURI);
+        _setTokenURI(shopId, newTokenUri);
     }
 
     /// @notice mint registers a new shop and creates a NFT for it

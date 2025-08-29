@@ -4,12 +4,12 @@
 
 pragma solidity ^0.8.13;
 
-import "forge-std/Script.sol";
+import {Script} from "forge-std/Script.sol";
 import {console} from "forge-std/console.sol";
 
-import "../src/ShopReg.sol";
-import "../src/OrderPayments.sol";
-import "openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ShopReg} from "../src/ShopReg.sol";
+import {OrderPaymentsFactory} from "../src/OrderPayments.sol";
+import {ERC20} from "openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 
@@ -24,7 +24,7 @@ contract EuroDollar is ERC20 {
 contract Deploy is Script {
     bytes32 salt = bytes32(uint256(1));
 
-    function deployContracts(bool testERC20, bool mut) external {
+    function deployContracts(bool testErc20, bool mut) external {
         vm.startBroadcast();
 
         // deploy shop registary
@@ -34,7 +34,7 @@ contract Deploy is Script {
 
         string memory addresses;
 
-        if (testERC20) {
+        if (testErc20) {
             EuroDollar eddies = new EuroDollar{salt: salt}();
             vm.serializeAddress(addresses, "Eddies", address(eddies));
             // create a test shop

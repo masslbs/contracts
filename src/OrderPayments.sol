@@ -4,7 +4,8 @@
 
 pragma solidity ^0.8.19;
 
-import "openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ERC20} from "openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {EfficientHashLib} from "solady/utils/EfficientHashLib.sol";
 
 address constant ETH = address(0);
 
@@ -32,22 +33,23 @@ contract OrderPayment {
         if (address(token) == ETH) {
             sweepEth(hookCallData);
         } else {
-            sweepERC20(token, hookCallData);
+            sweepErc20(token, hookCallData);
         }
     }
 
     function sweepEth(bytes calldata hookCallData) public {
         uint256 balance = address(this).balance;
-        (bool sent, bytes memory data) = receivingAddress.call{value: balance}(hookCallData);
-        require(sent, "Failed to send Ether");
+        (bool success,) = receivingAddress.call{value: balance}(hookCallData);
+        require(success, "Failed to send Ether");
     }
 
-    function sweepERC20(ERC20 token, bytes calldata hookCallData) public {
+    function sweepErc20(ERC20 token, bytes calldata hookCallData) public {
         uint256 balance = token.balanceOf(address(this));
-        token.transfer(receivingAddress, balance);
+        bool success = token.transfer(receivingAddress, balance);
+        require(success, "Failed to transfer ERC20 tokens");
         if (hookCallData.length > 0) {
-            (bool sent, bytes memory data) = receivingAddress.call(hookCallData);
-            require(sent, "Failed to call hook");
+            (success, ) = receivingAddress.call(hookCallData);
+            require(success, "Failed to call hook");
         }
     }
 }
@@ -57,20 +59,21 @@ contract OrderPaymentsFactory {
     function getSalt(
         OrderPaymentBinding calldata binding
     ) public pure returns (bytes32) {
-        return keccak256(abi.encode(binding));
+        bytes memory encodedAbi = abi.encode(binding);
+        return EfficientHashLib.hash(encodedAbi);
     }
 
     function getBytecodeHash(
         address receivingAddress
     ) public pure returns (bytes32) {
         bytes memory bytecode = type(OrderPayment).creationCode;
-        return keccak256(abi.encodePacked(bytecode, abi.encode(receivingAddress)));
+        return EfficientHashLib.hash(abi.encodePacked(bytecode, abi.encode(receivingAddress)));
     }
 
     function getOrderPaymentAddress(
         OrderPaymentBinding calldata binding
     ) public view returns (address) {
-        bytes32 hash = keccak256(
+        bytes32 hash = EfficientHashLib.hash(
             abi.encodePacked(
                 bytes1(0xff),
                 address(this),

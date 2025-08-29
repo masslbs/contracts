@@ -31,12 +31,17 @@
       url = "github:dapphub/ds-test";
       flake = false;
     };
+    solady = {
+      url = "github:Vectorized/solady";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {
     flake-parts,
     flake-root,
     forge-std,
+    solady,
     openzeppelin,
     ds-test,
     systems,
@@ -71,6 +76,7 @@
           ln -s ${forge-std} $out/libs/forge-std
           ln -s ${openzeppelin} $out/libs/openzeppelin
           ln -s ${ds-test} $out/libs/ds-test
+          ln -s ${solady} $out/libs/solady
         '';
         src = pkgs.symlinkJoin {
           name = "deploy-contracts-src";

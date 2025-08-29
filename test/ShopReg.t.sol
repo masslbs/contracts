@@ -4,7 +4,7 @@
 
 pragma solidity ^0.8.19;
 
-import "forge-std/Test.sol";
+import {Test, stdStorage, StdStorage} from "forge-std/Test.sol";
 import {ShopReg} from "../src/ShopReg.sol";
 
 contract ShopTest is Test {

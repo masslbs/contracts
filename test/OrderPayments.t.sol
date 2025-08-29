@@ -4,11 +4,10 @@
 
 pragma solidity ^0.8.19;
 
-import "forge-std/Test.sol";
-import "forge-std/Vm.sol";
-import {ERC20Mock} from "openzeppelin/contracts/mocks/token/ERC20Mock.sol";
+import {Test} from "forge-std/Test.sol";
+import {ERC20Mock, ERC20} from "openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 
-import "../src/OrderPayments.sol";
+import {OrderPaymentsFactory, OrderPaymentBinding, OrderPayment, ETH} from "../src/OrderPayments.sol";
 
 contract OrderPaymentsFactoryTest is Test {
     OrderPaymentsFactory factory;
@@ -32,13 +31,13 @@ contract OrderPaymentsFactoryTest is Test {
         });
     }
 
-    function test_getSalt() public {
+    function test_getSalt() public view {
         bytes32 salt = factory.getSalt(binding);
         bytes32 expectedSalt = keccak256(abi.encode(binding));
         assertEq(salt, expectedSalt);
     }
 
-    function test_getSalt_DifferentBindingsProduceDifferentSalts() public {
+    function test_getSalt_DifferentBindingsProduceDifferentSalts() public view {
         OrderPaymentBinding memory binding2 = OrderPaymentBinding({
             chainId: 1,
             shopId: 123,
@@ -169,7 +168,8 @@ contract OrderPaymentTest is Test {
 
         // Transfer tokens to the order payment contract
         vm.prank(customer);
-        mockToken.transfer(address(orderPayment), amount);
+        bool success = mockToken.transfer(address(orderPayment), amount);
+        assertTrue(success);
 
         uint256 merchantBalanceBefore = mockToken.balanceOf(merchant);
         uint256 contractBalanceBefore = mockToken.balanceOf(address(orderPayment));
@@ -177,7 +177,7 @@ contract OrderPaymentTest is Test {
         assertEq(contractBalanceBefore, amount);
 
         // Sweep ERC20
-        orderPayment.sweepERC20(mockToken, "");
+        orderPayment.sweepErc20(mockToken, "");
 
         uint256 merchantBalanceAfter = mockToken.balanceOf(merchant);
         uint256 contractBalanceAfter = mockToken.balanceOf(address(orderPayment));
@@ -193,7 +193,7 @@ contract OrderPaymentTest is Test {
         assertEq(mockToken.balanceOf(address(orderPayment)), 0);
 
         // Sweep should not revert but also not change balances
-        orderPayment.sweepERC20(mockToken, "");
+        orderPayment.sweepErc20(mockToken, "");
 
         assertEq(mockToken.balanceOf(address(orderPayment)), 0);
         assertEq(mockToken.balanceOf(merchant), merchantBalanceBefore);
@@ -224,12 +224,12 @@ contract OrderPaymentTest is Test {
 
         // Transfer tokens to the order payment contract
         vm.prank(customer);
-        mockToken.transfer(address(orderPayment), amount);
+        assertTrue(mockToken.transfer(address(orderPayment), amount));
 
         // Random address calls sweep
         address randomUser = makeAddr("random");
         vm.prank(randomUser);
-        orderPayment.sweepERC20(mockToken, "");
+        orderPayment.sweepErc20(mockToken, "");
 
         // Tokens should still go to merchant
         assertEq(mockToken.balanceOf(merchant), amount);
@@ -274,11 +274,11 @@ contract OrderPaymentTest is Test {
         // Mint tokens to customer and transfer to contract
         mockToken.mint(customer, amount);
         vm.prank(customer);
-        mockToken.transfer(address(orderPayment), amount);
+        assertTrue(mockToken.transfer(address(orderPayment), amount));
 
         uint256 merchantBalanceBefore = mockToken.balanceOf(merchant);
 
-        orderPayment.sweepERC20(mockToken, "");
+        orderPayment.sweepErc20(mockToken, "");
 
         assertEq(mockToken.balanceOf(address(orderPayment)), 0);
         assertEq(mockToken.balanceOf(merchant), merchantBalanceBefore + amount);
@@ -317,7 +317,7 @@ contract OrderPaymentsIntegrationTest is Test {
         // Customer sends ETH and tokens to the predicted address
         vm.startPrank(customer);
         payable(predictedAddress).transfer(1 ether);
-        mockToken.transfer(predictedAddress, 100 ether);
+        assertTrue(mockToken.transfer(predictedAddress, 100 ether));
         vm.stopPrank();
 
         // Verify funds are at the predicted address
@@ -335,7 +335,7 @@ contract OrderPaymentsIntegrationTest is Test {
         uint256 merchantTokensBefore = mockToken.balanceOf(merchant);
 
         orderPayment.sweepEth("");
-        orderPayment.sweepERC20(mockToken, "");
+        orderPayment.sweepErc20(mockToken, "");
 
         // Verify funds were swept to merchant
         assertEq(merchant.balance, merchantEthBefore + 1 ether);
@@ -371,8 +371,8 @@ contract OrderPaymentsIntegrationTest is Test {
         vm.startPrank(customer);
         payable(addr1).transfer(1 ether);
         payable(addr2).transfer(2 ether);
-        mockToken.transfer(addr1, 100 ether);
-        mockToken.transfer(addr2, 200 ether);
+        assertTrue(mockToken.transfer(addr1, 100 ether));
+        assertTrue(mockToken.transfer(addr2, 200 ether));
         vm.stopPrank();
 
         // Deploy contracts
@@ -384,9 +384,9 @@ contract OrderPaymentsIntegrationTest is Test {
         uint256 merchantTokensBefore = mockToken.balanceOf(merchant);
 
         OrderPayment(addr1).sweepEth("");
-        OrderPayment(addr1).sweepERC20(mockToken, "");
+        OrderPayment(addr1).sweepErc20(mockToken, "");
         OrderPayment(addr2).sweepEth("");
-        OrderPayment(addr2).sweepERC20(mockToken, "");
+        OrderPayment(addr2).sweepErc20(mockToken, "");
 
         // Verify total funds were swept
         assertEq(merchant.balance, merchantEthBefore + 3 ether);
