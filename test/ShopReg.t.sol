@@ -185,4 +185,19 @@ contract ShopTest is Test {
         vm.prank(notOwner);
         shops.removeRelay(shopId, 0);
     }
+    function test_GetRelayEndPoints() public {
+        address owner = address(3);
+        shops.mint(shopId, testSchema, owner);
+        string[] memory endpoints = new string[](3);
+        endpoints[0] = "http://relay1.example.com";
+        endpoints[1] = "http://relay2.example.com";
+        endpoints[2] = "http://relay2b.example.com";
+        vm.prank(owner);
+        shops.setRelayEndpoints(shopId, endpoints);
+        string[] memory foundEndpoints = shops.getRelayEndPoints(shopId);
+        assertEq(foundEndpoints.length, 3);
+        assertEq(foundEndpoints[0], "http://relay1.example.com");
+        assertEq(foundEndpoints[1], "http://relay2.example.com");
+        assertEq(foundEndpoints[2], "http://relay2b.example.com");
+      }
 }

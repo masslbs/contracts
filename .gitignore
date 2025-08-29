@@ -12,4 +12,4 @@ deploymentAddresses.json
 .pre-commit-config.yaml
 logs/
 cache
-libs/
+libs

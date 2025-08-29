@@ -19,6 +19,9 @@ contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
     /// @notice relays is a mapping of shop nfts to their relays
     mapping(uint256 shopid => uint256[]) public relays;
     mapping(uint256 shopid => bytes32) public schema;
+    /// @notice endPoints are for relays to store their endpoints as URLs
+    /// any shop can also run their own relay(s) and this endPoints field to br
+    mapping(uint256 shopid => string[]) public endPoints;
 
     constructor() ERC721("ShopRegistry", "SR") {
     }
@@ -137,6 +140,37 @@ contract ShopReg is  ERC721Enumerable, ERC721URIStorage {
             relays[shopId][idx] = relays[shopId][last];
         }
         relays[shopId].pop();
+    }
+
+    function setRelayEndpoints(uint256 shopId, string[] calldata endpoints) public {
+        require(ownerOf(shopId) == msg.sender, "NOT_AUTHORIZED");
+        endPoints[shopId] = endpoints;
+    }
+
+    /// @notice getRelayEndPoints returns the endpoints of all relays in the shop
+    /// @param shopId The shop nft
+    function getRelayEndPoints(uint256 shopId) public view returns (string[] memory) {
+        uint256[] storage allRelays = relays[shopId];
+        uint256 totalEndpoints = endPoints[shopId].length;
+        for (uint256 i = 0; i < allRelays.length; i++) {
+            totalEndpoints += endPoints[allRelays[i]].length;
+        }
+        string[] memory relayEndPoints = new string[](totalEndpoints);
+        string[] storage currentEndpoints = endPoints[shopId];
+        uint256 index = 0;
+
+        for (uint256 j = 0; j < currentEndpoints.length; j++) {
+            relayEndPoints[index] = currentEndpoints[j];
+            index++;
+        }
+        for (uint256 i = 0; i < allRelays.length; i++) {
+            currentEndpoints = endPoints[allRelays[i]];
+            for (uint256 j = 0; j < currentEndpoints.length; j++) {
+                relayEndPoints[index] = currentEndpoints[j];
+                index++;
+            }
+        }
+        return relayEndPoints;
     }
 
     /// @dev checks if the sender is part of the configured relays

@@ -1,3 +1,0 @@
-forge-std/=./libs/forge-std/src
-openzeppelin/=./libs/openzeppelin/
-ds-test/=./libs/ds-test/src
